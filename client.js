@@ -14,4 +14,4 @@ sendButton.addEventListener('click', () => {
 socket.on('chat message', (msg) => {
   const div = document.createElement('div');
   div.textContent = msg;
- 
+});
