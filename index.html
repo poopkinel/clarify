@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App</title>
+</head>
+<body>
+
+<button id="proceedButton">Proceed</button>
+
+<script>
+    document.getElementById('proceedButton').addEventListener('click', function() {
+        fetch('/proceed', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // You can send additional data in the body if needed
+            body: JSON.stringify({ event: 'StartTalking' }), // Example event
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+
+</body>
+</html>
