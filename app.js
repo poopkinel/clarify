@@ -47,4 +47,5 @@ const startTalkingEvent = new ChatEvent("StartTalking");
 // ChatFlow setup
 const chatFlow = new ChatFlow();
 chatFlow.addTransition(waitingState, waitingState, startTalkingEvent, talkingState, talkingState);
+chatFlow.addTransition(talkingState, talkingState, startTalkingEvent, waitingState, waitingState);
 chatFlow.setCurrentState(waitingState, waitingState);
