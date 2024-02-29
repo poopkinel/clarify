@@ -8,6 +8,9 @@ const ChatState = require('./src/models/ChatState');
 const ChatEvent = require('./src/models/ChatEvent');
 const ChatFlow = require('./src/models/ChatFlow');
 
+// Enable CORS for all requests
+app.use(cors());
+
 // Middlewares
 app.use(bodyParser.json()); // for parsing application/json
 app.use(express.static('public')); // Serve static files from 'public' directory, where your HTML file is located
