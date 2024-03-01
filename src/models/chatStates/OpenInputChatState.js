@@ -1,4 +1,4 @@
-import ChatState from './ChatState';
+const ChatState = require("./ChatState");
 
 class OpenInputChatState extends ChatState {
   constructor() {
@@ -10,13 +10,6 @@ class OpenInputChatState extends ChatState {
     super.onEnter();
     // Additional enter logic for open chat
   }
-
-  renderInput() {
-    // Return JSX for text input field
-    return (
-      <input type="text" placeholder="Type a message..." />
-    );
-  }
 }
   
-export default OpenInputChatState;
+module.exports = OpenInputChatState;

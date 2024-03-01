@@ -1,7 +1,9 @@
-const { ChatEvent, ChatFlow } = require('./models');
-const OpenInputChatState = require('./models/chatStates/OpenInputChatState');
-const ClosedInputChatState = require('./models/chatStates/ClosedInputChatState');
-const WaitingChatState = require('./models/chatStates/WaitingChatState');
+const ChatFlow = require('../models/ChatFlow');
+const ChatEvent = require('../models/ChatEvent');
+const ChatState = require('../models/chatStates/ChatState');
+const OpenInputChatState = require('../models/chatStates/OpenInputChatState');
+const ClosedInputChatState = require('../models/chatStates/ClosedInputChatState');
+const WaitingChatState = require('../models/chatStates/WaitingChatState');
 
 // Define States
 const waitingStatePar1 = new WaitingChatState();

@@ -1,5 +1,4 @@
-import ChatState from './ChatState';
-
+const ChatState = require("./ChatState");
 
 class ClosedInputChatState extends ChatState {
   constructor(options) {
@@ -11,13 +10,6 @@ class ClosedInputChatState extends ChatState {
     super.onEnter();
     // Additional enter logic for closed chat
   }
-
-  renderInput() {
-    // Return JSX for buttons based on this.options
-    return this.options.map((option, index) => (
-      <button key={index}>{option}</button>
-    ));
-  }
 }
 
-export default ClosedInputChatState;
+module.exports = ClosedInputChatState;

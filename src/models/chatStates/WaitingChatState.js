@@ -1,4 +1,4 @@
-import ChatState from './ChatState';
+const ChatState = require("./ChatState");
 
 class WaitingChatState extends ChatState {
   constructor() {
@@ -10,13 +10,6 @@ class WaitingChatState extends ChatState {
     super.onEnter();
     // Additional enter logic for open chat
   }
-
-  renderInput() {
-    // Return JSX for text input field
-    return (
-        <div>Waiting for other user...</div>
-    );
-  }
 }
   
-export default WaitingChatState;
+module.exports = WaitingChatState;
