@@ -1,0 +1,23 @@
+import ChatState from './ChatState';
+
+
+class ClosedInputChatState extends ChatState {
+  constructor(options) {
+    super("ClosedInputChat");
+    this.options = options; // Assuming options is an array of button labels
+  }
+
+  onEnter() {
+    super.onEnter();
+    // Additional enter logic for closed chat
+  }
+
+  renderInput() {
+    // Return JSX for buttons based on this.options
+    return this.options.map((option, index) => (
+      <button key={index}>{option}</button>
+    ));
+  }
+}
+
+export default ClosedInputChatState;

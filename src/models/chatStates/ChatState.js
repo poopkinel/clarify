@@ -10,6 +10,11 @@ class ChatState {
     OnExit() {
         console.log(`${this.name} state exited.`);
     }
+    
+    handleInput(input) {
+        console.log(`Input received in ${this.name} state: ${input}`);
+        // Handle input specific to the state
+    }
 }
 
 module.exports = ChatState;
