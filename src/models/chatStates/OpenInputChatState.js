@@ -8,7 +8,7 @@ class OpenInputChatState extends ChatState {
   // Specific logic for open chat state
   onEnter() {
     super.onEnter();
-    // Additional enter logic for open chat
+    console.log("Open chat state entered.");
   }
 }
   

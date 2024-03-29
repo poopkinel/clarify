@@ -8,8 +8,8 @@ const WaitingChatState = require('../models/chatStates/WaitingChatState');
 // Define States
 const waitingStatePar1 = new WaitingChatState();
 const waitingStatePar2 = new WaitingChatState();
-const talkingStatePar1 = new ChatState("Talking");
-const talkingStatePar2 = new ChatState("Talking");
+const talkingStatePar1 = new OpenInputChatState("Talking");
+const talkingStatePar2 = new OpenInputChatState("Talking");
 
 // Define Events
 const messageSentEvent = new ChatEvent("MessageSent");
