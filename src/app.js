@@ -45,6 +45,9 @@ app.get('/socket.io/socket.io.js', cors(corsOptions), (req, res) => {
 io.on('connection', (socket) => {
   console.log('A user connected');
 
+  // Emit starting event
+  socket.emit('event', 'start');
+
   socket.on('event', (eventName) => {
     const event = events[eventName];
     console.log('Event received:', event);
