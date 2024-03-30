@@ -47,8 +47,10 @@ io.on('connection', (socket) => {
 
   socket.on('event', (eventName) => {
     const event = events[eventName];
+    console.log('Event received:', event);
 
     if (!event) {
+      console.log('Invalid event');
       return socket.emit('error', 'Invalid event');
     }
 
