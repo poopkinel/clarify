@@ -4,26 +4,27 @@
 // - `Proceed(event)`: Proceeds to the next state based on the current state and the event triggered.
 // - `setCurrentState(state1, state2)`: Sets the initial current state of the conversation.
 
+const { states, events, transitions, initialState } = require('../src/config/chatConfig');
 const ChatFlow = require('../src/models/ChatFlow');
 
 describe('ChatFlow', () => {
-  let chatFlow;
+  let mockChatFlow;
   let mockState1, mockState2;
 
   beforeEach(() => {
-    chatFlow = new ChatFlow();
+    mockChatFlow = new ChatFlow();
     mockState1 = { name: 'state1', OnEnter: jest.fn(), OnExit: jest.fn() };
     mockState2 = { name: 'state2', OnEnter: jest.fn(), OnExit: jest.fn() };
   });
 
   it('should set the current state correctly', () => {
-    chatFlow.setCurrentState(mockState1, mockState2);
-    expect(chatFlow.currentState.participant1).toBe(mockState1);
-    expect(chatFlow.currentState.participant2).toBe(mockState2);
+    mockChatFlow.setCurrentState(mockState1, mockState2);
+    expect(mockChatFlow.currentState.participant1).toBe(mockState1);
+    expect(mockChatFlow.currentState.participant2).toBe(mockState2);
   });
 
   it('should call OnEnter on the new states when setting current state', () => {
-    chatFlow.setCurrentState(mockState1, mockState2);
+    mockChatFlow.setCurrentState(mockState1, mockState2);
     expect(mockState1.OnEnter).toHaveBeenCalled();
     expect(mockState2.OnEnter).toHaveBeenCalled();
   });
@@ -33,58 +34,44 @@ describe('ChatFlow', () => {
     let newState3 = { name: 'newState3', OnEnter: jest.fn(), OnExit: jest.fn() };
     let newState4 = { name: 'newState4', OnEnter: jest.fn(), OnExit: jest.fn() };
   
-    chatFlow.addTransition(mockState1, mockState2, mockEvent, newState3, newState4);
-    chatFlow.setCurrentState(mockState1, mockState2);
-    chatFlow.Proceed(mockEvent);
+    mockChatFlow.addTransition(mockState1, mockState2, mockEvent, newState3, newState4);
+    mockChatFlow.setCurrentState(mockState1, mockState2);
+    mockChatFlow.Proceed(mockEvent);
   
-    expect(chatFlow.currentState.participant1).toBe(newState3);
-    expect(chatFlow.currentState.participant2).toBe(newState4);
+    expect(mockChatFlow.currentState.participant1).toBe(newState3);
+    expect(mockChatFlow.currentState.participant2).toBe(newState4);
   });
 
   it('should correctly transition between states based on the chat flow', () => {
-    let waiting = { name: 'waiting for response', OnEnter: jest.fn(), OnExit: jest.fn() };
-    let openSay = { name: 'openSay', OnEnter: jest.fn(), OnExit: jest.fn() };
-    let closedUnderstand = { name: 'closedUnderstand', OnEnter: jest.fn(), OnExit: jest.fn() };
-    let openParaphrase = { name: 'openParaphrase', OnEnter: jest.fn(), OnExit: jest.fn() };
-    let closedConfirmParaphrase = { name: 'closedConfirmParaphrase', OnEnter: jest.fn(), OnExit: jest.fn() };
-    let openQuestion = { name: 'openQuestion', OnEnter: jest.fn(), OnExit: jest.fn() };
-  
-    let participant1Says = { name: 'participant1Says' };
-    let participant1UnderstandsYes = { name: 'participant1UnderstandsYes' };
-    let participant1UnderstandsNo = { name: 'participant1UnderstandsNo' };
-    let participant1Paraphrases = { name: 'participant1Paraphrases' };
-    let participant1ConfirmParaphraseYes = { name: 'participant1ConfirmParaphraseYes' };
-    let participant1ConfirmParaphraseNo = { name: 'participant1ConfirmParaphraseNo' };
-    let participant1Questions = { name: 'participant1Questions' };
-    let participant2Says = { name: 'participant2Says' };
-    let participant2UnderstandsYes = { name: 'participant2UnderstandsYes' };
-    let participant2UnderstandsNo = { name: 'participant2UnderstandsNo' };
-    let participant2Paraphrases = { name: 'participant2Paraphrases' };
-    let participant2ConfirmParaphraseYes = { name: 'participant2ConfirmParaphraseYes' };
-    let participant2ConfirmParaphraseNo = { name: 'participant2ConfirmParaphraseNo' };
-    let participant2Questions = { name: 'participant2Questions' };
-  
-    // Transitions
-    chatFlow.addTransition(waiting, openSay, participant2Says, closedUnderstand, waiting);
-    chatFlow.addTransition(closedUnderstand, waiting, participant1UnderstandsYes, openParaphrase, waiting);
-    chatFlow.addTransition(closedUnderstand, waiting, participant1UnderstandsNo, openQuestion, waiting);
-    chatFlow.addTransition(openParaphrase, waiting, participant1Paraphrases, waiting, closedConfirmParaphrase);
-    chatFlow.addTransition(waiting, closedConfirmParaphrase, participant2ConfirmParaphraseYes, openSay, waiting);
-    chatFlow.addTransition(waiting, closedConfirmParaphrase, participant2ConfirmParaphraseNo, waiting, openSay);
-    chatFlow.addTransition(openQuestion, waiting, participant1Questions, waiting, openSay);
+    let chatFlow = new ChatFlow();
     
-    chatFlow.addTransition(openSay, waiting, participant1Says, waiting, closedUnderstand);
-    chatFlow.addTransition(waiting, closedUnderstand, participant2UnderstandsYes, waiting, openParaphrase);
-    chatFlow.addTransition(waiting, closedUnderstand, participant2UnderstandsNo, waiting, openQuestion);
-    chatFlow.addTransition(waiting, openParaphrase, participant2Paraphrases, closedConfirmParaphrase, waiting);
-    chatFlow.addTransition(closedConfirmParaphrase, waiting, participant1ConfirmParaphraseYes, waiting, openSay);
-    chatFlow.addTransition(closedConfirmParaphrase, waiting, participant1ConfirmParaphraseNo, openSay, waiting);
-    chatFlow.addTransition(waiting, openQuestion, participant2Questions, openSay, waiting);
+    chatFlow.setCurrentState(initialState[0], initialState[1]);
     
-    // Start state
-    chatFlow.setCurrentState(waiting, openSay);
-  
-    // Test the chat flow
+    transitions.forEach(({ from, to, event }) => {
+        chatFlow.addTransition(states[from[0]], states[from[1]], events[event], states[to[0]], states[to[1]]);
+    });
+
+    let participant1Says = events.participant1Says;
+    let participant1UnderstandsYes = events.participant1UnderstandsYes;
+    let participant1UnderstandsNo = events.participant1UnderstandsNo;
+    let participant1Paraphrases = events.participant1Paraphrases;
+    let participant1ConfirmParaphraseYes = events.participant1ConfirmParaphraseYes;
+    let participant1ConfirmParaphraseNo = events.participant1ConfirmParaphraseNo;
+    let participant1Questions = events.participant1Questions;
+    let participant2Says = events.participant2Says;
+    let participant2UnderstandsYes = events.participant2UnderstandsYes;
+    let participant2UnderstandsNo = events.participant2UnderstandsNo;
+    let participant2Paraphrases = events.participant2Paraphrases;
+    let participant2ConfirmParaphraseYes = events.participant2ConfirmParaphraseYes;
+    let participant2ConfirmParaphraseNo = events.participant2ConfirmParaphraseNo;
+    let participant2Questions = events.participant2Questions;
+
+    let waiting = states.waiting;
+    let openSay = states.openSay;
+    let closedUnderstand = states.closedUnderstand;
+    let openParaphrase = states.openParaphrase;
+    let closedConfirmParaphrase = states.closedConfirmParaphrase;
+    let openQuestion = states.openQuestion;
 
     chatFlow.Proceed(participant2Says);
     expect(chatFlow.currentState.participant1).toBe(closedUnderstand);
