@@ -2,24 +2,25 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+var corsOptions;
 if (process.env.NODE_ENV === 'production') {
   console.log('using cors production settings');
-  app.use(cors({
-    origin: "https://silver-dragon-272374.netlify.app"
-  }));
+  corsOptions = {
+    origin: 'https://silver-dragon-272374.netlify.app'
+  };
 } else {
   console.log('using cors development settings');
-  app.use(cors({
-    origin: "http://localhost:3000"
-  }));
+  corsOptions = {
+    origin: 'http://localhost:3000'
+  };
 }
 
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
 
-const io = new Server(server);
-
-
+const io = new Server(server, {
+  cors: corsOptions
+});
 
 const PORT = process.env.PORT || 65432;
 console.log('PORT:', PORT);
@@ -42,7 +43,7 @@ app.get('/', (req, res) => {
   var socket = io.listen(server);
 });
 
-app.get('/socket.io/socket.io.js', (req, res) => {
+app.get('/socket.io/socket.io.js', cors(corsOptions), (req, res) => {
   console.log('socket.io.js requested');
 });
 
