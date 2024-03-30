@@ -2,23 +2,27 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+if (process.env.NODE_ENV === 'production') {
+  console.log('using cors production settings');
+  app.use(cors({
+    origin: "https://silver-dragon-272374.netlify.app"
+  }));
+} else {
+  console.log('using cors development settings');
+  app.use(cors({
+    origin: "http://localhost:3000"
+  }));
+}
+
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
 
 const io = new Server(server);
-if (process.env.NODE_ENV === 'production') {
-  io.cors = {
-    origin: "https://silver-dragon-272374.netlify.app"
-  };
-} else {
-  io.cors = {
-    origin: "http://localhost:3000"
-  };
-}
+
+
 
 const PORT = process.env.PORT || 65432;
 console.log('PORT:', PORT);
-
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
@@ -27,9 +31,6 @@ server.listen(PORT, () => {
 const bodyParser = require('body-parser');
 const ChatEvent = require('./models/ChatEvent'); // Import ChatEvent model
 const chatFlow = require('./config/chatConfig'); // Import chatFlow
-
-// Enable CORS for all requests
-app.use(cors());
 
 // Middlewares
 app.use(bodyParser.json()); // for parsing application/json
