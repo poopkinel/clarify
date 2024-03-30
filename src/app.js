@@ -4,11 +4,17 @@ const app = express();
 
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
-const io = new Server(server, {
-  cors: {
+
+const io = new Server(server);
+if (process.env.NODE_ENV === 'production') {
+  io.cors = {
+    origin: "https://silver-dragon-272374.netlify.app"
+  };
+} else {
+  io.cors = {
     origin: "http://localhost:3000"
-  }
-});
+  };
+}
 
 const PORT = process.env.PORT || 65432;
 console.log('PORT:', PORT);
