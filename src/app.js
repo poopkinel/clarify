@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+
 const app = express();
 
+// CORS settings
 var corsOptions;
 if (process.env.NODE_ENV === 'production') {
   console.log('using cors production settings');
@@ -15,16 +17,17 @@ if (process.env.NODE_ENV === 'production') {
   };
 }
 
+// Create HTTP server
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
 
+// Create Socket.io server
 const io = new Server(server, {
   cors: corsOptions
 });
 
+// Define the port
 const PORT = process.env.PORT || 65432;
-console.log('PORT:', PORT);
-
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
@@ -38,9 +41,7 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(express.static('public')); // Serve static files from 'public' directory, where your HTML file is located
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
-  console.log('before listen to ', server);
-  var socket = io.listen(server);
+  res.send('Server up');
 });
 
 app.get('/socket.io/socket.io.js', cors(corsOptions), (req, res) => {
