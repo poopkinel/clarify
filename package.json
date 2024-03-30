@@ -2,10 +2,10 @@
   "name": "clarify",
   "version": "1.0.0",
   "description": "Chat app",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node src/app.js"
   },
   "author": "Ophek Ozelle",
   "license": "ISC",
