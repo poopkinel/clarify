@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+const server = require('http').createServer(app);
+const { Server } = require('socket.io');
 
 // CORS settings
 var corsOptions;
@@ -17,9 +19,6 @@ if (process.env.NODE_ENV === 'production') {
   };
 }
 
-// Create HTTP server
-const server = require('http').createServer(app);
-const { Server } = require('socket.io');
 
 // Create Socket.io server
 const io = new Server(server, {
@@ -33,8 +32,7 @@ server.listen(PORT, () => {
 });
 
 const bodyParser = require('body-parser');
-const ChatEvent = require('./models/ChatEvent'); // Import ChatEvent model
-const chatFlow = require('./config/chatConfig'); // Import chatFlow
+const { events } = require('./config/chatConfig'); // Import chatFlow
 
 // Middlewares
 app.use(bodyParser.json()); // for parsing application/json
@@ -58,23 +56,20 @@ app.get('/api/chatState', (req, res) => {
 io.on('connection', (socket) => {
   console.log('A user connected');
 
-  // Example of emitting chat state
-  socket.emit('chatState', chatState);
+  socket.on('event', (eventName) => {
+    const event = events[eventName];
+
+    if (!event) {
+      return socket.emit('error', 'Invalid event');
+    }
+
+    chatFlow.Proceed(event);
+    socket.emit('eventProcessed', 'Event processed');
+  });
 
   // Handle disconnection
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
-})
-
-// Define the route for proceeding with an event
-app.post('/proceed', (req, res) => {
-  const { event } = req.body;
-  // Here you would find the corresponding ChatEvent instance based on the event name
-  // For simplicity, we're creating a new event instance directly
-  const chatEvent = new ChatEvent(event);
-  
-  chatFlow.Proceed(chatEvent);
-  
-  res.json({ message: 'Proceed successful' });
 });
+
