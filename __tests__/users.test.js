@@ -1,0 +1,47 @@
+const { getAuth, createUserWithEmailAndPassword } = require('firebase/auth');
+const { initializeApp } = require('firebase/app');
+
+require('dotenv').config();
+
+const firebaseConfig = {
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIRE_BASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
+    };
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const createUser = async (email, password) => {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        return user;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+module.exports = { createUser };
+
+// Path: clarify/__tests__/users.test.js
+
+//mport { createUser } from '../src/users';
+
+describe('createUser', () => {
+    it('should create a new user', async () => {
+        const email = `test@test.test`;
+        const password = 'testtest';
+        const user = await createUser(email, password);
+        expect(user).not.toBeNull();
+
+        // Clean up
+        await user.delete();
+    });
+});
+
