@@ -17,7 +17,7 @@
     "tar": "^6.2.0"
   },
   "engines": {
-    "node": "14.x"
+    "node": "20.x"
   },
   "devDependencies": {
     "firebase": "^10.10.0",
