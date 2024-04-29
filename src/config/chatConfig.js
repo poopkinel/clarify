@@ -1,4 +1,4 @@
-const ChatState = require('../models/chatStates/ChatState');
+const ChatState = require('../entities/ChatState');
 
 const states = {
     waiting: new ChatState({ name: 'waiting'}),

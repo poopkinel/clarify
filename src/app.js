@@ -5,7 +5,7 @@ const app = express();
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
 
-const chatFlow = require('./models/ChatFlow');
+const chatFlow = require('./entities/ChatFlow');
 const { events } = require('./config/chatConfig');
 
 // CORS settings
