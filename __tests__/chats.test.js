@@ -4,7 +4,7 @@ const { ChatEntity } = require("../src/entities/chatEntity");
 const { CreateATestChatUseCase } = require("../src/useCases/createATestChatUseCase");
 const { ChatGatewayFirebaseImpl } = require("../src/details/persistence/chatGatewayFirebaseImpl");
 const { ChatGatewaySqliteImpl } = require("../src/details/persistence/chatGatewaySqliteImpl");
-const { RetrieveAChat: RetrieveAChatUseCase } = require("../src/useCases/retrieveAChatUseCase");
+const { RetrieveAChatUseCase } = require("../src/useCases/retrieveAChatUseCase");
 const { ResponseEntity, ResponseType } = require("../src/entities/responseEntity");
 const { ViewAllChatsUseCase } = require("../src/useCases/viewAllChatsUseCase");
 
