@@ -1,12 +1,12 @@
 // A test to create a new chat
 
 const { ChatEntity } = require("../src/entities/chatEntity");
-const { OperatorCreatesATestChat } = require("../src/useCases/operatorCreatesATestChat");
+const { CreateATestChatUseCase } = require("../src/useCases/createATestChatUseCase");
 const { ChatGatewayFirebaseImpl } = require("../src/details/persistence/chatGatewayFirebaseImpl");
 const { ChatGatewaySqliteImpl } = require("../src/details/persistence/chatGatewaySqliteImpl");
-const { OperatorRetrievesAChatForInspection } = require("../src/useCases/operatorRetrievesAChatForInspection");
+const { RetrieveAChat: RetrieveAChatUseCase } = require("../src/useCases/retrieveAChatUseCase");
 const { ResponseEntity, ResponseType } = require("../src/entities/responseEntity");
-const { OperatorViewsAllChats } = require("../src/useCases/operatorViewsAllChats");
+const { ViewAllChatsUseCase } = require("../src/useCases/viewAllChatsUseCase");
 
 // var responses = 
 //   [
@@ -28,7 +28,7 @@ const { OperatorViewsAllChats } = require("../src/useCases/operatorViewsAllChats
 //     new ResponseEntity('16', '16', 'other', ResponseType.TEXT, 'And it justifies it?! How could you think that???', null, null)
 //   ];
 
-describe('OperatorCreatesATestChat', () => {
+describe('Chat Operations', () => {
     // it('should create a new chat', async () => {
     //     const chatGateway = new ChatGatewaySqliteImpl();
     //     const useCase = new OperatorCreatesATestChat(chatGateway);
@@ -44,7 +44,7 @@ describe('OperatorCreatesATestChat', () => {
 
     it('should retrieve the test chat', async () => {
         const chatGateway = new ChatGatewaySqliteImpl();
-        const useCase = new OperatorRetrievesAChatForInspection(chatGateway);
+        const useCase = new RetrieveAChatUseCase(chatGateway);
         
         const chatId = '0';
         const chat = await useCase.execute(chatId);
@@ -58,7 +58,7 @@ describe('OperatorCreatesATestChat', () => {
 
     it('should throw an error when chatId is not found', async () => {
         const chatGateway = new ChatGatewaySqliteImpl();
-        const useCase = new OperatorRetrievesAChatForInspection(chatGateway);
+        const useCase = new RetrieveAChatUseCase(chatGateway);
         
         const chatId = '-100';
         try {
@@ -71,7 +71,7 @@ describe('OperatorCreatesATestChat', () => {
 
     it('should return list of all chats (or up to 1000)', async () => {
         const chatGateway = new ChatGatewaySqliteImpl();
-        const useCase = new OperatorViewsAllChats(chatGateway);
+        const useCase = new ViewAllChatsUseCase(chatGateway);
         
         var chats = await useCase.execute();
 

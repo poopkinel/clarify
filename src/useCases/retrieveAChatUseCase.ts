@@ -3,7 +3,7 @@
 import { ChatGateway } from "../boundaries/persistence/chatGateway";
 import { ChatEntity } from "../entities/chatEntity";
 
-export class OperatorRetrievesAChatForInspection {
+export class RetrieveAChat {
     private chatGateway: ChatGateway;
 
     constructor(chatGateway: ChatGateway) {
