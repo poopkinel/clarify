@@ -1,6 +1,6 @@
 // Use case for a person looking to register as a user in the system
 
-import { UserGateway } from "../boundaries/userGateway";
+import { UserGateway } from "../boundaries/persistence/userGateway";
 import { UserRequestModel } from "../dataModels/userRequestModel";
 import { User } from "../entities/userEntity";
 

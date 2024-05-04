@@ -1,4 +1,4 @@
-import { UserGateway } from "../../boundaries/userGateway";
+import { UserGateway } from "../../boundaries/persistence/userGateway";
 import { User } from "../../entities/userEntity";
 import { UserRequestModel } from "../../dataModels/userRequestModel";
 
@@ -10,6 +10,7 @@ admin.initializeApp({
 
 require('dotenv').config();
 const auth = admin.auth();
+
 
 export class UserGatewayFirebaseImpl implements UserGateway {
     adjustUsername = (username: string) => {
@@ -49,7 +50,16 @@ export class UserGatewayFirebaseImpl implements UserGateway {
         return user;
     }
     async getUserById(id: string): Promise<User> {
-        throw new Error("Method not implemented.");
+        try {
+            const userRecord = await auth.getUser(id);
+            return new User(
+                userRecord.uid,
+                userRecord.email,
+                userRecord.password
+            );
+        } catch (error) {
+            throw new Error("User not found");
+        }
     }
     async getUserByUsername(username: string): Promise<User> {
         throw new Error("Method not implemented.");

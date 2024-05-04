@@ -1,7 +1,7 @@
-import { UserGateway } from "../boundaries/userGateway";
+import { UserGateway } from "../boundaries/persistence/userGateway";
 import { User } from "../entities/userEntity";
 
-export class DeleteUserUseCase {
+export class OperatorDeleteUserUseCase {
     userGateway: UserGateway;
 
     constructor(userGateway: UserGateway) {

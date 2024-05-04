@@ -1,6 +1,6 @@
-import { User } from "../entities/userEntity";
-import { UserRequestModel } from "../dataModels/userRequestModel";
-import { UserResponseModel } from "../dataModels/userResponseModel";
+import { User } from "../../entities/userEntity";
+import { UserRequestModel } from "../../dataModels/userRequestModel";
+import { UserResponseModel } from "../../dataModels/userResponseModel";
 
 export interface UserGateway {
     createUser(userModel: UserRequestModel) : Promise<User | undefined>;
