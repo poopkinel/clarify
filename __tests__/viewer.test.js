@@ -3,8 +3,7 @@
 
 const { UserViewsAChatUseCase } = require("../src/useCases/userViewsAChatUseCase");
 const { UserGatewayFirebaseImpl } = require("../src/details/persistence/userGatewayFirebaseImpl");
-const { ChatGatewaySqliteImpl } = require("../src/details/persistence/chatGatewaySqliteImpl");
-const { ChatGatewayMockImpl } = require("../src/details/persistence/chatGatewayMockImple");
+const { ChatGatewayMockImpl } = require("../src/details/persistence/chatGatewayMockImpl");
 
 const userGateway = new UserGatewayFirebaseImpl();
 const chatGateway = new ChatGatewayMockImpl();

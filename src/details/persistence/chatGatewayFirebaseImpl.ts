@@ -46,6 +46,10 @@ export class ChatGatewayFirebaseImpl implements ChatGateway {
         throw new Error("Method not implemented.");
     }
 
+    async getAllChats(): Promise<ChatEntity[]> {
+        throw new Error("Method not implemented.");
+    }
+
     async getChatById(chatId: string): Promise<ChatEntity> {
         // const chatSnapshot = await admin.firestore().collection("chats").doc(chatId).get();
         // const chatData = chatSnapshot.data();

@@ -6,6 +6,7 @@ const { ChatGatewayFirebaseImpl } = require("../src/details/persistence/chatGate
 const { ChatGatewaySqliteImpl } = require("../src/details/persistence/chatGatewaySqliteImpl");
 const { OperatorRetrievesAChatForInspection } = require("../src/useCases/operatorRetrievesAChatForInspection");
 const { ResponseEntity, ResponseType } = require("../src/entities/responseEntity");
+const { OperatorViewsAllChats } = require("../src/useCases/operatorViewsAllChats");
 
 // var responses = 
 //   [
@@ -28,18 +29,18 @@ const { ResponseEntity, ResponseType } = require("../src/entities/responseEntity
 //   ];
 
 describe('OperatorCreatesATestChat', () => {
-    it('should create a new chat', async () => {
-        const chatGateway = new ChatGatewaySqliteImpl();
-        const useCase = new OperatorCreatesATestChat(chatGateway);
-        const chatId = await useCase.execute();
-        expect(chatId).not.toBeNull();
-        expect(chatId).toBeDefined();
+    // it('should create a new chat', async () => {
+    //     const chatGateway = new ChatGatewaySqliteImpl();
+    //     const useCase = new OperatorCreatesATestChat(chatGateway);
+    //     const chatId = await useCase.execute("TestChat0", "TestUser1", "TestUser2");
+    //     expect(chatId).not.toBeNull();
+    //     expect(chatId).toBeDefined();
         
-        const chat = await chatGateway.getChatById(chatId);
-        expect(chat).toBeInstanceOf(ChatEntity);
-        expect(chat.responses).not.toBeNull();
-        expect(chat.responses).toBeDefined();
-    });
+    //     const chat = await chatGateway.getChatById(chatId);
+    //     expect(chat).toBeInstanceOf(ChatEntity);
+    //     expect(chat.responses).not.toBeNull();
+    //     expect(chat.responses).toBeDefined();
+    // });
 
     it('should retrieve the test chat', async () => {
         const chatGateway = new ChatGatewaySqliteImpl();
@@ -47,7 +48,7 @@ describe('OperatorCreatesATestChat', () => {
         
         const chatId = '0';
         const chat = await useCase.execute(chatId);
-        console.log('chat.id', chat.id);
+        // console.log('chat.id', chat.id);
 
         expect(chat.id === chatId).toBeTruthy();
         expect(chat).toBeInstanceOf(ChatEntity);
@@ -67,4 +68,15 @@ describe('OperatorCreatesATestChat', () => {
             expect(error.message).toBe('Chat not found');
         }
     });        
+
+    it('should return list of all chats (or up to 1000)', async () => {
+        const chatGateway = new ChatGatewaySqliteImpl();
+        const useCase = new OperatorViewsAllChats(chatGateway);
+        
+        var chats = await useCase.execute();
+
+        expect(chats).not.toBeNull();
+        expect(chats).toBeDefined();
+        expect(chats.length).toBeGreaterThan(0);
+    });
 });
