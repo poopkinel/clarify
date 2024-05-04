@@ -5,7 +5,7 @@ const app = express();
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
 
-const chatFlow = require('./entities/ChatFlow');
+const { ChatFlow } = require('./entities/chatFlow');
 const { events } = require('./config/chatConfig');
 
 // CORS settings
@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
       return socket.emit('error', 'Invalid event');
     }
 
-    chatFlow.Proceed(event);
+    ChatFlow.Proceed(event);
     socket.emit('eventProcessed', 'Event processed');
   });
 
