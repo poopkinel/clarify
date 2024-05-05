@@ -7,6 +7,7 @@ const { ChatGatewaySqliteImpl } = require("../src/details/persistence/chatGatewa
 const { RetrieveAChatUseCase } = require("../src/useCases/retrieveAChatUseCase");
 const { ResponseEntity, ResponseType } = require("../src/entities/responseEntity");
 const { ViewAllChatsUseCase } = require("../src/useCases/viewAllChatsUseCase");
+const { StartANewChatUseCase } = require("../src/useCases/startANewChatUseCase");
 
 // var responses = 
 //   [
@@ -28,22 +29,56 @@ const { ViewAllChatsUseCase } = require("../src/useCases/viewAllChatsUseCase");
 //     new ResponseEntity('16', '16', 'other', ResponseType.TEXT, 'And it justifies it?! How could you think that???', null, null)
 //   ];
 
-describe('Chat Operations', () => {
-    // it('should create a new chat', async () => {
-    //     const chatGateway = new ChatGatewaySqliteImpl();
-    //     const useCase = new OperatorCreatesATestChat(chatGateway);
-    //     const chatId = await useCase.execute("TestChat0", "TestUser1", "TestUser2");
-    //     expect(chatId).not.toBeNull();
-    //     expect(chatId).toBeDefined();
+const chatGateway = new ChatGatewaySqliteImpl();
+
+const testStartChatResponseModel = (chatResponseModel) => {
+    if (chatResponseModel.error != '' && chatResponseModel.error != null) {
+        console.log('chatResponseModel.error', chatResponseModel.error);
+        expect(chatResponseModel.error).toBe('Invalid chat start request');
+
+    } else {
+        expect(chatResponseModel).not.toBeNull();
+        expect(chatResponseModel).toBeDefined();
+        expect(chatResponseModel.chatId).not.toBeNull();
+        expect(chatResponseModel.chatId).toBeDefined();
         
-    //     const chat = await chatGateway.getChatById(chatId);
-    //     expect(chat).toBeInstanceOf(ChatEntity);
-    //     expect(chat.responses).not.toBeNull();
-    //     expect(chat.responses).toBeDefined();
-    // });
+        expect(chatResponseModel.chatName).not.toBe('');
+        expect(chatResponseModel.chatName).not.toBeNull();
+        expect(chatResponseModel.chatName).toBeDefined();
+
+        expect(chatResponseModel.userId).not.toBe('');
+        expect(chatResponseModel.userId).not.toBeNull();
+        expect(chatResponseModel.userId).toBeDefined();
+    }
+};
+
+
+describe('Chat Operations', () => {
+    it.skip('should create a new chat', async () => {
+        const useCase = new OperatorCreatesATestChat(chatGateway);
+        const chatId = await useCase.execute("TestChat0", "TestUser1", "TestUser2");
+        expect(chatId).not.toBeNull();
+        expect(chatId).toBeDefined();
+        
+        const chat = await chatGateway.getChatById(chatId);
+        expect(chat).toBeInstanceOf(ChatEntity);
+        expect(chat.responses).not.toBeNull();
+        expect(chat.responses).toBeDefined();
+    });
+
+    it.skip('should start a chat based on model', async () => {
+        const useCase = new StartANewChatUseCase(chatGateway);
+
+        const startChatRequestModel = {
+            chatName: 'TestChat0',
+            userId: 'TestUser1',
+        };
+
+        const chatResponseModel = await useCase.execute(startChatRequestModel);
+        testStartChatResponseModel(chatResponseModel);
+    });
 
     it('should retrieve the test chat', async () => {
-        const chatGateway = new ChatGatewaySqliteImpl();
         const useCase = new RetrieveAChatUseCase(chatGateway);
         
         const chatId = '0';
@@ -57,7 +92,6 @@ describe('Chat Operations', () => {
     });
 
     it('should throw an error when chatId is not found', async () => {
-        const chatGateway = new ChatGatewaySqliteImpl();
         const useCase = new RetrieveAChatUseCase(chatGateway);
         
         const chatId = '-100';
@@ -70,7 +104,6 @@ describe('Chat Operations', () => {
     });        
 
     it('should return list of all chats (or up to 1000)', async () => {
-        const chatGateway = new ChatGatewaySqliteImpl();
         const useCase = new ViewAllChatsUseCase(chatGateway);
         
         var chats = await useCase.execute();
@@ -78,5 +111,14 @@ describe('Chat Operations', () => {
         expect(chats).not.toBeNull();
         expect(chats).toBeDefined();
         expect(chats.length).toBeGreaterThan(0);
+    });
+
+    it('should print all chats', async () => {
+        const useCase = new ViewAllChatsUseCase(chatGateway);
+        
+        var chats = await useCase.execute();
+        chats.forEach(chat => {
+            console.log('chat.id', chat.id);
+        });
     });
 });

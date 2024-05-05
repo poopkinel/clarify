@@ -31,29 +31,31 @@ export class ChatGatewaySqliteImpl implements ChatGateway {
     }
 
     async createChat(chatName: string, user1: string, user2: string): Promise<string> {
-        const sql = `INSERT INTO ${chatsTableName} (name, user1, user2) VALUES ('${chatName}', '${user1}', '${user2}');`;
-        //console.log(sql);
+        const sql = `INSERT INTO ${chatsTableName} (name, user1, user2) VALUES ('${chatName}', '${user1}', '${user2}') RETURNING *;`;
+        console.log(sql);
 
         var chatId = "";
 
-        db.get(sql), (err, result) => {
+        // const { err, result } = await db.get(sql);
+        const out = await new Promise(resolve => {
+            db.get(sql, (err, row) => {
                 if (err) {
+                    resolve({ 'error': err });
                     console.log(err);
-                }
-                if (result === undefined) {
-                    console.log('Error creating chat');
                 } else {
-                    console.log('Chat created', result);
-                    chatId = result.id;
+                    resolve({ 'result': row });
                 }
-            };
+            });
+        });
+        
+        chatId = out['result']['id'];
 
-        console.log('Chat created', chatId);
+        console.log('Chat returned', chatId);
         return chatId;
     }
 
     async getAllChats(): Promise<ChatEntity[]> {
-        const sql = `SELECT * FROM ${chatsTableName} LIMIT 10;`;
+        const sql = `SELECT * FROM ${chatsTableName} LIMIT 100;`;
         let chats: ChatEntity[] = [];
 
         var db = await open({ filename: './sqlite3.db', driver: sqlite3.Database });
@@ -75,7 +77,7 @@ export class ChatGatewaySqliteImpl implements ChatGateway {
             });
 
             return chats;
-            
+
         } catch (err) {
             console.error('Error when fetching chats:', err);
             throw err;  // rethrow the error if you want to handle it further up the chain
@@ -110,6 +112,10 @@ export class ChatGatewaySqliteImpl implements ChatGateway {
     }
 
     async deleteChat(chatId: string): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+    async isChatNameUnique(chatName: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 }

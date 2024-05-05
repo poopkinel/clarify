@@ -7,4 +7,6 @@ export interface ChatGateway {
     getChatById(chatId: string): Promise<ChatEntity>;
     // addMessageToChat(chatId: string, messageText: string, messageAuthor: string): Promise<void>;
     deleteChat(chatId: string): Promise<void>;
+
+    //isChatNameUnique(chatName: string): Promise<boolean>;
 }

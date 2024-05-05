@@ -8,6 +8,18 @@ const { Server } = require('socket.io');
 const { ChatFlow } = require('./entities/chatFlow');
 const { events } = require('./config/chatConfig');
 
+//
+// log the current working directory
+const path = require('path');
+var distPath = path.join(process.cwd(), './dist/');
+
+const { ApiService } = require(path.join(distPath, './details/web/apiService.js'));
+const { StartANewChatUseCase } = require(path.join(distPath, './useCases/startANewChatUseCase'));
+const { ChatGatewaySqliteImpl } = require(path.join(distPath, './details/persistence/chatGatewaySqliteImpl'));
+const { ChatStartRequestModel } = require(path.join(distPath, './dataModels/chatStartRequestModel'));
+const { ChatStartResultModel } = require(path.join(distPath, './dataModels/chatStartResultModel'));
+//
+
 // CORS settings
 var corsOptions;
 if (process.env.NODE_ENV === 'production') {
@@ -33,8 +45,16 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+const gateway = new ChatGatewaySqliteImpl();
+const apiService = new ApiService();
+const startANewChatUseCase = new StartANewChatUseCase(gateway, apiService);
+
 app.get('/', (req, res) => {
-  res.send('Server up');
+  startANewChatUseCase.sendStartNewChatRequest(
+    new ChatStartRequestModel('TestChat0', 'TestUser1')
+  ).then((result) => {  
+    res.send(result);
+  });
 });
 
 app.get('/socket.io/socket.io.js', cors(corsOptions), (req, res) => {
