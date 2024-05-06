@@ -30,9 +30,12 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   console.log('using cors development settings');
   corsOptions = {
-    origin: 'http://localhost:3000'
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST']
   };
 }
+app.use(cors(corsOptions));
 
 // Create Socket.io server
 const io = new Server(server, {
@@ -53,6 +56,7 @@ app.get('/', (req, res) => {
   startANewChatUseCase.sendStartNewChatRequest(
     new ChatStartRequestModel('TestChat0', 'TestUser1')
   ).then((result) => {  
+    console.log('result:', result);
     res.send(result);
   });
 });
