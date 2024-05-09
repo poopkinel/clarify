@@ -14,7 +14,7 @@ var distPath = path.join(process.cwd(), './dist/');
 const { ApiService } = require(path.join(distPath, './details/web/apiService.js'));
 const { StartANewChatUseCase } = require(path.join(distPath, './useCases/startANewChatUseCase'));
 const { ChatGatewaySqliteImpl } = require(path.join(distPath, './details/persistence/chatGatewaySqliteImpl'));
-const { WebInBoundaryImpl: WebInPort } = require(path.join(distPath, './details/web/webInBoundaryImpl'));
+const { WebInPort } = require(path.join(distPath, './details/web/webInPort'));
 
 // CORS settings
 var corsOptions;
