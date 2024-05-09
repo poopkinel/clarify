@@ -8,17 +8,13 @@ const { Server } = require('socket.io');
 const { ChatFlow } = require('./entities/chatFlow');
 const { events } = require('./config/chatConfig');
 
-//
-// log the current working directory
 const path = require('path');
 var distPath = path.join(process.cwd(), './dist/');
 
 const { ApiService } = require(path.join(distPath, './details/web/apiService.js'));
 const { StartANewChatUseCase } = require(path.join(distPath, './useCases/startANewChatUseCase'));
 const { ChatGatewaySqliteImpl } = require(path.join(distPath, './details/persistence/chatGatewaySqliteImpl'));
-const { ChatStartRequestModel } = require(path.join(distPath, './dataModels/chatStartRequestModel'));
-const { ChatStartResultModel } = require(path.join(distPath, './dataModels/chatStartResultModel'));
-//
+const { WebInBoundaryImpl: WebInPort } = require(path.join(distPath, './details/web/webInBoundaryImpl'));
 
 // CORS settings
 var corsOptions;
@@ -48,18 +44,13 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-const gateway = new ChatGatewaySqliteImpl();
 const apiService = new ApiService();
-const startANewChatUseCase = new StartANewChatUseCase(gateway, apiService);
+const startNewChatUseCase = new StartANewChatUseCase(new ChatGatewaySqliteImpl(), apiService);
+const webInPort = new WebInPort(startNewChatUseCase);
+apiService.setInBoundary(webInPort);
+apiService.setUp(app);
 
-app.get('/', (req, res) => {
-  startANewChatUseCase.sendStartNewChatRequest(
-    new ChatStartRequestModel('TestChat0', 'TestUser1')
-  ).then((result) => {  
-    console.log('result:', result);
-    res.send(result);
-  });
-});
+// Socket 
 
 app.get('/socket.io/socket.io.js', cors(corsOptions), (req, res) => {
   console.log('socket.io.js requested');

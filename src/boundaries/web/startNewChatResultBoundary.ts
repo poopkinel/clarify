@@ -1,5 +1,5 @@
 import { ChatStartResultModel } from "../../dataModels/chatStartResultModel";
 
 export interface StartNewChatResultBoundary {
-    sendStartNewChatResult(chatStartRequestModel: ChatStartResultModel): Promise<ChatStartResultModel>;
+    sendStartNewChatResult(chatStartRequestModel: ChatStartResultModel): Promise<any>;
 }
