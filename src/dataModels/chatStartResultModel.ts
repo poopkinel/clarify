@@ -4,10 +4,10 @@ export default class ChatStartResultModel {
     error: string;
     username: string;
 
-    constructor(chatId: string, chatName: string, error: string) {
+    constructor(chatId: string, chatName: string, username: string, error: string) {
         this.chatId = chatId;
         this.chatName = chatName;
         this.error = error;
-        this.username = "TestUser";
+        this.username = username;
     }
 }

@@ -1,7 +1,7 @@
 // A serivce to manage the backend API
 
 import WebInPort from "../../boundaries/web/webInPort";
-import { WebOutPort } from "./webOutPort";
+import { WebOutPort } from "../../boundaries/web/webOutPort";
 import ChatStartResultModel from "../../dataModels/chatStartResultModel";
 
 import { Express } from 'express';
@@ -13,10 +13,6 @@ export class ApiService implements WebOutPort {
   constructor(app: Express, webInPort: WebInPort) {
     this.app = app;
     this.webInPort = webInPort;
-  }
-
-  setInBoundary(inBoundary: WebInPort) {
-    this.webInPort = inBoundary;
   }
 
   async setUp(app: Express) {
@@ -36,6 +32,7 @@ export class ApiService implements WebOutPort {
         return {
             chatId: chatStartResultModel.chatId,
             chatName: chatStartResultModel.chatName,
+            username: chatStartResultModel.username,
             error: chatStartResultModel.error
         };
     }

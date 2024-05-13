@@ -10,12 +10,13 @@ describe('ApiService', () => {
     it('should return relevant data for start new chat', async () => {
         const webInPortMock = new WebInPortMock();
         const apiService = new ApiService(appMock, webInPortMock);
-        const startNewChatResult = new ChatStartResultModel('chatId', 'chatName', 'error');
+        const startNewChatResult = new ChatStartResultModel('chatId', 'chatName', 'testUser', 'error');
         const startChatDataResponse = await apiService.sendStartNewChatResult(startNewChatResult);
 
         expect(startChatDataResponse).toBeDefined();
         expect(startChatDataResponse.chatId).toBe('chatId');
         expect(startChatDataResponse.chatName).toBe('chatName');
+        expect(startChatDataResponse.username).toBe('testUser');
         expect(startChatDataResponse.error).toBe('error');
     });
 });
