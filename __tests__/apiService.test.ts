@@ -1,7 +1,3 @@
-// A test for the ApiService class
-
-// import '@types/jest';
-
 import express from 'express';
 const appMock = express();
 
