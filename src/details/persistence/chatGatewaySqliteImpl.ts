@@ -32,7 +32,7 @@ export class ChatGatewaySqliteImpl implements ChatGateway {
 
     async createChat(chatName: string, user1: string, user2: string): Promise<string> {
         const sql = `INSERT INTO ${chatsTableName} (name, user1, user2) VALUES ('${chatName}', '${user1}', '${user2}') RETURNING *;`;
-        console.log(sql);
+        // console.log(sql);
 
         var chatId = "";
 
@@ -50,7 +50,7 @@ export class ChatGatewaySqliteImpl implements ChatGateway {
         
         chatId = out['result']['id'];
 
-        console.log('Chat returned', chatId);
+        // console.log('Chat returned', chatId);
         return chatId;
     }
 

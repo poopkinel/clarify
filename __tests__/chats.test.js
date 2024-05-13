@@ -2,12 +2,11 @@
 
 const { ChatEntity } = require("../src/entities/chatEntity");
 const { CreateATestChatUseCase } = require("../src/useCases/createATestChatUseCase");
-const { ChatGatewayFirebaseImpl } = require("../src/details/persistence/chatGatewayFirebaseImpl");
 const { ChatGatewaySqliteImpl } = require("../src/details/persistence/chatGatewaySqliteImpl");
 const { RetrieveAChatUseCase } = require("../src/useCases/retrieveAChatUseCase");
-const { ResponseEntity, ResponseType } = require("../src/entities/responseEntity");
 const { ViewAllChatsUseCase } = require("../src/useCases/viewAllChatsUseCase");
 const { StartANewChatUseCase } = require("../src/useCases/startANewChatUseCase");
+const { ChatStartRequestModel } = require("../src/dataModels/chatStartRequestModel");
 
 // var responses = 
 //   [
@@ -31,12 +30,13 @@ const { StartANewChatUseCase } = require("../src/useCases/startANewChatUseCase")
 
 const chatGateway = new ChatGatewaySqliteImpl();
 
-const testStartChatResponseModel = (chatResponseModel) => {
+const testStartChatResponseModelWithError = (chatResponseModel) => {
     if (chatResponseModel.error != '' && chatResponseModel.error != null) {
         console.log('chatResponseModel.error', chatResponseModel.error);
         expect(chatResponseModel.error).toBe('Invalid chat start request');
-
-    } else {
+    }
+};
+const testStartChatResponseModelNoError = (chatResponseModel) => {
         expect(chatResponseModel).not.toBeNull();
         expect(chatResponseModel).toBeDefined();
         expect(chatResponseModel.chatId).not.toBeNull();
@@ -46,16 +46,15 @@ const testStartChatResponseModel = (chatResponseModel) => {
         expect(chatResponseModel.chatName).not.toBeNull();
         expect(chatResponseModel.chatName).toBeDefined();
 
-        expect(chatResponseModel.userId).not.toBe('');
-        expect(chatResponseModel.userId).not.toBeNull();
-        expect(chatResponseModel.userId).toBeDefined();
-    }
+        expect(chatResponseModel.username).not.toBe('');
+        expect(chatResponseModel.username).not.toBeNull();
+        expect(chatResponseModel.username).toBeDefined();
 };
 
 
 describe('Chat Operations', () => {
-    it.skip('should create a new chat', async () => {
-        const useCase = new OperatorCreatesATestChat(chatGateway);
+    it('should create a new chat', async () => {
+        const useCase = new CreateATestChatUseCase(chatGateway);
         const chatId = await useCase.execute("TestChat0", "TestUser1", "TestUser2");
         expect(chatId).not.toBeNull();
         expect(chatId).toBeDefined();
@@ -66,16 +65,24 @@ describe('Chat Operations', () => {
         expect(chat.responses).toBeDefined();
     });
 
-    it.skip('should start a chat based on model', async () => {
+    it('should start a chat based on model', async () => {
         const useCase = new StartANewChatUseCase(chatGateway);
-
-        const startChatRequestModel = {
-            chatName: 'TestChat0',
-            userId: 'TestUser1',
-        };
+        
+        const startChatRequestModel = new ChatStartRequestModel('TestChat0', 'TestUser1');
+        expect(useCase.validate(startChatRequestModel)).toBeTruthy();
 
         const chatResponseModel = await useCase.execute(startChatRequestModel);
-        testStartChatResponseModel(chatResponseModel);
+        testStartChatResponseModelNoError(chatResponseModel);
+    });
+
+    it('shoud return an invalid chat start request error', async () => {
+        const useCase = new StartANewChatUseCase(chatGateway);
+        
+        const startChatRequestModel = new ChatStartRequestModel('', '');
+        expect(!useCase.validate(startChatRequestModel)).toBeTruthy();
+
+        const chatResponseModel = await useCase.execute(startChatRequestModel);
+        testStartChatResponseModelWithError(chatResponseModel);
     });
 
     it('should retrieve the test chat', async () => {
@@ -83,7 +90,6 @@ describe('Chat Operations', () => {
         
         const chatId = '0';
         const chat = await useCase.execute(chatId);
-        // console.log('chat.id', chat.id);
 
         expect(chat.id === chatId).toBeTruthy();
         expect(chat).toBeInstanceOf(ChatEntity);

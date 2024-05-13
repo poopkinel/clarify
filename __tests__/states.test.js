@@ -5,7 +5,7 @@
 // - `setCurrentState(state1, state2)`: Sets the initial current state of the conversation.
 
 const { states, events, transitions, initialState } = require('../src/config/chatConfig');
-const ChatFlow = require('../src/models/ChatFlow');
+const ChatFlow = require('../src/entities/chatFlow');
 
 describe('ChatFlow', () => {
   let mockChatFlow;

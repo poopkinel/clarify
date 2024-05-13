@@ -27,7 +27,7 @@ export class ChatGatewayMockImpl implements ChatGateway {
     }
 
     async createChat(chatName: string, user1: string, user2: string): Promise<string> {
-        return 'chatId';
+        return 'mockChatId';
     }
 
     async getAllChats(): Promise<ChatEntity[]> {

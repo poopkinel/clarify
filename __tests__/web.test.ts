@@ -2,7 +2,9 @@
 
 // Path: clarify/src/details/web/webInPort.js
 
-import { WebInPort } from '../src/details/web/webInPort';
+// import '@types/jest';
+
+import { WebInPortImpl } from '../src/details/web/webInPortImpl';
 import { PersonRegistersAsUserUseCase } from '../src/useCases/personRegistersAsUserUseCase';
 import { ChatGatewayMockImpl } from '../src/details/persistence/chatGatewayMockImpl';
 import { UserGatewayMockImpl } from '../src/details/persistence/userGatewayMockImpl';
@@ -12,7 +14,7 @@ describe('WebInPort create a user request', () => {
     it('should create a valid request model', () => {
         const gateway = new UserGatewayMockImpl();
         const useCase = new PersonRegistersAsUserUseCase(gateway);
-        const webInPort = new WebInPort(useCase);
+        const webInPort = new WebInPortImpl(useCase);
 
         const requestModel = webInPort.createRequestModel('username', 'testChat0');
 

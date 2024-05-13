@@ -2,8 +2,9 @@ import { ChatStartRequestModel } from "../../dataModels/chatStartRequestModel";
 import { StartNewChatRequestBoundary } from "../../boundaries/web/startNewChatRequestBoundary";
 import ChatStartResultModel from "../../dataModels/chatStartResultModel";
 import WebToUsecaseBoundary from "../../boundaries/web/webToUsecaseBoundary";
+import WebInPort from "../../boundaries/web/webInPort";
 
-export class WebInPort {
+export class WebInPortImpl implements WebInPort {
     
     private startNewChatRequestBoundary: WebToUsecaseBoundary;
 

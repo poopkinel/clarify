@@ -1,6 +1,6 @@
 // A serivce to manage the backend API
 
-import { WebInPort } from "./webInPort";
+import WebInPort from "../../boundaries/web/webInPort";
 import { WebOutPort } from "./webOutPort";
 import ChatStartResultModel from "../../dataModels/chatStartResultModel";
 
@@ -32,11 +32,11 @@ export class ApiService implements WebOutPort {
         });
     }
 
-  async sendStartNewChatResult(chatStartRequestModel: ChatStartResultModel): Promise<any>{
+  async sendStartNewChatResult(chatStartResultModel: ChatStartResultModel): Promise<any>{
         return {
-            chatId: chatStartRequestModel.chatId,
-            chatName: chatStartRequestModel.chatName,
-            error: chatStartRequestModel.error
+            chatId: chatStartResultModel.chatId,
+            chatName: chatStartResultModel.chatName,
+            error: chatStartResultModel.error
         };
     }
 }
