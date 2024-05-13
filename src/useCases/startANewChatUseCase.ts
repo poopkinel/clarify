@@ -3,7 +3,7 @@
 import { ChatGateway } from "../boundaries/persistence/chatGateway";
 import { ChatEntity } from "../entities/chatEntity";
 import { ChatStartRequestModel } from "../dataModels/chatStartRequestModel";
-import { ChatStartResultModel } from "../dataModels/chatStartResultModel";
+import ChatStartResultModel from "../dataModels/chatStartResultModel";
 
 import { StartNewChatRequestBoundary } from "../boundaries/web/startNewChatRequestBoundary";
 import { StartNewChatResultBoundary } from "../boundaries/web/startNewChatResultBoundary";
@@ -28,7 +28,7 @@ export class StartANewChatUseCase implements StartNewChatRequestBoundary {
             return false;
         }
 
-        if (!chatStartRequestModel.userId || chatStartRequestModel.userId.length < 1) {
+        if (!chatStartRequestModel.username || chatStartRequestModel.username.length < 1) {
             return false;
         }
 
@@ -43,22 +43,22 @@ export class StartANewChatUseCase implements StartNewChatRequestBoundary {
             return {
                 chatId: '',
                 chatName: '',
-                userId: '',
+                username: '',
                 error: 'Invalid chat start request'
             };
         }
 
         const chatId = await this.chatGateway.createChat(
             chatStartRequestModel.chatName, 
-            chatStartRequestModel.userId, 
+            chatStartRequestModel.username, 
             ''
         );
 
         return {
             chatId: chatId,
             chatName: chatStartRequestModel.chatName,
-            userId: chatStartRequestModel.userId,
-            error: null
+            username: chatStartRequestModel.username,
+            error: ""
         };
     }
 }

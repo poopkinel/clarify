@@ -36,7 +36,6 @@ export class ApiService implements WebOutPort {
         return {
             chatId: chatStartRequestModel.chatId,
             chatName: chatStartRequestModel.chatName,
-            userId: chatStartRequestModel.userId,
             error: chatStartRequestModel.error
         };
     }

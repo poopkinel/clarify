@@ -8,4 +8,11 @@ export class ChatViewResponseModel {
     chatMessages: ChatMessageResponseModel[];
 
     error: string | null;
+
+    constructor(chatId: string, chatName: string, chatMessages: ChatMessageResponseModel[], error: string | null) {
+        this.chatId = chatId;
+        this.chatName = chatName;
+        this.chatMessages = chatMessages;
+        this.error = error;
+    }
 }

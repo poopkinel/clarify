@@ -10,18 +10,18 @@ const { open } = require('sqlite');
 const chatsTableName = 'chats';
 
 // let db = new sqlite3.Database('../../../persistent_data/chats.db', (err) => {
-const db = new sqlite3.Database('./sqlite3.db', (err) => {});
+const db = new sqlite3.Database('./sqlite3.db', (err: any) => {});
 
 
 export class ChatGatewaySqliteImpl implements ChatGateway {
     constructor() {
-        db.get(`SELECT name FROM sqlite_master WHERE type='table' AND name='${chatsTableName}'`, (err, result) => {
+        db.get(`SELECT name FROM sqlite_master WHERE type='table' AND name='${chatsTableName}'`, (err: any, result: any) => {
             if (err) {
                 console.log(err);
             }
             if (result === undefined) {
                 db.run(`CREATE TABLE ${chatsTableName} 
-                        (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, user1 TEXT, user2 TEXT)`, (err) => {
+                        (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, user1 TEXT, user2 TEXT)`, (err: any) => {
                     if (err) {
                         console.log(err);
                     }
@@ -37,8 +37,8 @@ export class ChatGatewaySqliteImpl implements ChatGateway {
         var chatId = "";
 
         // const { err, result } = await db.get(sql);
-        const out = await new Promise(resolve => {
-            db.get(sql, (err, row) => {
+        const out: any = await new Promise(resolve => {
+            db.get(sql, (err: any, row: any) => {
                 if (err) {
                     resolve({ 'error': err });
                     console.log(err);
@@ -67,7 +67,7 @@ export class ChatGatewaySqliteImpl implements ChatGateway {
         try {
             const rows = await db.all(sql);  // using all() with async/await
             
-            rows.forEach(row => {
+            rows.forEach((row: any) => {
                 chats.push(new ChatEntity(
                     row.id,
                     row.name,
@@ -78,7 +78,7 @@ export class ChatGatewaySqliteImpl implements ChatGateway {
 
             return chats;
 
-        } catch (err) {
+        } catch (err: any) {
             console.error('Error when fetching chats:', err);
             throw err;  // rethrow the error if you want to handle it further up the chain
         } finally {
