@@ -3,8 +3,15 @@
         "outDir": "./dist",
         "rootDir": "./src",
         // other options
+        // "types": ["jest", "node"],
+        "esModuleInterop": true,
+
       },
       "include": [
         "src/**/*"
-      ]
+      ],
+      "exclude": [
+        "node_modules"
+      ],
+      "extends": "@tsconfig/node20/tsconfig.json",
 }

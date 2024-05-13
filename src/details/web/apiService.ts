@@ -2,13 +2,18 @@
 
 import { WebInPort } from "./webInPort";
 import { WebOutPort } from "./webOutPort";
-import { ChatStartResultModel } from "../../dataModels/chatStartResultModel";
+import ChatStartResultModel from "../../dataModels/chatStartResultModel";
 
 import { Express } from 'express';
 
 export class ApiService implements WebOutPort {
-    private app: Express;
-    private webInPort: WebInPort;
+  private app: Express;
+  private webInPort: WebInPort;
+
+  constructor(app: Express, webInPort: WebInPort) {
+    this.app = app;
+    this.webInPort = webInPort;
+  }
 
   setInBoundary(inBoundary: WebInPort) {
     this.webInPort = inBoundary;

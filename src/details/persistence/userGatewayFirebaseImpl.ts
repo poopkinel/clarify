@@ -36,14 +36,14 @@ export class UserGatewayFirebaseImpl implements UserGateway {
                 disabled: false
             }
         )
-        .then((userRecord) => {
+        .then((userRecord: any) => {
             user = new User(
                 userRecord.uid,
                 userModel.username,
                 userRecord.password
             );
         })
-        .catch((error) => {
+        .catch((error: any) => {
             console.error('Error creating new user:', error);
         });
         
@@ -71,11 +71,11 @@ export class UserGatewayFirebaseImpl implements UserGateway {
         const adjustedUsername = this.adjustUsername(user.username);
 
         await auth.getUserByEmail(adjustedUsername)
-            .then((userRecord) => {
+            .then((userRecord: any) => {
                 const uid = userRecord.uid;
                 auth.deleteUser(uid);
             })
-            .catch((error) => {
+            .catch((error: any) => {
                 console.error('Error deleting user:', error);
             });
     }

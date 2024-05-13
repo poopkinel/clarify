@@ -1,4 +1,6 @@
-export class UserRequestModel {
+import RequestModel from './requestModel';
+
+export class UserRequestModel implements RequestModel {
     username: string;
     password: string;
 

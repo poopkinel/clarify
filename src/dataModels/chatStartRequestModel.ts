@@ -1,9 +1,9 @@
 export class ChatStartRequestModel {
-    userId: string;
+    username: string;
     chatName: string;
 
     constructor(userId: string, chatName: string) {
-        this.userId = userId;
+        this.username = userId;
         this.chatName = chatName;
     }
 }

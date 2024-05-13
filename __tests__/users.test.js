@@ -1,5 +1,3 @@
-// Path: clarify/__tests__/users.test.js
-
 const { UserGatewayFirebaseImpl } = require('../src/details/persistence/userGatewayFirebaseImpl');
 const { PersonRegistersAsUserUseCase } = require('../src/useCases/personRegistersAsUserUseCase');
 const { RegistrationInputModel } = require('../src/dataModels/registrationInputModel');

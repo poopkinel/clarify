@@ -1,18 +1,22 @@
 import { ChatStartRequestModel } from "../../dataModels/chatStartRequestModel";
 import { StartNewChatRequestBoundary } from "../../boundaries/web/startNewChatRequestBoundary";
-import { ChatStartResultModel } from "../../dataModels/chatStartResultModel";
+import ChatStartResultModel from "../../dataModels/chatStartResultModel";
+import WebToUsecaseBoundary from "../../boundaries/web/webToUsecaseBoundary";
 
 export class WebInPort {
     
-    private startNewChatRequestBoundary: StartNewChatRequestBoundary;
+    private startNewChatRequestBoundary: WebToUsecaseBoundary;
 
-    constructor(startNewChatRequestBoundary: StartNewChatRequestBoundary) {
+    constructor(startNewChatRequestBoundary: WebToUsecaseBoundary) {
         this.startNewChatRequestBoundary = startNewChatRequestBoundary;
     }
 
-    async startNewChat(webStartNewChatModel: any): Promise<ChatStartResultModel> {
-        console.log('webStartNewChatModel', webStartNewChatModel);
-        const chatStartRequestModel = new ChatStartRequestModel(webStartNewChatModel.chatName, webStartNewChatModel.userId);
+    createRequestModel(username: string, chatName: string): ChatStartRequestModel {
+        return new ChatStartRequestModel(username, chatName);
+    }
+
+    async startNewChat(webStartNewChatRequestModel: any): Promise<ChatStartResultModel> {
+        const chatStartRequestModel = new ChatStartRequestModel(webStartNewChatRequestModel.chatName, webStartNewChatRequestModel.userId);
         return this.startNewChatRequestBoundary.sendStartNewChatRequest(chatStartRequestModel);
     }
 }
