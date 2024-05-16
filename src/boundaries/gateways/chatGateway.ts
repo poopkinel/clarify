@@ -1,7 +1,7 @@
 import { ChatViewResponseModel } from "../../dataModels/v1/chatViewResponseModel";
 import { ChatEntity } from "../../entities/chatEntity";
 
-export interface ChatGateway {
+export default interface ChatGateway {
     createChat(chatName: string, user1: string, user2: string): Promise<string>;
     getAllChats(): Promise<ChatEntity[]>;
     getChatById(chatId: string): Promise<ChatEntity>;

@@ -1,5 +1,5 @@
-import { ChatGateway } from "../../boundaries/gateways/chatGateway";
-import { ChatEntity } from "../../entities/chatEntity";
+import ChatGateway from "../../../boundaries/gateways/chatGateway";
+import { ChatEntity } from "../../../entities/chatEntity";
 
 var chat0 = new ChatEntity(
     "0",

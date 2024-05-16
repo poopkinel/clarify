@@ -1,10 +1,10 @@
 // An implemenetaion of the chatGateway interface that uses Firebase as a backend
 
-import { ChatGateway } from "../../boundaries/gateways/chatGateway";
-import { ChatViewResponseModel } from "../../dataModels/v1/chatViewResponseModel";
-import { ChatMessageResponseModel } from "../../dataModels/v1/chatMessageResponseModel";
-import { ResponseEntity } from "../../entities/responseEntity";
-import { ChatEntity } from "../../entities/chatEntity";
+import { ChatGateway } from "../../../boundaries/gateways/chatGateway";
+import { ChatViewResponseModel } from "../../../dataModels/v1/chatViewResponseModel";
+import { ChatMessageResponseModel } from "../../../dataModels/v1/chatMessageResponseModel";
+import { ResponseEntity } from "../../../entities/responseEntity";
+import { ChatEntity } from "../../../entities/chatEntity";
 
 const admin = require("firebase-admin");
 var serviceAccount = require("../../../sak.json");
