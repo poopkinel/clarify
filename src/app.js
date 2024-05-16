@@ -14,7 +14,7 @@ var distPath = path.join(process.cwd(), './dist/');
 const { ApiService } = require(path.join(distPath, './details/web/apiService.js'));
 const { StartANewChatUseCase } = require(path.join(distPath, './useCases/startANewChatUseCase'));
 const { ChatGatewaySqliteImpl } = require(path.join(distPath, './details/persistence/chatGatewaySqliteImpl'));
-const { WebInPort } = require(path.join(distPath, './details/web/webInPort'));
+const { WebInPortImpl } = require(path.join(distPath, './details/web/webInPortImpl'));
 
 // CORS settings
 var corsOptions;
@@ -46,9 +46,8 @@ server.listen(PORT, () => {
 
 const apiService = new ApiService();
 const startNewChatUseCase = new StartANewChatUseCase(new ChatGatewaySqliteImpl(), apiService);
-const webInPort = new WebInPort(startNewChatUseCase);
-apiService.setInBoundary(webInPort);
-apiService.setUp(app);
+const webInPort = new WebInPortImpl(startNewChatUseCase);
+apiService.setUp(app, webInPort);
 
 // Socket 
 

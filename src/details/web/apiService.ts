@@ -15,8 +15,9 @@ export class ApiService implements WebOutPort {
     this.webInPort = webInPort;
   }
 
-  async setUp(app: Express) {
+  async setUp(app: Express, webInPort: WebInPort) {
     this.app = app;
+    this.webInPort = webInPort;
     this.app.get('/', async (req, res) => {
             const request = {
                 chatName: 'TestChat0',

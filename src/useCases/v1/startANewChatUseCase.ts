@@ -6,7 +6,7 @@ import { ChatStartRequestModel } from "../../dataModels/v1/chatStartRequestModel
 import ChatStartResultModel from "../../dataModels/v1/chatStartResultModel";
 
 import { StartNewChatRequestBoundary } from "../../boundaries/web/startNewChatRequestBoundary";
-import { StartNewChatResultBoundary } from "../../boundaries/web/startNewChatResultBoundary";
+import StartNewChatResultBoundary from "../../boundaries/web/startNewChatResultBoundary";
 
 export class StartANewChatUseCase implements StartNewChatRequestBoundary {
     private chatGateway: ChatGateway;

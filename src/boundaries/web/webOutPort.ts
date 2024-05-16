@@ -1,4 +1,4 @@
-import { StartNewChatResultBoundary } from "./startNewChatResultBoundary";
+import StartNewChatResultBoundary from "./startNewChatResultBoundary";
 import ChatStartResultModel from "../../dataModels/v1/chatStartResultModel";
 
 export interface WebOutPort extends StartNewChatResultBoundary {
