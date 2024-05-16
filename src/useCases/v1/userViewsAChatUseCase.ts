@@ -1,11 +1,11 @@
 // A use case for a user to view a chat
 
-import { UserGateway } from "../boundaries/persistence/userGateway";
-import { ChatGateway } from "../boundaries/persistence/chatGateway";
-import { User } from "../entities/userEntity";
-import { ChatViewRequestModel } from "../dataModels/chatViewRequestModel";
-import { ChatViewResponseModel } from "../dataModels/chatViewResponseModel";
-import { ChatEntity } from "../entities/chatEntity";
+import { UserGateway } from "../../boundaries/gateways/userGateway";
+import { ChatGateway } from "../../boundaries/gateways/chatGateway";
+import { User } from "../../entities/userEntity";
+import { ChatViewRequestModel } from "../../dataModels/v1/chatViewRequestModel";
+import { ChatViewResponseModel } from "../../dataModels/v1/chatViewResponseModel";
+import { ChatEntity } from "../../entities/chatEntity";
 
 export class UserViewsAChatUseCase {
     userGateway: UserGateway;

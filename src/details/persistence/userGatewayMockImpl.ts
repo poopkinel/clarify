@@ -1,6 +1,6 @@
-import { UserGateway } from "../../boundaries/persistence/userGateway";
+import { UserGateway } from "../../boundaries/gateways/userGateway";
 import { User } from "../../entities/userEntity";
-import { UserRequestModel } from "../../dataModels/userRequestModel";
+import { UserRequestModel } from "../../dataModels/v1/userRequestModel";
 
 
 export class UserGatewayMockImpl implements UserGateway {

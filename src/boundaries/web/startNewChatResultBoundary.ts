@@ -1,5 +1,5 @@
-import ChatStartResultModel from "../../dataModels/chatStartResultModel";
+import ChatStartResultModel from "../../dataModels/v1/chatStartResultModel";
 
-export interface StartNewChatResultBoundary {
+export default interface StartNewChatResultBoundary {
     sendStartNewChatResult(chatStartRequestModel: ChatStartResultModel): Promise<any>;
 }

@@ -1,5 +1,5 @@
-import { UserGateway } from "../boundaries/persistence/userGateway";
-import { User } from "../entities/userEntity";
+import { UserGateway } from "../../boundaries/gateways/userGateway";
+import { User } from "../../entities/userEntity";
 
 export class DeleteUserUseCase {
     userGateway: UserGateway;

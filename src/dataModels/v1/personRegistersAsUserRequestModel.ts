@@ -1,4 +1,4 @@
-import RequestModel from "./requestModel";
+import RequestModel from "../current/general/requestModel";
 
 export default class PersonRegistersAsUserRequestModel implements RequestModel {
 }

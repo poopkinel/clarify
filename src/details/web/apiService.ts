@@ -2,7 +2,7 @@
 
 import WebInPort from "../../boundaries/web/webInPort";
 import { WebOutPort } from "../../boundaries/web/webOutPort";
-import ChatStartResultModel from "../../dataModels/chatStartResultModel";
+import ChatStartResultModel from "../../dataModels/v1/chatStartResultModel";
 
 import { Express } from 'express';
 

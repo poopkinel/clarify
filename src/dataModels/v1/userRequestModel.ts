@@ -1,4 +1,4 @@
-import RequestModel from './requestModel';
+import RequestModel from '../current/general/requestModel';
 
 export class UserRequestModel implements RequestModel {
     username: string;

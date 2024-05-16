@@ -1,7 +1,7 @@
 // A use case where the operator views all chats
 
-import { ChatGateway } from "../boundaries/persistence/chatGateway";
-import { ChatEntity } from "../entities/chatEntity";
+import { ChatGateway } from "../../boundaries/gateways/chatGateway";
+import { ChatEntity } from "../../entities/chatEntity";
 
 export class ViewAllChatsUseCase {
     private chatGateway: ChatGateway;

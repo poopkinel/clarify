@@ -1,6 +1,6 @@
-import { ChatStartRequestModel } from "../../dataModels/chatStartRequestModel";
+import { ChatStartRequestModel } from "../../dataModels/v1/chatStartRequestModel";
 import { StartNewChatRequestBoundary } from "../../boundaries/web/startNewChatRequestBoundary";
-import ChatStartResultModel from "../../dataModels/chatStartResultModel";
+import ChatStartResultModel from "../../dataModels/v1/chatStartResultModel";
 import WebToUsecaseBoundary from "../../boundaries/web/webToUsecaseBoundary";
 import WebInPort from "../../boundaries/web/webInPort";
 

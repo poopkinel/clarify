@@ -5,6 +5,7 @@
         // other options
         "types": ["jest", "node"],
         "esModuleInterop": true,
+        "moduleResolution": "Node16",
 
       },
       "include": [

@@ -1,13 +1,13 @@
-// An operator creating a new user use case
+// Use case for a person looking to register as a user in the system
 
-import { UserGateway } from "../boundaries/persistence/userGateway";
-import WebToUsecaseBoundary from "../boundaries/web/webToUsecaseBoundary";
-import ResultModel from "../dataModels/resultModel";
-import { UserRequestModel } from "../dataModels/userRequestModel";
-import { User } from "../entities/userEntity";
-import RequestModel from "../dataModels/requestModel";
+import { UserGateway } from "../../boundaries/gateways/userGateway";
+import WebToUsecaseBoundary from "../../boundaries/web/webToUsecaseBoundary";
+import ResultModel from "../../dataModels/current/general/resultModel";
+import { UserRequestModel } from "../../dataModels/v1/userRequestModel";
+import { User } from "../../entities/userEntity";
+import RequestModel from "../../dataModels/current/general/requestModel";
 
-export class CreateANewUserUseCase implements WebToUsecaseBoundary {
+export class PersonRegistersAsUserUseCase implements WebToUsecaseBoundary {
     userGateway: UserGateway;
 
     constructor(userGateway: UserGateway) {

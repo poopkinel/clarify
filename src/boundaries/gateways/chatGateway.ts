@@ -1,4 +1,4 @@
-import { ChatViewResponseModel } from "../../dataModels/chatViewResponseModel";
+import { ChatViewResponseModel } from "../../dataModels/v1/chatViewResponseModel";
 import { ChatEntity } from "../../entities/chatEntity";
 
 export interface ChatGateway {
