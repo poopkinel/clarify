@@ -1,8 +1,7 @@
-import ShareAChatAsUserRequestModel from '../src/dataModels/current/specific/shareAChatAsUserRequestModel'
+import AttemptShareAChatAsUserRequestModel from '../src/dataModels/current/specific/shareAChatAsUserRequestModel'
 import ShareAChatAsUserResultModel from '../src/dataModels/current/specific/shareAChatAsUserResultModel'
-import ShareAChatAsUserUseCase from '../src/useCases/current/shareAChatAsUserUseCase'
+import ShareChatAsUserUseCase from '../src/useCases/current/shareAChatAsUserUseCase'
 import ChatGateway from '../src/boundaries/gateways/chatGateway'
-import { ResponseEntity, ResponseType } from '../src/entities/responseEntity'
 
 class ShareAChatAsUserUseCaseTest {
     private usecaseOutBoundary: any;
@@ -11,25 +10,11 @@ class ShareAChatAsUserUseCaseTest {
     private mockPlaceholderUserId: any = "userId";
     private mockSharingSettings: any;
     private chatGatewayMockWithBaseData: any;
-    private mockResponseText: any = "text";
-    private mockOnStateId: any = "state";
-    private mockEmptyOptions: any = [];
-    private mockOptionsList: any = ["option1", "option2"];
-    private mockEmptyResponses: any = [];
+    private mockEmptyLink: any = "";
+    private mockLink: any = "https://www.clarify.mock/0";
     private mockAccess: any = "all";
     private mockSharingSettingsNoErrorMessage: any = "";
     private mockSharingSettingsUserNotAuthorizedErrorMessage: any = "User not authorized to share chat";
-    private mockResponseEntity: any = new ResponseEntity(
-        "plachodler ResponseId",
-        "placeholder ChatId",
-        "placeholder UserId",
-        ResponseType.TEXT,
-        this.mockResponseText,
-        new Date(),
-        new Date(),
-        "placeholder FlowId",
-        this.mockOnStateId
-    );
 
     setup() {
         this.usecaseOutBoundary = {
@@ -37,7 +22,7 @@ class ShareAChatAsUserUseCaseTest {
         }
         
         this.mockSharingSettings = {
-            getSharingOptions: jest.fn().mockReturnValue(this.mockOptionsList)
+            getLink: jest.fn().mockReturnValue(this.mockLink)
         }
         
         this.chatGatewayMockWithBaseData = {
@@ -45,11 +30,9 @@ class ShareAChatAsUserUseCaseTest {
             getAllChats: jest.fn(),
             deleteChat: jest.fn(),
             getChatById: jest.fn().mockResolvedValue({
-                responses: [],
                 sharingSettings:
                 {
-                    userIdsWhiteList: [this.mockPlaceholderUserId],
-                    getSharingOptions: jest.fn().mockReturnValue([]),
+                    getLink: jest.fn().mockReturnValue(this.mockEmptyLink),
                     canUserShare: jest.fn().mockReturnValue(true)
                 }
             })
@@ -58,48 +41,44 @@ class ShareAChatAsUserUseCaseTest {
         this.mockPlaceholderResultModel = new ShareAChatAsUserResultModel(
             this.mockPlaceholderChatId,
             this.mockPlaceholderUserId,
-            this.mockEmptyResponses,
             this.mockAccess,
             this.mockSharingSettingsNoErrorMessage,
-            this.mockEmptyOptions
+            this.mockEmptyLink
         );
     }
     
-    setupMockResultModelKeyValuePairs = (chatId: string, userId: string, responses: any[], 
-                                        access: string, error: string, sharingOptions: string[]) => {
+    setupMockResultModelKeyValuePairs = (chatId: string, userId: string, 
+                                        access: string, error: string, link: string) => {
         return {
             chatId: chatId,
             userId: userId,
-            responses: responses,
             access: access,
             error: error,
-            sharingOptions: sharingOptions,
+            link: link,
         }
     }
 
     setupEmptyDataUseCase = () => {
-        return new ShareAChatAsUserUseCase(this.usecaseOutBoundary, this.chatGatewayMockWithBaseData)
+        return new ShareChatAsUserUseCase(this.usecaseOutBoundary, this.chatGatewayMockWithBaseData)
     }
 
     setupUsecaseWithDefaultBoundary = (chatGateway: ChatGateway) => {
-        return new ShareAChatAsUserUseCase(this.usecaseOutBoundary, chatGateway)
+        return new ShareChatAsUserUseCase(this.usecaseOutBoundary, chatGateway)
     }
     
     setupMockRequest = () => {
-        return new ShareAChatAsUserRequestModel(this.mockPlaceholderChatId, this.mockPlaceholderUserId);
+        return new AttemptShareAChatAsUserRequestModel(this.mockPlaceholderChatId, this.mockPlaceholderUserId);
     }
 
-    setupMockGateway = (responses: ResponseEntity[], options: string[], canUserShareChat: boolean) => {
+    setupMockGateway = (link: string, canUserShareChat: boolean) => {
         return {
             createChat: jest.fn(),
             getAllChats: jest.fn(),
             deleteChat: jest.fn(), 
             getChatById: jest.fn().mockResolvedValue({
-                responses: responses,
                 sharingSettings: {
-                    userIdsWhiteList: [this.mockPlaceholderUserId],
                     canUserShare: jest.fn().mockReturnValue(canUserShareChat),
-                    getSharingOptions: jest.fn().mockReturnValue(options)
+                    getLink: jest.fn().mockReturnValue(link)
                 }
             })
         }
@@ -107,86 +86,68 @@ class ShareAChatAsUserUseCaseTest {
 
   
     runTests() {
-        describe('ShareAChatAsUserUseCase', () => {
+        describe('Attempt Share A Chat As User Use Case', () => {
 
             it('should call sendResultModel on usecaseOutBoundary', async () => {
-                await this.setupEmptyDataUseCase().shareAChatAsUser(this.setupMockRequest());
+                await this.setupEmptyDataUseCase().executeShareChat(this.setupMockRequest());
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
             });
             it('should call sendResultModel on usecaseOutBoundary with a result model', async () => {
-                await this.setupEmptyDataUseCase().shareAChatAsUser(this.setupMockRequest());
+                await this.setupEmptyDataUseCase().executeShareChat(this.setupMockRequest());
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(this.mockPlaceholderResultModel);
             });
         
-            it('should map empty responseEntities to empty responses', async () => {
-                await this.setupEmptyDataUseCase().shareAChatAsUser(this.setupMockRequest());
-                const resultModelKeyValuePairs = this.setupMockResultModelKeyValuePairs(
-                    this.mockPlaceholderChatId,
-                    this.mockPlaceholderUserId,
-                    this.mockEmptyResponses,
-                    this.mockAccess,
-                    "",
-                    this.mockEmptyOptions
-                );
-                
-                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(resultModelKeyValuePairs);
-            });
-        
-            it('should map non-empty responseEntities to valid responses', async () => {
-                const mockResponses = [
-                    this.mockResponseEntity
-                ];
-                const chatGatewayWithSingleResponse: ChatGateway = this.setupMockGateway(mockResponses, [], true);
-                const singleResponseUseCase = this.setupUsecaseWithDefaultBoundary(chatGatewayWithSingleResponse)
-        
-                await singleResponseUseCase.shareAChatAsUser(this.setupMockRequest());
-        
-                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(new ShareAChatAsUserResultModel(
-                    this.mockPlaceholderChatId,
-                    this.mockPlaceholderUserId,
-                    [{ text: this.mockResponseText, onStateId: this.mockOnStateId}],
-                    this.mockAccess,
-                    this.mockSharingSettingsNoErrorMessage,
-                    this.mockEmptyOptions
-                ));
-            });
-        
             it('should return the sharing options from the chatGateway', async () => {
-                const chatGatewayWithOptions: ChatGateway = this.setupMockGateway(this.mockEmptyResponses, this.mockOptionsList, true);
+                const chatGatewayWithLink: ChatGateway = this.setupMockGateway(this.mockLink, true);
         
-                const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(chatGatewayWithOptions);
-                const request = new ShareAChatAsUserRequestModel(this.mockPlaceholderChatId, this.mockPlaceholderUserId);
-                await shareAChatAsUserUseCase.shareAChatAsUser(request);
+                const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(chatGatewayWithLink);
+                const request = new AttemptShareAChatAsUserRequestModel(this.mockPlaceholderChatId, this.mockPlaceholderUserId);
+                await shareAChatAsUserUseCase.executeShareChat(request);
         
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(new ShareAChatAsUserResultModel(
                     this.mockPlaceholderChatId,
                     this.mockPlaceholderUserId,
-                    this.mockEmptyResponses,
                     this.mockAccess,
                     this.mockSharingSettingsNoErrorMessage,
-                    await this.mockSharingSettings.getSharingOptions()
+                    await this.mockSharingSettings.getLink()
                 ));
             });
 
             it('on user can\'t share chat, should return appropriate result', async () => {
-                const cantShareChatGateway: ChatGateway = this.setupMockGateway([], [], false);
+                const cantShareChatGateway: ChatGateway = this.setupMockGateway("RandomLink", false);
                 const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(cantShareChatGateway)
-                await shareAChatAsUserUseCase.shareAChatAsUser(this.setupMockRequest());
+                await shareAChatAsUserUseCase.executeShareChat(this.setupMockRequest());
         
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
                     new ShareAChatAsUserResultModel(
                         this.mockPlaceholderChatId,
                         this.mockPlaceholderUserId,
-                        this.mockEmptyResponses,
                         this.mockAccess,
                         this.mockSharingSettingsUserNotAuthorizedErrorMessage,
-                        []
+                        this.mockEmptyLink
                     )
                 );
             });
-        })
+            
+            it('should return a valid link when authorized to share chat', async () => {
+                const canShareChatGateway: ChatGateway = this.setupMockGateway(this.mockLink, true);
+                const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(canShareChatGateway)
+                await shareAChatAsUserUseCase.executeShareChat(this.setupMockRequest());
+        
+                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
+                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
+                    new ShareAChatAsUserResultModel(
+                        this.mockPlaceholderChatId,
+                        this.mockPlaceholderUserId,
+                        this.mockAccess,
+                        this.mockSharingSettingsNoErrorMessage,
+                        this.mockLink
+                    )
+                );
+            });
+        });
     }
   }
   

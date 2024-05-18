@@ -1,6 +1,6 @@
-import ChatSharingSettingsForSharingOptions from "./chatSharingSettingsForSharingOptions";
+import ChatSharingSettingsForLink from "./chatSharingSettingsForSharingOptions";
 
-export default class ChatSharingSetting implements ChatSharingSettingsForSharingOptions{
+export default class ChatSharingSetting implements ChatSharingSettingsForLink{
     canUserShare(userId: string): boolean {
         return this.userIdsWhiteList.includes(userId);
     }
@@ -11,12 +11,8 @@ export default class ChatSharingSetting implements ChatSharingSettingsForSharing
         this.chatId = chatId;
         this.userIdsWhiteList = userIdsWhiteList;
     }
-    getSharingOptions(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            resolve({
-                option1: "Link",
-                option2: "Invitation by email"
-            });
-        });
+
+    async getLink(): Promise<string> {
+        return "link";  
     }
 }

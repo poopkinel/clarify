@@ -1,10 +1,10 @@
-import ShareAChatAsUserRequestModel from "../../dataModels/current/specific/shareAChatAsUserRequestModel";
+import AttemptShareAChatAsUserRequestModel from "../../dataModels/current/specific/shareAChatAsUserRequestModel";
 import UsecaseInBoundary from "../../boundaries/useCaseBoundaries/usecaseInBoundary";
 import UsecaseOutBoundary from "../../boundaries/useCaseBoundaries/usecaseOutBoundary";
 import ShareAChatAsUserResultModel from "../../dataModels/current/specific/shareAChatAsUserResultModel";
 import ChatGateway from "../../boundaries/gateways/chatGateway";
 
-export default class ShareAChatAsUserUseCase implements UsecaseInBoundary<ShareAChatAsUserRequestModel> {
+export default class ShareAChatAsUserUseCase implements UsecaseInBoundary<AttemptShareAChatAsUserRequestModel> {
     usecaseOutBoundary: UsecaseOutBoundary<ShareAChatAsUserResultModel>;
     chatGateway: ChatGateway;
 
@@ -14,28 +14,25 @@ export default class ShareAChatAsUserUseCase implements UsecaseInBoundary<ShareA
         this.chatGateway = chatGateway;
     }
 
-    async sendRequestModel(requestModel: ShareAChatAsUserRequestModel): Promise<any> {
-        await this.shareAChatAsUser(requestModel);
+    async sendRequestModel(requestModel: AttemptShareAChatAsUserRequestModel): Promise<any> {
+        await this.executeShareChat(requestModel);
     }
 
-    async shareAChatAsUser(requestModel: ShareAChatAsUserRequestModel) {
+    async executeShareChat(requestModel: AttemptShareAChatAsUserRequestModel) {
         const chat = (await this.chatGateway.getChatById(requestModel.chatId));
         var error = "";
+        var link = "";
         const canShare = chat.sharingSettings.canUserShare(requestModel.userId)
         if (!canShare) {
-            error = "User not authorized to share chat";
-        }
-        const responseEntities = chat.responses;
-        const sharingOptions = await chat.sharingSettings.getSharingOptions();
-        const responses = responseEntities.map((responseEntity) => {
-            return {
-                text: responseEntity.text,
-                onStateId: responseEntity.onStateId
-            }
-        });
+            error = "User not authorized to share chat"
+        } else {
+            link = await chat.sharingSettings.getLink();
+        };
 
         const resultModel = new ShareAChatAsUserResultModel(
-            "chatId", "userId", responses, "all", error, sharingOptions);
+            "chatId", "userId", "all", error, link
+        );
+            
         await this.usecaseOutBoundary.sendResultModel(resultModel);
     }
 }

@@ -1,3 +1,3 @@
-export default interface ChatSharingSettingsForSharingOptions {
-    getSharingOptions(): Promise<any>;
+export default interface ChatSharingSettingsForLink {
+    getLink(): Promise<string>;
 }
