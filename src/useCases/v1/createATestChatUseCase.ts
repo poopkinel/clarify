@@ -1,7 +1,7 @@
 // Operator creates a test chat
 
 import { ChatEntity } from '../../entities/chatEntity';
-import { ChatGateway } from '../../boundaries/gateways/chatGateway';
+import ChatGateway from '../../boundaries/gateways/chatGateway';
 
 export class CreateATestChatUseCase {
     private chatGateway: ChatGateway;

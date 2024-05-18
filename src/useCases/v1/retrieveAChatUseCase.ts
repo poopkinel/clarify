@@ -1,6 +1,6 @@
 // A use case for an operator to retrieve a chat for inspection
 
-import { ChatGateway } from "../../boundaries/gateways/chatGateway";
+import ChatGateway from "../../boundaries/gateways/chatGateway";
 import RequestModel from "../../dataModels/current/general/requestModel";
 import RetrieveAChatRequestModel from "../../dataModels/v1/retrieveAChatRequestModel";
 import { ChatEntity } from "../../entities/chatEntity";

@@ -1,6 +1,6 @@
 // A use case where the operator views all chats
 
-import { ChatGateway } from "../../boundaries/gateways/chatGateway";
+import ChatGateway from "../../boundaries/gateways/chatGateway";
 import { ChatEntity } from "../../entities/chatEntity";
 
 export class ViewAllChatsUseCase {
