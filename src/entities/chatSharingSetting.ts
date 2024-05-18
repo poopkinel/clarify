@@ -1,6 +1,9 @@
 import ChatSharingSettingsForSharingOptions from "./chatSharingSettingsForSharingOptions";
 
 export default class ChatSharingSetting implements ChatSharingSettingsForSharingOptions{
+    canUserShare(userId: string): boolean {
+        return this.userIdsWhiteList.includes(userId);
+    }
     chatId: string;
     userIdsWhiteList: string[];
 

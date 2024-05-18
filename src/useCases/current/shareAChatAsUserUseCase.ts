@@ -14,12 +14,17 @@ export default class ShareAChatAsUserUseCase implements UsecaseInBoundary<ShareA
         this.chatGateway = chatGateway;
     }
 
-    async sendStartNewChatRequest(requestModel: ShareAChatAsUserRequestModel): Promise<any> {
+    async sendRequestModel(requestModel: ShareAChatAsUserRequestModel): Promise<any> {
         await this.shareAChatAsUser(requestModel);
     }
 
     async shareAChatAsUser(requestModel: ShareAChatAsUserRequestModel) {
         const chat = (await this.chatGateway.getChatById(requestModel.chatId));
+        var error = "";
+        const canShare = chat.sharingSettings.canUserShare(requestModel.userId)
+        if (!canShare) {
+            error = "User not authorized to share chat";
+        }
         const responseEntities = chat.responses;
         const sharingOptions = await chat.sharingSettings.getSharingOptions();
         const responses = responseEntities.map((responseEntity) => {
@@ -30,7 +35,7 @@ export default class ShareAChatAsUserUseCase implements UsecaseInBoundary<ShareA
         });
 
         const resultModel = new ShareAChatAsUserResultModel(
-            "chatId", "userId", responses, "all", "error", sharingOptions);
-        await this.usecaseOutBoundary.sendStartNewChatResult(resultModel);
+            "chatId", "userId", responses, "all", error, sharingOptions);
+        await this.usecaseOutBoundary.sendResultModel(resultModel);
     }
 }
