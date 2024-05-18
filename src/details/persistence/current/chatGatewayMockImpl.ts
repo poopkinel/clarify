@@ -11,16 +11,13 @@ export default class ChatGatewayMockImpl implements ChatGateway {
     }
     getChatById(chatId: string): Promise<ChatEntity> {
         return new Promise((resolve, reject) => {
-            resolve({
-                id: '0',
-                name: 'Test Chat',
-                user1: 'Test User 1',
-                user2: 'Test User 2',
-                responses: [],
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                sharingSettings: new ChatSharingSetting('0', [])
-            });
+            resolve(new ChatEntity(
+                '0',
+                'Test Chat',
+                'Test User 1',
+                'Test User 2',
+                )
+            );
         });
     }
     deleteChat(chatId: string): Promise<void> {
