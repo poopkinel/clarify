@@ -1,4 +1,5 @@
 import { ResponseEntity } from './responseEntity';
+import ChatSharingSettings from './chatSharingSetting';
 
 export class ChatEntity {
     id: string;
@@ -9,7 +10,15 @@ export class ChatEntity {
     createdAt: Date;
     updatedAt: Date;
 
-    constructor(id: string, name: string, user1: string, user2: string) {
+    sharingSettings: ChatSharingSettings;
+
+    constructor(
+        id: string, 
+        name: string, 
+        user1: string, 
+        user2: string,
+        sharingSettings: ChatSharingSettings = new ChatSharingSettings(id, [])
+    ) {
         this.id = id;
         this.name = name;
         this.user1 = user1;
@@ -17,5 +26,6 @@ export class ChatEntity {
         this.responses = [];
         this.createdAt = new Date();
         this.updatedAt = new Date();
+        this.sharingSettings = sharingSettings;
     }
 }

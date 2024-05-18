@@ -19,17 +19,18 @@ export default class ShareAChatAsUserUseCase implements UsecaseInBoundary<ShareA
     }
 
     async shareAChatAsUser(requestModel: ShareAChatAsUserRequestModel) {
-        const responseEntities = (await this.chatGateway.getChatById(requestModel.chatId)).responses;
-        console.log("responseEntities", responseEntities);
+        const chat = (await this.chatGateway.getChatById(requestModel.chatId));
+        const responseEntities = chat.responses;
+        const sharingOptions = await chat.sharingSettings.getSharingOptions();
         const responses = responseEntities.map((responseEntity) => {
             return {
                 text: responseEntity.text,
                 onStateId: responseEntity.onStateId
             }
         });
-        console.log("responses", responses);
 
-        const resultModel = new ShareAChatAsUserResultModel("chatId", "userId", responses, "all", "error");
+        const resultModel = new ShareAChatAsUserResultModel(
+            "chatId", "userId", responses, "all", "error", sharingOptions);
         await this.usecaseOutBoundary.sendStartNewChatResult(resultModel);
     }
 }

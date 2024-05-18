@@ -9,11 +9,19 @@ export default class ShareAChatAsUserResultModel implements ResultModel {
     access: string;
     error: string;
 
-    constructor(chatId: string, userId: string, responses: Response[], access: string, error: string) {
+    sharingOptions: string[];
+
+    constructor(chatId: string, 
+                userId: string, 
+                responses: Response[], 
+                access: string, 
+                error: string,
+                sharingOptions: string[]) {
         this.chatId = chatId;
         this.userId = userId;
         this.responses = responses;
         this.access = access;
         this.error = error;
+        this.sharingOptions = sharingOptions;
     }
 }

@@ -4,17 +4,28 @@ import ShareAChatAsUserUseCase from '../src/useCases/current/shareAChatAsUserUse
 import ChatGateway from '../src/boundaries/gateways/chatGateway'
 import ChatGatewayMockImpl from '../src/details/persistence/current/chatGatewayMockImpl'
 import { ResponseEntity, ResponseType } from '../src/entities/responseEntity'
+import ChatSharingSettingsForSharingOptions from '../src/entities/chatSharingSettingsForSharingOptions'
+
+// import "@types/jest";
 
 const usecaseOutBoundary = {
     sendStartNewChatResult: jest.fn()
 }
 
-const chatGatewayMockWithEmtpyResponses = {
+const mockSharingOptions: ChatSharingSettingsForSharingOptions = {
+    getSharingOptions: jest.fn().mockReturnValue(["option1", "option2"])
+}
+
+const chatGatewayMockWithEmtpyData = {
     createChat: jest.fn(),
     getAllChats: jest.fn(),
     deleteChat: jest.fn(),
     getChatById: jest.fn().mockResolvedValue({
-        responses: []
+        responses: [],
+        sharingSettings:
+        {
+            getSharingOptions: jest.fn().mockReturnValue([])
+        }
     })
 }
 
@@ -26,7 +37,8 @@ const mockPlaceholderResultModel = new ShareAChatAsUserResultModel(
     mockPlaceholderUserId,
     [],
     "all",
-    "error"
+    "error",
+    []
 );
 
 const mockPlaceholderResultModelKeyValueWithEmptyResponses = {
@@ -34,35 +46,60 @@ const mockPlaceholderResultModelKeyValueWithEmptyResponses = {
     userId: mockPlaceholderUserId,
     responses: [],
     access: "all",
-    error: "error"
+    error: "error",
+    sharingOptions: []
 }
 
-describe('ShareAChatAsUserUseCase', () => {
-    it('should call sendStartNewChatResult on usecaseOutBoundary with result', async () => {
-        const shareAChatAsUserUseCase = new ShareAChatAsUserUseCase(usecaseOutBoundary, chatGatewayMockWithEmtpyResponses)
-        const request = new ShareAChatAsUserRequestModel(mockPlaceholderChatId, mockPlaceholderUserId);
-        await shareAChatAsUserUseCase.shareAChatAsUser(request);
+const setupEmptyDataUseCase = () => {
+    return new ShareAChatAsUserUseCase(usecaseOutBoundary, chatGatewayMockWithEmtpyData)
+}
 
+const setupMockRequest = () => {
+    return new ShareAChatAsUserRequestModel(mockPlaceholderChatId, mockPlaceholderUserId);
+}
+
+const emptyDataShareAChatAsUserUseCase = setupEmptyDataUseCase();
+const emptyDataMockRequest = setupMockRequest();
+
+const mockResponseText = "test text";
+const mockOnStateId = "Test state";
+
+const setupMockGateway = (responses: ResponseEntity[], options: string[]) => {
+    return {
+        createChat: jest.fn(),
+        getAllChats: jest.fn(),
+        deleteChat: jest.fn(), 
+        getChatById: jest.fn().mockResolvedValue({
+            responses: responses,
+            sharingSettings: {
+                getSharingOptions: jest.fn().mockReturnValue(options)
+            }
+        })
+    }
+}
+
+const mockOptions = ["option1", "option2"];
+
+describe('ShareAChatAsUserUseCase', () => {
+
+    it('should call sendStartNewChatResult on usecaseOutBoundary', async () => {
+        await emptyDataShareAChatAsUserUseCase.shareAChatAsUser(emptyDataMockRequest);
         expect(usecaseOutBoundary.sendStartNewChatResult).toHaveBeenCalled();
+    });
+    it('should call sendStartNewChatResult on usecaseOutBoundary with a result model', async () => {
+        await emptyDataShareAChatAsUserUseCase.shareAChatAsUser(emptyDataMockRequest);
         expect(usecaseOutBoundary.sendStartNewChatResult).toHaveBeenCalledWith(mockPlaceholderResultModel);
     });
 
     it('should call getChatById on chatGateway with chatId from requestModel', async () => {
-        const shareAChatAsUserUseCase = new ShareAChatAsUserUseCase(usecaseOutBoundary, chatGatewayMockWithEmtpyResponses)
-        const request = new ShareAChatAsUserRequestModel(mockPlaceholderChatId, mockPlaceholderUserId);
-        await shareAChatAsUserUseCase.shareAChatAsUser(request);
-
-        expect(chatGatewayMockWithEmtpyResponses.getChatById).toHaveBeenCalled();
-        expect(chatGatewayMockWithEmtpyResponses.getChatById).toHaveBeenCalledWith(mockPlaceholderChatId);
+        await emptyDataShareAChatAsUserUseCase.shareAChatAsUser(emptyDataMockRequest);
+        expect(chatGatewayMockWithEmtpyData.getChatById).toHaveBeenCalledWith(mockPlaceholderChatId);
     });
 
     it('should map empty responseEntities to empty responses', async () => {
-        const chatGateway: ChatGateway = new ChatGatewayMockImpl();
-        const shareAChatAsUserUseCase = new ShareAChatAsUserUseCase(usecaseOutBoundary, chatGateway)
         const request = new ShareAChatAsUserRequestModel(mockPlaceholderChatId, mockPlaceholderUserId);
-        await shareAChatAsUserUseCase.shareAChatAsUser(request);
+        await emptyDataShareAChatAsUserUseCase.shareAChatAsUser(request);
 
-        expect(usecaseOutBoundary.sendStartNewChatResult).toHaveBeenCalled();
         expect(usecaseOutBoundary.sendStartNewChatResult).toHaveBeenCalledWith(mockPlaceholderResultModelKeyValueWithEmptyResponses);
     });
 
@@ -81,16 +118,25 @@ describe('ShareAChatAsUserUseCase', () => {
             )
         ];
 
-        const chatGateway: ChatGateway = {
-            createChat: jest.fn(),
-            getAllChats: jest.fn(),
-            deleteChat: jest.fn(),
-            getChatById: jest.fn().mockResolvedValue({
-                responses: mockResponses
-            })
-        }
+        const chatGatewayWithSingleResponse: ChatGateway = setupMockGateway(mockResponses, []);
+        const singleResponseUseCase = new ShareAChatAsUserUseCase(usecaseOutBoundary, chatGatewayWithSingleResponse)
+        
+        await singleResponseUseCase.shareAChatAsUser(emptyDataMockRequest);
 
-        const shareAChatAsUserUseCase = new ShareAChatAsUserUseCase(usecaseOutBoundary, chatGateway)
+        expect(usecaseOutBoundary.sendStartNewChatResult).toHaveBeenCalledWith(new ShareAChatAsUserResultModel(
+            mockPlaceholderChatId,
+            mockPlaceholderUserId,
+            [{ text: mockResponseText, onStateId: mockOnStateId}],
+            "all",
+            "error",
+            []
+        ));
+    });
+
+    it('should return the sharing options from the chatGateway', async () => {
+        const chatGatewayWithOptions: ChatGateway = setupMockGateway([], mockOptions);
+
+        const shareAChatAsUserUseCase = new ShareAChatAsUserUseCase(usecaseOutBoundary, chatGatewayWithOptions)
         const request = new ShareAChatAsUserRequestModel(mockPlaceholderChatId, mockPlaceholderUserId);
         await shareAChatAsUserUseCase.shareAChatAsUser(request);
 
@@ -98,9 +144,10 @@ describe('ShareAChatAsUserUseCase', () => {
         expect(usecaseOutBoundary.sendStartNewChatResult).toHaveBeenCalledWith(new ShareAChatAsUserResultModel(
             mockPlaceholderChatId,
             mockPlaceholderUserId,
-            [{ text: "test text", onStateId: "Test state"}],
+            [],
             "all",
-            "error"
+            "error",
+            await mockSharingOptions.getSharingOptions()
         ));
     });
 })

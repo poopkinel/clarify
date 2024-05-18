@@ -1,5 +1,6 @@
 import ChatGateway from "../../../boundaries/gateways/chatGateway";
 import { ChatEntity } from "../../../entities/chatEntity";
+import ChatSharingSetting from "../../../entities/chatSharingSetting";
 
 export default class ChatGatewayMockImpl implements ChatGateway {
     createChat(chatName: string, user1: string, user2: string): Promise<string> {
@@ -17,7 +18,8 @@ export default class ChatGatewayMockImpl implements ChatGateway {
                 user2: 'Test User 2',
                 responses: [],
                 createdAt: new Date(),
-                updatedAt: new Date()
+                updatedAt: new Date(),
+                sharingSettings: new ChatSharingSetting('0', [])
             });
         });
     }
