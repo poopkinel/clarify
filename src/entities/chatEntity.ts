@@ -28,4 +28,8 @@ export class ChatEntity {
         this.updatedAt = new Date();
         this.sharingSettings = sharingSettings;
     }
+
+    ValidateLink(link: string): boolean {
+        return link != '';
+    }
 }

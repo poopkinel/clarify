@@ -13,6 +13,6 @@ export default class ChatSharingSetting implements ChatSharingSettingsForLink{
     }
 
     async getLink(): Promise<string> {
-        return "link";  
+        return '/chat/'+this.chatId;  
     }
 }

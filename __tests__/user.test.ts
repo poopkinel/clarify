@@ -86,7 +86,7 @@ class ShareAChatAsUserUseCaseTest {
 
   
     runTests() {
-        describe('Attempt Share A Chat As User Use Case', () => {
+        describe('Share A Chat As User Use Case', () => {
 
             it('should call sendResultModel on usecaseOutBoundary', async () => {
                 await this.setupEmptyDataUseCase().executeShareChat(this.setupMockRequest());
@@ -144,6 +144,23 @@ class ShareAChatAsUserUseCaseTest {
                         this.mockAccess,
                         this.mockSharingSettingsNoErrorMessage,
                         this.mockLink
+                    )
+                );
+            });
+
+            it('should return different links for different chats', async () => {
+                const chatGatewayWithDifferentLink: ChatGateway = this.setupMockGateway("DifferentLink", true);
+                const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(chatGatewayWithDifferentLink)
+                await shareAChatAsUserUseCase.executeShareChat(this.setupMockRequest());
+        
+                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
+                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
+                    new ShareAChatAsUserResultModel(
+                        this.mockPlaceholderChatId,
+                        this.mockPlaceholderUserId,
+                        this.mockAccess,
+                        this.mockSharingSettingsNoErrorMessage,
+                        "DifferentLink"
                     )
                 );
             });
