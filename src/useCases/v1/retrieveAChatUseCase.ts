@@ -1,14 +1,14 @@
 // A use case for an operator to retrieve a chat for inspection
 
-import ChatGateway from "../../boundaries/gateways/chatGateway";
+import ChatGatewayToShareAChat from "../../boundaries/gateways/chatGatewayToShareAChat";
 import RequestModel from "../../dataModels/current/general/requestModel";
 import RetrieveAChatRequestModel from "../../dataModels/v1/retrieveAChatRequestModel";
 import { ChatEntity } from "../../entities/chatEntity";
 
 export class RetrieveAChatUseCase {
-    private chatGateway: ChatGateway;
+    private chatGateway: ChatGatewayToShareAChat;
 
-    constructor(chatGateway: ChatGateway) {
+    constructor(chatGateway: ChatGatewayToShareAChat) {
         this.chatGateway = chatGateway;
     }
 

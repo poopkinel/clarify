@@ -1,16 +1,16 @@
 // A use case for a user to view a chat
 
 import { UserGateway } from "../../boundaries/gateways/userGateway";
-import ChatGateway from "../../boundaries/gateways/chatGateway";
+import ChatGatewayToShareAChat from "../../boundaries/gateways/chatGatewayToShareAChat";
 import { User } from "../../entities/userEntity";
 import { ChatViewRequestModel } from "../../dataModels/v1/chatViewRequestModel";
 import { ChatViewResponseModel } from "../../dataModels/v1/chatViewResponseModel";
 
 export class UserViewsAChatUseCase {
     userGateway: UserGateway;
-    chatGateway: ChatGateway;
+    chatGateway: ChatGatewayToShareAChat;
 
-    constructor(userGateway: UserGateway, chatGateway: ChatGateway) {
+    constructor(userGateway: UserGateway, chatGateway: ChatGatewayToShareAChat) {
         this.userGateway = userGateway;
         this.chatGateway = chatGateway;
     }

@@ -1,6 +1,6 @@
 // An implemenetaion of the chatGateway interface that uses Firebase as a backend
 
-import ChatGateway from "../../../boundaries/gateways/chatGateway";
+import ChatGatewayToShareAChat from "../../../boundaries/gateways/chatGatewayToShareAChat";
 import { ChatViewResponseModel } from "../../../dataModels/v1/chatViewResponseModel";
 import { ChatMessageResponseModel } from "../../../dataModels/v1/chatMessageResponseModel";
 import { ResponseEntity } from "../../../entities/responseEntity";
@@ -14,7 +14,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-export class ChatGatewayFirebaseImpl implements ChatGateway {
+export class ChatGatewayFirebaseImpl implements ChatGatewayToShareAChat {
     async createChat(chatName: string, user1: string, user2: string): Promise<string> {
         // const chat: ChatEntity = {
         //     id: '0',

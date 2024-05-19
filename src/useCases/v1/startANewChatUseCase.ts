@@ -1,6 +1,6 @@
 // A use case for starting a new chat
 
-import ChatGateway from "../../boundaries/gateways/chatGateway";
+import ChatGatewayToShareAChat from "../../boundaries/gateways/chatGatewayToShareAChat";
 import { ChatStartRequestModel } from "../../dataModels/v1/chatStartRequestModel";
 import ChatStartResultModel from "../../dataModels/v1/chatStartResultModel";
 
@@ -8,7 +8,7 @@ import { StartNewChatRequestBoundary } from "../../boundaries/web/startNewChatRe
 import StartNewChatResultBoundary from "../../boundaries/web/startNewChatResultBoundary";
 
 export class StartANewChatUseCase implements StartNewChatRequestBoundary {
-    private chatGateway: ChatGateway;
+    private chatGateway: ChatGatewayToShareAChat;
     private startNewChatResultBoundary: StartNewChatResultBoundary
 
     async sendStartNewChatRequest(chatStartRequestModel: ChatStartRequestModel): Promise<ChatStartResultModel> {
@@ -17,7 +17,7 @@ export class StartANewChatUseCase implements StartNewChatRequestBoundary {
         return await this.startNewChatResultBoundary.sendStartNewChatResult(result);
     }
 
-    constructor(chatGateway: ChatGateway, startNewChatResultBoundary: StartNewChatResultBoundary) {
+    constructor(chatGateway: ChatGatewayToShareAChat, startNewChatResultBoundary: StartNewChatResultBoundary) {
         this.chatGateway = chatGateway;
         this.startNewChatResultBoundary = startNewChatResultBoundary;
     }

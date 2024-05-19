@@ -1,7 +1,7 @@
-import AttemptShareAChatAsUserRequestModel from '../src/dataModels/current/specific/shareAChatAsUserRequestModel'
-import ShareAChatAsUserResultModel from '../src/dataModels/current/specific/shareAChatAsUserResultModel'
-import ShareChatAsUserUseCase from '../src/useCases/current/shareAChatAsUserUseCase'
-import ChatGateway from '../src/boundaries/gateways/chatGateway'
+import AttemptShareAChatAsUserRequestModel from '../../../src/dataModels/current/specific/shareAChatAsUserRequestModel'
+import ShareAChatAsUserResultModel from '../../../src/dataModels/current/specific/shareAChatAsUserResultModel'
+import ShareChatAsUserUseCase from '../../../src/useCases/current/shareAChatAsUserUseCase'
+import ChatGatewayToShareAChat from '../../../src/boundaries/gateways/chatGatewayToShareAChat'
 
 class ShareAChatAsUserUseCaseTest {
     private usecaseOutBoundary: any;
@@ -26,9 +26,6 @@ class ShareAChatAsUserUseCaseTest {
         }
         
         this.chatGatewayMockWithBaseData = {
-            createChat: jest.fn(),
-            getAllChats: jest.fn(),
-            deleteChat: jest.fn(),
             getChatById: jest.fn().mockResolvedValue({
                 sharingSettings:
                 {
@@ -62,7 +59,7 @@ class ShareAChatAsUserUseCaseTest {
         return new ShareChatAsUserUseCase(this.usecaseOutBoundary, this.chatGatewayMockWithBaseData)
     }
 
-    setupUsecaseWithDefaultBoundary = (chatGateway: ChatGateway) => {
+    setupUsecaseWithDefaultBoundary = (chatGateway: ChatGatewayToShareAChat) => {
         return new ShareChatAsUserUseCase(this.usecaseOutBoundary, chatGateway)
     }
     
@@ -72,9 +69,6 @@ class ShareAChatAsUserUseCaseTest {
 
     setupMockGateway = (link: string, canUserShareChat: boolean) => {
         return {
-            createChat: jest.fn(),
-            getAllChats: jest.fn(),
-            deleteChat: jest.fn(), 
             getChatById: jest.fn().mockResolvedValue({
                 sharingSettings: {
                     canUserShare: jest.fn().mockReturnValue(canUserShareChat),
@@ -98,7 +92,7 @@ class ShareAChatAsUserUseCaseTest {
             });
         
             it('should return the sharing options from the chatGateway', async () => {
-                const chatGatewayWithLink: ChatGateway = this.setupMockGateway(this.mockLink, true);
+                const chatGatewayWithLink: ChatGatewayToShareAChat = this.setupMockGateway(this.mockLink, true);
         
                 const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(chatGatewayWithLink);
                 const request = new AttemptShareAChatAsUserRequestModel(this.mockPlaceholderChatId, this.mockPlaceholderUserId);
@@ -115,7 +109,7 @@ class ShareAChatAsUserUseCaseTest {
             });
 
             it('on user can\'t share chat, should return appropriate result', async () => {
-                const cantShareChatGateway: ChatGateway = this.setupMockGateway("RandomLink", false);
+                const cantShareChatGateway: ChatGatewayToShareAChat = this.setupMockGateway("RandomLink", false);
                 const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(cantShareChatGateway)
                 await shareAChatAsUserUseCase.executeShareChat(this.setupMockRequest());
         
@@ -132,7 +126,7 @@ class ShareAChatAsUserUseCaseTest {
             });
             
             it('should return a valid link when authorized to share chat', async () => {
-                const canShareChatGateway: ChatGateway = this.setupMockGateway(this.mockLink, true);
+                const canShareChatGateway: ChatGatewayToShareAChat = this.setupMockGateway(this.mockLink, true);
                 const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(canShareChatGateway)
                 await shareAChatAsUserUseCase.executeShareChat(this.setupMockRequest());
         
@@ -149,7 +143,7 @@ class ShareAChatAsUserUseCaseTest {
             });
 
             it('should return different links for different chats', async () => {
-                const chatGatewayWithDifferentLink: ChatGateway = this.setupMockGateway("DifferentLink", true);
+                const chatGatewayWithDifferentLink: ChatGatewayToShareAChat = this.setupMockGateway("DifferentLink", true);
                 const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(chatGatewayWithDifferentLink)
                 await shareAChatAsUserUseCase.executeShareChat(this.setupMockRequest());
         

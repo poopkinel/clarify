@@ -2,14 +2,14 @@ import AttemptShareAChatAsUserRequestModel from "../../dataModels/current/specif
 import UsecaseInBoundary from "../../boundaries/useCaseBoundaries/usecaseInBoundary";
 import UsecaseOutBoundary from "../../boundaries/useCaseBoundaries/usecaseOutBoundary";
 import ShareAChatAsUserResultModel from "../../dataModels/current/specific/shareAChatAsUserResultModel";
-import ChatGateway from "../../boundaries/gateways/chatGateway";
+import ChatGatewayToShareAChat from "../../boundaries/gateways/chatGatewayToShareAChat";
 
 export default class ShareAChatAsUserUseCase implements UsecaseInBoundary<AttemptShareAChatAsUserRequestModel> {
     usecaseOutBoundary: UsecaseOutBoundary<ShareAChatAsUserResultModel>;
-    chatGateway: ChatGateway;
+    chatGateway: ChatGatewayToShareAChat;
 
     constructor(usecaseOutBoundary: UsecaseOutBoundary<ShareAChatAsUserResultModel>,
-                chatGateway: ChatGateway) {
+                chatGateway: ChatGatewayToShareAChat) {
         this.usecaseOutBoundary = usecaseOutBoundary;
         this.chatGateway = chatGateway;
     }

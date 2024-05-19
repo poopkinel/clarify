@@ -1,12 +1,12 @@
 // Operator creates a test chat
 
 import { ChatEntity } from '../../entities/chatEntity';
-import ChatGateway from '../../boundaries/gateways/chatGateway';
+import ChatGatewayToShareAChat from '../../boundaries/gateways/chatGatewayToShareAChat';
 
 export class CreateATestChatUseCase {
-    private chatGateway: ChatGateway;
+    private chatGateway: ChatGatewayToShareAChat;
 
-    constructor(chatGateway: ChatGateway) {
+    constructor(chatGateway: ChatGatewayToShareAChat) {
         this.chatGateway = chatGateway;
     }
 

@@ -1,8 +1,8 @@
-import ChatGateway from "../../../boundaries/gateways/chatGateway";
+import ChatGatewayToShareAChat from "../../../boundaries/gateways/chatGatewayToShareAChat";
 import { ChatEntity } from "../../../entities/chatEntity";
 import ChatSharingSetting from "../../../entities/chatSharingSetting";
 
-export default class ChatGatewayMockImpl implements ChatGateway {
+export default class ChatGatewayMockImpl implements ChatGatewayToShareAChat {
     createChat(chatName: string, user1: string, user2: string): Promise<string> {
         throw new Error("Method not implemented.");
     }

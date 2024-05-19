@@ -1,4 +1,4 @@
-import ChatGateway from "../../../boundaries/gateways/chatGateway";
+import ChatGatewayToShareAChat from "../../../boundaries/gateways/chatGatewayToShareAChat";
 import { ChatViewResponseModel } from "../../../dataModels/v1/chatViewResponseModel";
 import { ChatMessageResponseModel } from "../../../dataModels/v1/chatMessageResponseModel";
 import { ResponseEntity } from "../../../entities/responseEntity";
@@ -13,7 +13,7 @@ const chatsTableName = 'chats';
 const db = new sqlite3.Database('./sqlite3.db', (err: any) => {});
 
 
-export class ChatGatewaySqliteImpl implements ChatGateway {
+export class ChatGatewaySqliteImpl implements ChatGatewayToShareAChat {
     constructor() {
         db.get(`SELECT name FROM sqlite_master WHERE type='table' AND name='${chatsTableName}'`, (err: any, result: any) => {
             if (err) {
