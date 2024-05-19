@@ -11,7 +11,7 @@ export class ViewAllChatsUseCase {
     }
 
     async execute(): Promise<ChatEntity[]> {
-        const chats = await this.chatGateway.getAllChats();
+        const chats: ChatEntity[] = [] ;//await this.chatGateway.getAllChats();
         return chats;
     }
 }

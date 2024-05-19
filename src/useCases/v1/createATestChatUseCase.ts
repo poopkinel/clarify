@@ -11,7 +11,8 @@ export class CreateATestChatUseCase {
     }
 
     async execute(chatName: string, user1: string, user2: string): Promise<string> {
-        const chatId = await this.chatGateway.createChat(chatName, user1, user2);
-        return chatId;
+        // const chatId = await this.chatGateway.createChat(chatName, user1, user2);
+        // return chatId;
+        return "";
     }
 }

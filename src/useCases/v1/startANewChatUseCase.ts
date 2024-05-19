@@ -47,11 +47,12 @@ export class StartANewChatUseCase implements StartNewChatRequestBoundary {
             };
         }
 
-        const chatId = await this.chatGateway.createChat(
-            chatStartRequestModel.chatName, 
-            chatStartRequestModel.username, 
-            ''
-        );
+        // const chatId = await this.chatGateway.createChat(
+        //     chatStartRequestModel.chatName, 
+        //     chatStartRequestModel.username, 
+        //     ''
+        // );
+        const chatId = '1';
 
         return {
             chatId: chatId,
