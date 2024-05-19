@@ -1,7 +1,8 @@
 import { ResponseEntity } from './responseEntity';
 import ChatSharingSettings from './chatSharingSetting';
+import ChatEntityForShare from './chatEntityForShare';
 
-export class ChatEntity {
+export class ChatEntity implements ChatEntityForShare{
     id: string;
     name: string;
     user1: string;
