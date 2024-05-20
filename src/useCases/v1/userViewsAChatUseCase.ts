@@ -40,7 +40,7 @@ export class UserViewsAChatUseCase {
 
         chatViewResponseModel = {
             chatId: chat.id,
-            chatName: chat.name,
+            chatName: "PlaceholderName",
             chatMessages: [],
             error: null
         };
