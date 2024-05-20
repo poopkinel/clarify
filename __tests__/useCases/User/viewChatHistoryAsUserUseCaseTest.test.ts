@@ -101,6 +101,13 @@ class ViewChatHistoryAsUserTest {
                         )
                     );
                 });
+
+                it('should get from gateway.getChatHistoryById a ChatEntityForViewingChatHistory type', async () => {
+                    const chatGatewayStubHistory = this.setupStubChatGateway();
+                    const useCaseWithStubGateway = new ViewChatHistoryAsUserUseCase(this.usecaseOutBoundary, chatGatewayStubHistory);
+                    await useCaseWithStubGateway.executeViewChatHistory(dummyRequestModel);
+                    expect(chatGatewayStubHistory.getChatHistoryById).not.toHaveBeenCalledWith({"prop": "value"});
+                });
             });
 
 
