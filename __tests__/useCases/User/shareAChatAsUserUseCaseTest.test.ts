@@ -9,9 +9,9 @@ class ShareAChatAsUserUseCaseTest {
     private dummyChatId: any = "chatId";
     private dummyUserId: any = "userId";
     private mockSharingSettings: any;
-    private chatGatewayDymmy: any;
+    private chatGatewayDummy: any;
     private dummyEmptyLink: any = "";
-    private mockLink: any = "https://www.clarify.mock/0";
+    private stubLink: any = "https://www.clarify.mock/0";
     private dummyAccess: any = "all";
     private stubSharingSettingsNoErrorMessage: any = "";
     private mockSharingSettingsUserNotAuthorizedErrorMessage: any = "User not authorized to share chat";
@@ -22,10 +22,10 @@ class ShareAChatAsUserUseCaseTest {
         }
         
         this.mockSharingSettings = {
-            getLink: jest.fn().mockReturnValue(this.mockLink)
+            getLink: jest.fn().mockReturnValue(this.stubLink)
         }
         
-        this.chatGatewayDymmy = {
+        this.chatGatewayDummy = {
             getChatById: jest.fn().mockResolvedValue({
                 sharingSettings:
                 {
@@ -55,19 +55,19 @@ class ShareAChatAsUserUseCaseTest {
         }
     }
 
-    setupEmptyDataUseCase = () => {
-        return new ShareChatAsUserUseCase(this.usecaseOutBoundary, this.chatGatewayDymmy)
+    setupStubUseCase = () => {
+        return new ShareChatAsUserUseCase(this.usecaseOutBoundary, this.chatGatewayDummy)
     }
 
     setupUsecaseWithDefaultBoundary = (chatGateway: ChatGatewayToShareAChat) => {
         return new ShareChatAsUserUseCase(this.usecaseOutBoundary, chatGateway)
     }
     
-    setupMockRequest = () => {
+    setupStubRequest = () => {
         return new AttemptShareAChatAsUserRequestModel(this.dummyChatId, this.dummyUserId);
     }
 
-    setupMockGateway = (link: string, canUserShareChat: boolean) => {
+    setupStubGateway = (link: string, canUserShareChat: boolean) => {
         return {
             getChatById: jest.fn().mockResolvedValue({
                 sharingSettings: {
@@ -78,25 +78,31 @@ class ShareAChatAsUserUseCaseTest {
         }
     }
 
+    executeUseCaseWithStubRequestAndGateway = async (chatGateway: ChatGatewayToShareAChat) => {
+        const useCase = this.setupUsecaseWithDefaultBoundary(chatGateway);
+        await useCase.executeShareChat(this.setupStubRequest());
+    }
+
   
     runTests() {
-        describe('Share A Chat As User Use Case', () => {
+        describe('Given an empty data use case and a dummy request', () => {
 
             it('should call sendResultModel on usecaseOutBoundary', async () => {
-                await this.setupEmptyDataUseCase().executeShareChat(this.setupMockRequest());
+                await this.setupStubUseCase().executeShareChat(this.setupStubRequest());
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
             });
             it('should call sendResultModel on usecaseOutBoundary with a result model', async () => {
-                await this.setupEmptyDataUseCase().executeShareChat(this.setupMockRequest());
+                await this.setupStubUseCase().executeShareChat(this.setupStubRequest());
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(this.dummyResultModel);
             });
-        
+        });
+
+        describe('Given a chatGateway with a chat that can be shared', () => {
+            const request = new AttemptShareAChatAsUserRequestModel(this.dummyChatId, this.dummyUserId);
+
             it('should return the sharing options from the chatGateway', async () => {
-                const chatGatewayWithLink: ChatGatewayToShareAChat = this.setupMockGateway(this.mockLink, true);
-        
-                const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(chatGatewayWithLink);
-                const request = new AttemptShareAChatAsUserRequestModel(this.dummyChatId, this.dummyUserId);
-                await shareAChatAsUserUseCase.executeShareChat(request);
+                const chatGatewayStubWithLink: ChatGatewayToShareAChat = this.setupStubGateway(this.stubLink, true);
+                await this.executeUseCaseWithStubRequestAndGateway(chatGatewayStubWithLink);
         
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(new ShareAChatAsUserResultModel(
@@ -109,9 +115,7 @@ class ShareAChatAsUserUseCaseTest {
             });
 
             it('should get chat enitity interface with only sharing relevant data', async () => {
-                const request = this.setupMockRequest();
-                
-                const chat = this.chatGatewayDymmy.getChatById(request.chatId);
+                const chat = this.chatGatewayDummy.getChatById(request.chatId);
                 expect(chat).not.toHaveProperty('name');
                 expect(chat).not.toHaveProperty('user1');
                 expect(chat).not.toHaveProperty('user2');
@@ -120,10 +124,27 @@ class ShareAChatAsUserUseCaseTest {
                 expect(chat).not.toHaveProperty('updatedAt');
             });
 
+            it('should return a valid link', async () => {
+                const canShareChatGateway: ChatGatewayToShareAChat = this.setupStubGateway(this.stubLink, true);
+                await this.executeUseCaseWithStubRequestAndGateway(canShareChatGateway);
+        
+                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
+                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
+                    new ShareAChatAsUserResultModel(
+                        this.dummyChatId,
+                        this.dummyUserId,
+                        this.dummyAccess,
+                        this.stubSharingSettingsNoErrorMessage,
+                        this.stubLink
+                    )
+                );
+            });
+
+        });
+        describe('Given a chatGateway with a chat that can\'t be shared', () => {
             it('on user can\'t share chat, should return appropriate result', async () => {
-                const cantShareChatGateway: ChatGatewayToShareAChat = this.setupMockGateway("RandomLink", false);
-                const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(cantShareChatGateway)
-                await shareAChatAsUserUseCase.executeShareChat(this.setupMockRequest());
+                const cantShareChatGateway: ChatGatewayToShareAChat = this.setupStubGateway("RandomLink", false);
+                await this.executeUseCaseWithStubRequestAndGateway(cantShareChatGateway);
         
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
@@ -136,28 +157,12 @@ class ShareAChatAsUserUseCaseTest {
                     )
                 );
             });
-            
-            it('should return a valid link when authorized to share chat', async () => {
-                const canShareChatGateway: ChatGatewayToShareAChat = this.setupMockGateway(this.mockLink, true);
-                const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(canShareChatGateway)
-                await shareAChatAsUserUseCase.executeShareChat(this.setupMockRequest());
-        
-                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
-                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
-                    new ShareAChatAsUserResultModel(
-                        this.dummyChatId,
-                        this.dummyUserId,
-                        this.dummyAccess,
-                        this.stubSharingSettingsNoErrorMessage,
-                        this.mockLink
-                    )
-                );
-            });
-
+        });
+        describe('Given multiple chats', () => {
             it('should return different links for different chats', async () => {
-                const chatGatewayWithDifferentLink: ChatGatewayToShareAChat = this.setupMockGateway("DifferentLink", true);
+                const chatGatewayWithDifferentLink: ChatGatewayToShareAChat = this.setupStubGateway("DifferentLink", true);
                 const shareAChatAsUserUseCase = this.setupUsecaseWithDefaultBoundary(chatGatewayWithDifferentLink)
-                await shareAChatAsUserUseCase.executeShareChat(this.setupMockRequest());
+                await shareAChatAsUserUseCase.executeShareChat(this.setupStubRequest());
         
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
