@@ -21,8 +21,8 @@ export default class ViewChatHistoryAsUserUseCase implements UsecaseInBoundary<V
         const chats = historyChats.map(chat => {
             return {
                 chatId: chat.id,
-                user1: chat.user1,
-                user2: chat.user2,
+                participator1UserId: chat.participator1UserId,
+                participator2UserId: chat.participator2UserId,
                 responses: chat.responses.map(response => {
                     return {
                         text: response.text,

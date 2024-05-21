@@ -1,13 +1,17 @@
 import { ResponseEntity } from '../responseEntity';
 import ChatSharingSettings from '../chatSharingSetting';
 import ChatEntityForShare from './chatEntityForShare';
-import ChatEntityForUserToBeParticipant from './chatEntityForUserToBeParticipant';
+import ChatEntityForUserToBeParticipator from './chatEntityForUserToBeParticipator';
+import ChatEntityForViewingChatHistory from './chatEntityForViewingChatHistory';
 
-export class ChatEntity implements ChatEntityForShare, ChatEntityForUserToBeParticipant{
+export class ChatEntity implements ChatEntityForShare, 
+                                    ChatEntityForUserToBeParticipator,
+                                    ChatEntityForViewingChatHistory{
     id: string;
     name: string;
-    user1: string;
-    user2: string;
+    creatorUserId: string;
+    participator1UserId: string;
+    participator2UserId: string;
     responses: ResponseEntity[];
     createdAt: Date;
     updatedAt: Date;
@@ -30,8 +34,9 @@ export class ChatEntity implements ChatEntityForShare, ChatEntityForUserToBePart
     ) {
         this.id = id;
         this.name = name;
-        this.user1 = user1;
-        this.user2 = user2;
+        this.creatorUserId = user1;
+        this.participator1UserId = user1;
+        this.participator2UserId = user2;
         this.responses = [];
         this.createdAt = new Date();
         this.updatedAt = new Date();

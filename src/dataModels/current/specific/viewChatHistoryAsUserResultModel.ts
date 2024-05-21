@@ -8,8 +8,8 @@ type Response = {
 
 type ChatHistory = { 
     chatId: string,
-    user1: string,
-    user2: string,
+    participator1UserId: string,
+    participator2UserId: string,
     responses: {
         text: string,
         responseId: string,

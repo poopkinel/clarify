@@ -10,39 +10,39 @@ const states = {
 }
 
 const events = {
-    participant1Says: { name: 'participant1Says' },
-    participant1UnderstandsYes: { name: 'participant1UnderstandsYes' },
-    participant1UnderstandsNo: { name: 'participant1UnderstandsNo' },
-    participant1Paraphrases: { name: 'participant1Paraphrases' },
-    participant1ConfirmParaphraseYes: { name: 'participant1ConfirmParaphraseYes' },
-    participant1ConfirmParaphraseNo: { name: 'participant1ConfirmParaphraseNo' },
-    participant1Questions: { name: 'participant1Questions' },
-    participant2Says: { name: 'participant2Says' },
-    participant2UnderstandsYes: { name: 'participant2UnderstandsYes' },
-    participant2UnderstandsNo: { name: 'participant2UnderstandsNo' },
-    participant2Paraphrases: { name: 'participant2Paraphrases' },
-    participant2ConfirmParaphraseYes: { name: 'participant2ConfirmParaphraseYes' },
-    participant2ConfirmParaphraseNo: { name: 'participant2ConfirmParaphraseNo' },
-    participant2Questions: { name: 'participant2Questions' }
+    Participator1Says: { name: 'Participator1Says' },
+    Participator1UnderstandsYes: { name: 'Participator1UnderstandsYes' },
+    Participator1UnderstandsNo: { name: 'Participator1UnderstandsNo' },
+    Participator1Paraphrases: { name: 'Participator1Paraphrases' },
+    Participator1ConfirmParaphraseYes: { name: 'Participator1ConfirmParaphraseYes' },
+    Participator1ConfirmParaphraseNo: { name: 'Participator1ConfirmParaphraseNo' },
+    Participator1Questions: { name: 'Participator1Questions' },
+    Participator2Says: { name: 'Participator2Says' },
+    Participator2UnderstandsYes: { name: 'Participator2UnderstandsYes' },
+    Participator2UnderstandsNo: { name: 'Participator2UnderstandsNo' },
+    Participator2Paraphrases: { name: 'Participator2Paraphrases' },
+    Participator2ConfirmParaphraseYes: { name: 'Participator2ConfirmParaphraseYes' },
+    Participator2ConfirmParaphraseNo: { name: 'Participator2ConfirmParaphraseNo' },
+    Participator2Questions: { name: 'Participator2Questions' }
 };
 
 const transitions = [
-    { from: ['waiting', 'openSay'], to: ['closedUnderstand', 'waiting'], event: 'participant2Says' },
-    { from: ['closedUnderstand', 'waiting'], to: ['openParaphrase', 'waiting'], event: 'participant1UnderstandsYes' },
-    { from: ['closedUnderstand', 'waiting'], to: ['openQuestion', 'waiting'], event: 'participant1UnderstandsNo' },
-    { from: ['openParaphrase', 'waiting'], to: ['waiting', 'closedConfirmParaphrase'], event: 'participant1Paraphrases' },
-    { from: ['waiting', 'closedConfirmParaphrase'], to: ['openSay', 'waiting'], event: 'participant2ConfirmParaphraseYes' },
-    { from: ['waiting', 'closedConfirmParaphrase'], to: ['waiting', 'openSay'], event: 'participant2ConfirmParaphraseNo' },
-    { from: ['openQuestion', 'waiting'], to: ['waiting', 'openSay'], event: 'participant1Questions' },
-    { from: ['openSay', 'waiting'], to: ['waiting', 'closedUnderstand'], event: 'participant1Says' },
+    { from: ['waiting', 'openSay'], to: ['closedUnderstand', 'waiting'], event: 'Participator2Says' },
+    { from: ['closedUnderstand', 'waiting'], to: ['openParaphrase', 'waiting'], event: 'Participator1UnderstandsYes' },
+    { from: ['closedUnderstand', 'waiting'], to: ['openQuestion', 'waiting'], event: 'Participator1UnderstandsNo' },
+    { from: ['openParaphrase', 'waiting'], to: ['waiting', 'closedConfirmParaphrase'], event: 'Participator1Paraphrases' },
+    { from: ['waiting', 'closedConfirmParaphrase'], to: ['openSay', 'waiting'], event: 'Participator2ConfirmParaphraseYes' },
+    { from: ['waiting', 'closedConfirmParaphrase'], to: ['waiting', 'openSay'], event: 'Participator2ConfirmParaphraseNo' },
+    { from: ['openQuestion', 'waiting'], to: ['waiting', 'openSay'], event: 'Participator1Questions' },
+    { from: ['openSay', 'waiting'], to: ['waiting', 'closedUnderstand'], event: 'Participator1Says' },
 
-    { from: ['openSay', 'waiting'], to: ['waiting', 'closedUnderstand'], event: 'participant1Says'},
-    { from: ['waiting', 'closedUnderstand'], to: ['waiting', 'openParaphrase'], event: 'participant2UnderstandsYes' },
-    { from: ['waiting', 'closedUnderstand'], to: ['waiting', 'openQuestion'], event: 'participant2UnderstandsNo' },
-    { from: ['waiting', 'openParaphrase'], to: ['closedConfirmParaphrase', 'waiting'], event: 'participant2Paraphrases' },
-    { from: ['closedConfirmParaphrase', 'waiting'], to: ['waiting', 'openSay'], event: 'participant1ConfirmParaphraseYes' },
-    { from: ['closedConfirmParaphrase', 'waiting'], to: ['openSay', 'waiting'], event: 'participant1ConfirmParaphraseNo' },
-    { from: ['waiting', 'openQuestion'], to: ['openSay', 'waiting'], event: 'participant2Questions' }
+    { from: ['openSay', 'waiting'], to: ['waiting', 'closedUnderstand'], event: 'Participator1Says'},
+    { from: ['waiting', 'closedUnderstand'], to: ['waiting', 'openParaphrase'], event: 'Participator2UnderstandsYes' },
+    { from: ['waiting', 'closedUnderstand'], to: ['waiting', 'openQuestion'], event: 'Participator2UnderstandsNo' },
+    { from: ['waiting', 'openParaphrase'], to: ['closedConfirmParaphrase', 'waiting'], event: 'Participator2Paraphrases' },
+    { from: ['closedConfirmParaphrase', 'waiting'], to: ['waiting', 'openSay'], event: 'Participator1ConfirmParaphraseYes' },
+    { from: ['closedConfirmParaphrase', 'waiting'], to: ['openSay', 'waiting'], event: 'Participator1ConfirmParaphraseNo' },
+    { from: ['waiting', 'openQuestion'], to: ['openSay', 'waiting'], event: 'Participator2Questions' }
 ];
 
 module.exports = {
