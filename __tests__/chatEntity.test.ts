@@ -1,7 +1,7 @@
 // A test suite for the chat entity
 
 import { describe } from 'node:test';
-import { ChatEntity } from '../src/entities/chatEntity';
+import { ChatEntity } from '../src/entities/chatEntity/chatEntity';
 import ChatSharingSettings from '../src/entities/chatSharingSetting';
 
 describe('ChatEntity', () => {

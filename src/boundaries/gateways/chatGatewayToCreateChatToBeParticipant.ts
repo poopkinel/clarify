@@ -1,8 +1,7 @@
+import CreateAChatAsUserToBeParticipantResultModel from "../../dataModels/current/specific/createAChatAsUserToBeParticipantResultModel";
+import ChatEntityForUserToBeParticipant from "../../entities/chatEntity/chatEntityForUserToBeParticipant";
 import ChatGateway from "./chatGateway";
 
 export default interface ChatGatewayToCreateChatAsParticipant extends ChatGateway {
-    createChatToBeParticipant(chatId: string, userId: string): Promise<{
-        success: boolean;
-        error: string;
-    }>;
+    createChatToBeParticipant(userId: string, chatName: string): Promise<ChatEntityForUserToBeParticipant>;
 };

@@ -1,4 +1,4 @@
-import ChatEntityForShare from "../../entities/chatEntityForShare";
+import ChatEntityForShare from "../../entities/chatEntity/chatEntityForShare";
 import ChatGateway from "./chatGateway";
 
 export default interface ChatGatewayToShareAChat extends ChatGateway {

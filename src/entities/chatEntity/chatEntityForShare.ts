@@ -1,4 +1,4 @@
-import ChatSharingSetting from "./chatSharingSetting";
+import ChatSharingSetting from "../chatSharingSetting";
 
 export default interface ChatEntityForShare {
     id: string;

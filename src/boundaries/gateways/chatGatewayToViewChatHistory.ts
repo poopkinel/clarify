@@ -1,4 +1,4 @@
-import { ChatEntity } from "../../entities/chatEntity";
+import { ChatEntity } from "../../entities/chatEntity/chatEntity";
 import ChatGateway from "./chatGateway";
 
 export default interface ChatGatewayToViewChatHistory extends ChatGateway{

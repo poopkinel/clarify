@@ -1,5 +1,5 @@
 import ChatGatewayToShareAChat from "../../../boundaries/gateways/chatGatewayToShareAChat";
-import { ChatEntity } from "../../../entities/chatEntity";
+import { ChatEntity } from "../../../entities/chatEntity/chatEntity";
 
 var chat0 = new ChatEntity(
     "0",

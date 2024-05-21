@@ -3,8 +3,8 @@
 import ChatGatewayToShareAChat from "../../boundaries/gateways/chatGatewayToShareAChat";
 import RequestModel from "../../dataModels/current/general/requestModel";
 import RetrieveAChatRequestModel from "../../dataModels/v1/retrieveAChatRequestModel";
-import { ChatEntity } from "../../entities/chatEntity";
-import ChatEntityForShare from "../../entities/chatEntityForShare";
+import { ChatEntity } from "../../entities/chatEntity/chatEntity";
+import ChatEntityForShare from "../../entities/chatEntity/chatEntityForShare";
 
 export class RetrieveAChatUseCase {
     private chatGateway: ChatGatewayToShareAChat;

@@ -1,8 +1,9 @@
-import { ResponseEntity } from './responseEntity';
-import ChatSharingSettings from './chatSharingSetting';
+import { ResponseEntity } from '../responseEntity';
+import ChatSharingSettings from '../chatSharingSetting';
 import ChatEntityForShare from './chatEntityForShare';
+import ChatEntityForUserToBeParticipant from './chatEntityForUserToBeParticipant';
 
-export class ChatEntity implements ChatEntityForShare{
+export class ChatEntity implements ChatEntityForShare, ChatEntityForUserToBeParticipant{
     id: string;
     name: string;
     user1: string;
@@ -28,6 +29,10 @@ export class ChatEntity implements ChatEntityForShare{
         this.createdAt = new Date();
         this.updatedAt = new Date();
         this.sharingSettings = sharingSettings;
+    }
+
+    getLink(): Promise<string> {
+        return this.sharingSettings.getLink();
     }
 
     ValidateLink(link: string): boolean {
