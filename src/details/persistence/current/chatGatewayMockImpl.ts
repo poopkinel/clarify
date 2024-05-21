@@ -16,6 +16,7 @@ export default class ChatGatewayMockImpl implements ChatGatewayToShareAChat {
                 'Test Chat',
                 'Test User 1',
                 'Test User 2',
+                true
                 )
             );
         });

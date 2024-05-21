@@ -6,6 +6,7 @@ var chat0 = new ChatEntity(
     "chatName0",
     "user1",
     "user2",
+    true
 );
 
 var chat1 = new ChatEntity(
@@ -13,6 +14,7 @@ var chat1 = new ChatEntity(
     "chatName1",
     "user1",
     "user2",
+    true
 );
 
 var chat2 = new ChatEntity(
@@ -20,6 +22,7 @@ var chat2 = new ChatEntity(
     "chatName2",
     "user1",
     "user2",
+    true
 );
 
 export class ChatGatewayMockImpl implements ChatGatewayToShareAChat {

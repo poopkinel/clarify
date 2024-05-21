@@ -72,7 +72,8 @@ export class ChatGatewaySqliteImpl implements ChatGatewayToShareAChat {
                     row.id,
                     row.name,
                     row.user1,
-                    row.user2
+                    row.user2,
+                    true
                 ));
             });
 
@@ -96,6 +97,7 @@ export class ChatGatewaySqliteImpl implements ChatGatewayToShareAChat {
                 "chatName",
                 "user1",
                 "user2",
+                true
             );
         } else {
             return new ChatEntity(
@@ -103,6 +105,7 @@ export class ChatGatewaySqliteImpl implements ChatGatewayToShareAChat {
                 "chatName1",
                 "user1",
                 "user2",
+                true
             );
         }
     }
