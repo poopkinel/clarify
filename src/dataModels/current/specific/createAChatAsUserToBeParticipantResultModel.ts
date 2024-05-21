@@ -4,12 +4,20 @@ export default class CreateAChatAsUserToBeParticipantResultModel implements Resu
     createdChatId: string;
     otherParticipantLink: string;
     viewerLink: string;
-    // success: boolean;
-    // error: string;
+    success: boolean;
+    error: string;
 
-    constructor(createdChatId: string, otherParticipantLink: string, viewerLink: string) {
+    constructor(
+        createdChatId: string, 
+        otherParticipantLink: string, 
+        viewerLink: string, 
+        success: boolean, 
+        error: string = ''
+    ) {
         this.createdChatId = createdChatId;
         this.otherParticipantLink = otherParticipantLink;
         this.viewerLink = viewerLink;
+        this.success = success;
+        this.error = error;
     }
 }

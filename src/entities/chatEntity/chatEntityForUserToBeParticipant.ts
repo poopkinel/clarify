@@ -9,6 +9,8 @@ export default interface ChatEntityForUserToBeParticipant {
     responses: ResponseEntity[];
     // createdAt: Date;
     // updatedAt: Date;
+    createSuccess: boolean;
+    createError: string;
 
     sharingSettings: ChatSharingSettings;
 

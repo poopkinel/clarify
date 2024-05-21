@@ -15,10 +15,24 @@ export default class CreateAChatAsUserToBeParticipantUseCase {
 
     async executeCreateChatToBeParticipant(requestModel: CreateAChatAsUserToBeParticipantRequestModel) {
         const chat = await this.chatGateway.createChatToBeParticipant(requestModel.chatName, requestModel.userId);
-        this.usecaseOutBoundary.sendResultModel(new CreateAChatAsUserToBeParticipantResultModel(
-            chat.id,
-            await chat.sharingSettings.getLink(),
-            await chat.sharingSettings.getLink()
-        ));
+        let result;
+        if (chat.createSuccess) {
+            result = new CreateAChatAsUserToBeParticipantResultModel(
+                chat.id,
+                await chat.sharingSettings.getLink(),
+                await chat.sharingSettings.getLink(),
+                true,
+                ''
+            );
+        } else {
+            result = new CreateAChatAsUserToBeParticipantResultModel(
+                '',
+                '',
+                '',
+                false,
+                'Error creating chat'
+            );
+        }
+        this.usecaseOutBoundary.sendResultModel(result);
     }
 }

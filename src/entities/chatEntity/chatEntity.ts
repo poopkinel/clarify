@@ -12,6 +12,9 @@ export class ChatEntity implements ChatEntityForShare, ChatEntityForUserToBePart
     createdAt: Date;
     updatedAt: Date;
 
+    createSuccess: boolean;
+    createError: string;
+
     sharingSettings: ChatSharingSettings;
 
     constructor(
@@ -19,7 +22,11 @@ export class ChatEntity implements ChatEntityForShare, ChatEntityForUserToBePart
         name: string, 
         user1: string, 
         user2: string,
-        sharingSettings: ChatSharingSettings = new ChatSharingSettings(id, [])
+
+        createSuccess: boolean,
+        createError: string = '',
+
+        sharingSettings: ChatSharingSettings = new ChatSharingSettings(id, []),
     ) {
         this.id = id;
         this.name = name;
@@ -28,6 +35,10 @@ export class ChatEntity implements ChatEntityForShare, ChatEntityForUserToBePart
         this.responses = [];
         this.createdAt = new Date();
         this.updatedAt = new Date();
+
+        this.createSuccess = createSuccess;
+        this.createError = createError;
+
         this.sharingSettings = sharingSettings;
     }
 
