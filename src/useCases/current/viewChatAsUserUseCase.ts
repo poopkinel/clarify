@@ -17,7 +17,7 @@ export default class ViewChatAsUserUseCase {
 
     async viewChatAsUser(requestModel: ViewChatRequestModel) {
         const chat = await this.chatGatewayToViewChatHistory.getChatById(requestModel.chatId);
-        await this.usecaseOutboundary.sendResultModel(new ViewChatResultModel(
+        const result = new ViewChatResultModel(
             chat.id,
             chat.participator1UserId,
             chat.participator2UserId,
@@ -30,6 +30,7 @@ export default class ViewChatAsUserUseCase {
                     responseType: response.type
                 }
             })
-        ));
+        )
+        await this.usecaseOutboundary.sendResultModel(result);
     }
 }
