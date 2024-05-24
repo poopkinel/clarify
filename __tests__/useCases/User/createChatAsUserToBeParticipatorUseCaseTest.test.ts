@@ -1,10 +1,10 @@
-import CreateAChatAsUserToBeParticipatorUseCase from '../../../src/useCases/current/createAChatAsUserToBeParticipatorUseCase'
+import CreateChatAsUserToBeParticipatorUseCase from '../../../src/useCases/current/createChatAsUserToBeParticipatorUseCase'
 import ChatGatewayToCreateChatToBeParticipator from '../../../src/boundaries/gateways/chatGatewayToCreateChatToBeParticipator'
 import UsecaseOutBoundary from '../../../src/boundaries/useCaseBoundaries/usecaseOutBoundary';
-import CreateAChatAsUserToBeParticipatorResultModel from '../../../src/dataModels/current/specific/createAChatAsUserToBeParticipatorResultModel';
+import CreateChatAsUserToBeParticipatorResultModel from '../../../src/dataModels/current/specific/createChatAsUserToBeParticipatorResultModel';
 
-class CreateAChatAsUserToBeParticipatorUseCaseTest {
-    private usecaseOutBoundarySpy: UsecaseOutBoundary<CreateAChatAsUserToBeParticipatorResultModel> = {
+class CreateChatAsUserToBeParticipatorUseCaseTest {
+    private usecaseOutBoundarySpy: UsecaseOutBoundary<CreateChatAsUserToBeParticipatorResultModel> = {
         sendResultModel: jest.fn()
     };
     
@@ -32,7 +32,7 @@ class CreateAChatAsUserToBeParticipatorUseCaseTest {
             const chatGatewayDummy: ChatGatewayToCreateChatToBeParticipator = {
                 createChatToBeParticipator: jest.fn().mockResolvedValue(dummyChatEntity)
             }
-            const dummyUseCase = new CreateAChatAsUserToBeParticipatorUseCase(chatGatewayDummy, this.usecaseOutBoundarySpy);
+            const dummyUseCase = new CreateChatAsUserToBeParticipatorUseCase(chatGatewayDummy, this.usecaseOutBoundarySpy);
 
             it('use case should be defined', async () => {
                 expect(dummyUseCase).toBeDefined();
@@ -54,10 +54,10 @@ class CreateAChatAsUserToBeParticipatorUseCaseTest {
                     const dummyCreatedChatId = "";
                     const dummySuccess = true;
                     const dummyError = '';
-                    it('should call usecaseOutBoundary.sendResultModel with a CreateAChatAsUserToBeParticipatorResultModel', async () => {
+                    it('should call usecaseOutBoundary.sendResultModel with a CreateChatAsUserToBeParticipatorResultModel', async () => {
                         await dummyUseCase.executeCreateChatToBeParticipator(dummyRequestModel);
 
-                        const dummyResultModel = new CreateAChatAsUserToBeParticipatorResultModel(
+                        const dummyResultModel = new CreateChatAsUserToBeParticipatorResultModel(
                             dummyUserId, dummySuccess, dummyCreatedChatId, dummyOtherParticipatorLink, dummyViewerLink, dummyError);
 
                         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(dummyResultModel);
@@ -103,7 +103,7 @@ class CreateAChatAsUserToBeParticipatorUseCaseTest {
                     chatName: stubChatName
                 }
 
-                const stubUseCase = new CreateAChatAsUserToBeParticipatorUseCase(mockChatGateway, this.usecaseOutBoundarySpy);
+                const stubUseCase = new CreateChatAsUserToBeParticipatorUseCase(mockChatGateway, this.usecaseOutBoundarySpy);
                 
                 describe('Given a stub chatName and userId in request model', () => {
                     it('should call chatGateway.createChatToBeParticipator with chatName and userId', async () => {
@@ -120,7 +120,7 @@ class CreateAChatAsUserToBeParticipatorUseCaseTest {
                             await stubUseCase.executeCreateChatToBeParticipator(stubRequestModel);
                             
                             expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(
-                                new CreateAChatAsUserToBeParticipatorResultModel(
+                                new CreateChatAsUserToBeParticipatorResultModel(
                                     stubUserId,
                                     stubSuccess,
                                     stubCreatedChatIdSuccess, 
@@ -138,7 +138,7 @@ class CreateAChatAsUserToBeParticipatorUseCaseTest {
                             await stubUseCase.executeCreateChatToBeParticipator(stubRequestModel);
                             
                             expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(
-                                new CreateAChatAsUserToBeParticipatorResultModel(
+                                new CreateChatAsUserToBeParticipatorResultModel(
                                     stubUserId,
                                     stubFail,
                                     stubCreatedChatIdFail,
@@ -185,6 +185,6 @@ class CreateAChatAsUserToBeParticipatorUseCaseTest {
     }
 }
 
-const usecaseTest = new CreateAChatAsUserToBeParticipatorUseCaseTest();
+const usecaseTest = new CreateChatAsUserToBeParticipatorUseCaseTest();
 usecaseTest.setup();
 usecaseTest.runTests();

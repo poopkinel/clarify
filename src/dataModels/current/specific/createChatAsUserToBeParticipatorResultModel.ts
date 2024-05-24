@@ -1,6 +1,6 @@
 import ResultModel from "../general/resultModel";
 
-export default class CreateAChatAsUserToBeParticipatorResultModel implements ResultModel {
+export default class CreateChatAsUserToBeParticipatorResultModel implements ResultModel {
     userId: string;
     success: boolean;
     createdChatId: string;

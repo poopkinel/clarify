@@ -1,23 +1,23 @@
 import ChatGatewayToCreateChatToBeParticipator from '../../boundaries/gateways/chatGatewayToCreateChatToBeParticipator';
 import UsecaseOutBoundary from '../../boundaries/useCaseBoundaries/usecaseOutBoundary';
-import CreateAChatAsUserToBeParticipatorRequestModel from '../../dataModels/current/specific/createAChatAsUserToBeParticipatorRequestModel';
-import CreateAChatAsUserToBeParticipatorResultModel from '../../dataModels/current/specific/createAChatAsUserToBeParticipatorResultModel';
+import CreateChatAsUserToBeParticipatorRequestModel from '../../dataModels/current/specific/createChatAsUserToBeParticipatorRequestModel';
+import CreateChatAsUserToBeParticipatorResultModel from '../../dataModels/current/specific/createChatAsUserToBeParticipatorResultModel';
 
 export default class CreateAChatAsUserToBeParticipatorUseCase {
     chatGateway: ChatGatewayToCreateChatToBeParticipator;
-    usecaseOutBoundary: UsecaseOutBoundary<CreateAChatAsUserToBeParticipatorResultModel>;
+    usecaseOutBoundary: UsecaseOutBoundary<CreateChatAsUserToBeParticipatorResultModel>;
 
     constructor(chatGateway: ChatGatewayToCreateChatToBeParticipator, 
-        usecaseOutBoundary: UsecaseOutBoundary<CreateAChatAsUserToBeParticipatorResultModel>) {
+        usecaseOutBoundary: UsecaseOutBoundary<CreateChatAsUserToBeParticipatorResultModel>) {
         this.chatGateway = chatGateway;
         this.usecaseOutBoundary = usecaseOutBoundary;
     }
 
-    async executeCreateChatToBeParticipator(requestModel: CreateAChatAsUserToBeParticipatorRequestModel) {
+    async executeCreateChatToBeParticipator(requestModel: CreateChatAsUserToBeParticipatorRequestModel) {
         const chat = await this.chatGateway.createChatToBeParticipator(requestModel.chatName, requestModel.userId);
         let result;
         if (chat.createSuccess) {
-            result = new CreateAChatAsUserToBeParticipatorResultModel(
+            result = new CreateChatAsUserToBeParticipatorResultModel(
                 chat.creatorUserId,
                 true,
                 chat.id,
@@ -26,7 +26,7 @@ export default class CreateAChatAsUserToBeParticipatorUseCase {
                 ''
             );
         } else {
-            result = new CreateAChatAsUserToBeParticipatorResultModel(
+            result = new CreateChatAsUserToBeParticipatorResultModel(
                 chat.creatorUserId,
                 false,
                 '',

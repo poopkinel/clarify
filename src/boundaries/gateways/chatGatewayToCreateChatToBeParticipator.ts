@@ -1,4 +1,4 @@
-import CreateAChatAsUserToBeParticipatorResultModel from "../../dataModels/current/specific/createAChatAsUserToBeParticipatorResultModel";
+import CreateChatAsUserToBeParticipatorResultModel from "../../dataModels/current/specific/createChatAsUserToBeParticipatorResultModel";
 import ChatEntityForUserToBeParticipator from "../../entities/chatEntity/chatEntityForUserToBeParticipator";
 import ChatGateway from "./chatGateway";
 

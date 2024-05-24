@@ -1,6 +1,6 @@
 import ResultModel from "../general/resultModel";
 
-export default class ShareAChatAsUserResultModel implements ResultModel {
+export default class ShareChatAsUserResultModel implements ResultModel {
     chatId: string;
     userId: string;
     access: string;

@@ -1,4 +1,4 @@
-import ChatSharingSettings from '../src/entities/chatSharingSetting';
+import ChatSharingSettings from '../../src/entities/chatSharingSetting';
 
 const mockChatId1 = '1';
 const mockChatId2 = '2';

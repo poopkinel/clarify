@@ -8,7 +8,7 @@ const { ChatGatewaySqliteImpl } = require('../src/details/persistence/v1/chatGat
 const { RetrieveAChatUseCase } = require('../src/useCases/retrieveAChatUseCase');
 const { ChatEntity } = require('../src/entities/chatEntity');
 
-describe('createUser', () => {
+describe.skip('createUser', () => {
     it.skip('should create a new user', async () => {
         const gateway = new UserGatewayFirebaseImpl();
         const username = `test${Date.now()}`;

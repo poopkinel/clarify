@@ -1,4 +1,4 @@
-import ChatGatewayToShareAChat from "../../../boundaries/gateways/chatGatewayToShareAChat";
+import ChatGatewayToShareChat from "../../../boundaries/gateways/chatGatewayToShareChat";
 import { ChatEntity } from "../../../entities/chatEntity/chatEntity";
 
 var chat0 = new ChatEntity(
@@ -25,7 +25,7 @@ var chat2 = new ChatEntity(
     true
 );
 
-export class ChatGatewayMockImpl implements ChatGatewayToShareAChat {
+export class ChatGatewayMockImpl implements ChatGatewayToShareChat {
     constructor() {
     }
 

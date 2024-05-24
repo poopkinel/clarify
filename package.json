@@ -5,6 +5,7 @@
   "main": "src/app.js",
   "scripts": {
     "test": "jest",
+    "test:unit": "jest --testPathPattern=__tests__/",
     "build": "tsc",
     "clean": "rimraf dist",
     "start": "nodemon",

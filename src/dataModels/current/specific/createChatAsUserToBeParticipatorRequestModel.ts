@@ -1,6 +1,6 @@
 import RequestModel from "../general/requestModel";
 
-export default class CreateAChatAsUserToBeParticipatorRequestModel implements RequestModel {
+export default class CreateChatAsUserToBeParticipatorRequestModel implements RequestModel {
     userId: string;
     chatName: string;
 

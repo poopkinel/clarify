@@ -1,7 +1,7 @@
 import ChatGatewayToViewChat from "../../../src/boundaries/gateways/chatGatewayToViewChat";
 import ViewChatAsUserUseCase from "../../../src/useCases/current/viewChatAsUserUseCase";
 
-class ViewAChatAsUserUseCaseTest {
+class ViewChatAsUserUseCaseTest {
     runTests() {
         describe('Given a spy usecaseOutBoundary', () => {
             const usecaseOutBoundarySpy = {
@@ -116,5 +116,5 @@ class ViewAChatAsUserUseCaseTest {
     }
 };
     
-const viewAChatAsUserUseCaseTest = new ViewAChatAsUserUseCaseTest();
-viewAChatAsUserUseCaseTest.runTests();
+const viewChatAsUserUseCaseTest = new ViewChatAsUserUseCaseTest();
+viewChatAsUserUseCaseTest.runTests();
