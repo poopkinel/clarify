@@ -1,5 +1,5 @@
 import { UserGateway } from "../../boundaries/gateways/userGateway";
-import { User } from "../../entities/userEntity";
+import { UserEntity } from "../../entities/userEntity/userEntity";
 
 export class DeleteUserUseCase {
     userGateway: UserGateway;
@@ -8,7 +8,7 @@ export class DeleteUserUseCase {
         this.userGateway = userGateway;
     }
 
-    async execute(user: User) : Promise<void> {
+    async execute(user: UserEntity) : Promise<void> {
         await this.userGateway.deleteUser(user);
     }
 }

@@ -4,7 +4,7 @@ import { UserGateway } from "../../boundaries/gateways/userGateway";
 import WebToUsecaseBoundary from "../../boundaries/web/webToUsecaseBoundary";
 import ResultModel from "../../dataModels/current/general/resultModel";
 import { UserRequestModel } from "../../dataModels/v1/userRequestModel";
-import { User } from "../../entities/userEntity";
+import { UserEntity } from "../../entities/userEntity/userEntity";
 import RequestModel from "../../dataModels/current/general/requestModel";
 
 export class CreateANewUserUseCase implements WebToUsecaseBoundary {
@@ -18,12 +18,12 @@ export class CreateANewUserUseCase implements WebToUsecaseBoundary {
         throw new Error("Method not implemented.");
     }
 
-    async execute(userModel: UserRequestModel) : Promise<User | undefined> {
+    async execute(userModel: UserRequestModel) : Promise<UserEntity | undefined> {
         const model = await this.userGateway.createUser(userModel);
         if (model === undefined) {
             return undefined;
         }
-        const user = new User(
+        const user = new UserEntity(
             model.id,
             model.username,
             model.password

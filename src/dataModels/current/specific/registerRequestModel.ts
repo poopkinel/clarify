@@ -1,0 +1,11 @@
+import RequestModel from "../general/requestModel";
+
+export default class RegisterRequestModel implements RequestModel {
+    username: string;
+    password: string;
+
+    constructor(username: string, password: string) {
+        this.username = username;
+        this.password = password;
+    }
+}

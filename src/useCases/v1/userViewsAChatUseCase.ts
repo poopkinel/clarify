@@ -2,7 +2,7 @@
 
 import { UserGateway } from "../../boundaries/gateways/userGateway";
 import ChatGatewayToShareChat from "../../boundaries/gateways/chatGatewayToShareChat";
-import { User } from "../../entities/userEntity";
+import { UserEntity } from "../../entities/userEntity/userEntity";
 import { ChatViewRequestModel } from "../../dataModels/v1/chatViewRequestModel";
 import { ChatViewResponseModel } from "../../dataModels/v1/chatViewResponseModel";
 
@@ -16,7 +16,7 @@ export class UserViewsAChatUseCase {
     }
 
     async execute(chatViewModel: ChatViewRequestModel) : Promise<ChatViewResponseModel> {
-        let user: User | undefined;
+        let user: UserEntity | undefined;
         try {
             user = await this.userGateway.getUserById(chatViewModel.userId);
         } catch (error) {

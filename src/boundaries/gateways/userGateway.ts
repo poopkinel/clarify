@@ -1,11 +1,11 @@
-import { User } from "../../entities/userEntity";
-import { UserRequestModel } from "../../dataModels/v1/userRequestModel";
-import { UserResponseModel } from "../../dataModels/v1/userResponseModel";
+import { UserEntity } from "../../entities/userEntity/userEntity";
+import UserGatewayToRegisterUser from "./userGatewayToRegisterUser";
+import UserGatewayCreateUserResultModel from "../../dataModels/current/specific/userGatewayCreateUserResultModel";
 
-export interface UserGateway {
-    createUser(userModel: UserRequestModel) : Promise<User | undefined>;
-    getUserById(id: string): Promise<User>;
-    getUserByUsername(username: string): Promise<User>;
-    updateUser(user: User): Promise<User>;
-    deleteUser(user: User): Promise<void>;
+export interface UserGateway extends UserGatewayToRegisterUser {
+    createUser(username: string, password: string) : Promise<UserGatewayCreateUserResultModel>;
+    getUserById(id: string): Promise<UserEntity>;
+    getUserByUsername(username: string): Promise<UserEntity>;
+    updateUser(user: UserEntity): Promise<UserEntity>;
+    deleteUser(user: UserEntity): Promise<void>;
 }

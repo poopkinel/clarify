@@ -1,5 +1,5 @@
 import { UserGateway } from "../../../boundaries/gateways/userGateway";
-import { User } from "../../../entities/userEntity";
+import { UserEntity } from "../../../entities/userEntity/userEntity";
 import { UserRequestModel } from "../../../dataModels/v1/userRequestModel";
 
 const admin = require("firebase-admin");
@@ -23,7 +23,7 @@ export class UserGatewayFirebaseImpl implements UserGateway {
         }
     }
 
-    async createUser(userModel: UserRequestModel): Promise<User | undefined> {
+    async createUser(userModel: UserRequestModel): Promise<UserEntity | undefined> {
         const adjustedUsername = this.adjustUsername(userModel.username);
         let user;
 
@@ -37,7 +37,7 @@ export class UserGatewayFirebaseImpl implements UserGateway {
             }
         )
         .then((userRecord: any) => {
-            user = new User(
+            user = new UserEntity(
                 userRecord.uid,
                 userModel.username,
                 userRecord.password
@@ -49,10 +49,10 @@ export class UserGatewayFirebaseImpl implements UserGateway {
         
         return user;
     }
-    async getUserById(id: string): Promise<User> {
+    async getUserById(id: string): Promise<UserEntity> {
         try {
             const userRecord = await auth.getUser(id);
-            return new User(
+            return new UserEntity(
                 userRecord.uid,
                 userRecord.email,
                 userRecord.password
@@ -61,13 +61,13 @@ export class UserGatewayFirebaseImpl implements UserGateway {
             throw new Error("User not found");
         }
     }
-    async getUserByUsername(username: string): Promise<User> {
+    async getUserByUsername(username: string): Promise<UserEntity> {
         throw new Error("Method not implemented.");
     }   
-    async updateUser(user: User): Promise<User> {
+    async updateUser(user: UserEntity): Promise<UserEntity> {
         throw new Error("Method not implemented.");
     }
-    async deleteUser(user: User): Promise<void> {
+    async deleteUser(user: UserEntity): Promise<void> {
         const adjustedUsername = this.adjustUsername(user.username);
 
         await auth.getUserByEmail(adjustedUsername)
