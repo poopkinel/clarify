@@ -21,6 +21,7 @@ export class ChatEntity implements ChatEntityForShare,
     createSuccess: boolean;
     createError: string;
 
+    access: string;
     sharingSettings: ChatSharingSettings;
 
     constructor(
@@ -32,6 +33,7 @@ export class ChatEntity implements ChatEntityForShare,
         createSuccess: boolean,
         createError: string = '',
 
+        access: string = '',
         sharingSettings: ChatSharingSettings = new ChatSharingSettings(id, []),
     ) {
         this.id = id;
@@ -46,8 +48,10 @@ export class ChatEntity implements ChatEntityForShare,
         this.createSuccess = createSuccess;
         this.createError = createError;
 
+        this.access = access;
         this.sharingSettings = sharingSettings;
     }
+
 
     getLink(): Promise<string> {
         return this.sharingSettings.getLink();

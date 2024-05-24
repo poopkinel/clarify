@@ -6,6 +6,5 @@ export default interface ChatEntityForViewingChat {
     participator1UserId: string;
     participator2UserId: string;
     access: string;
-    error: string;
     responses: ResponseEntity[];
 }
