@@ -3,8 +3,6 @@ import ViewChatHistoryAsUserUseCase from "../../../src/useCases/current/viewChat
 import ViewChatHistoryAsUserResultModel from "../../../src/dataModels/current/specific/viewChatHistoryAsUserResultModel";
 import ViewChatHistoryAsUserRequestModel from "../../../src/dataModels/current/specific/viewChatHistoryAsUserRequestModel";
 import { ResponseType } from "../../../src/entities/responseEntity";
-import { ChatEntity } from "../../../src/entities/chatEntity/chatEntity";
-import ChatEntityForViewingChatHistory from "../../../src/entities/chatEntity/chatEntityForViewingChatHistory";
 
 class ViewChatHistoryAsUserTest {
     private usecaseOutBoundarySpy: any = {
@@ -79,9 +77,9 @@ class ViewChatHistoryAsUserTest {
                         );
                     });
                     
-                    it.skip('should get from gateway.getChatHistoryById a ChatEntityForViewingChatHistory type', async () => {                      
-                        await useCaseWithStubGateway.executeViewChatHistory(dummyRequestModel);
-                    });
+                    // it.skip('should get from gateway.getChatHistoryById a ChatEntityForViewingChatHistory type', async () => {                      
+                    //     await useCaseWithStubGateway.executeViewChatHistory(dummyRequestModel);
+                    // });
                 });
 
 
@@ -121,6 +119,83 @@ class ViewChatHistoryAsUserTest {
                             new ViewChatHistoryAsUserResultModel(
                                 dummyUserId,
                                 stubChatHistorySingleChatResult
+                            )
+                        );
+                    });
+                });
+
+                describe('Given a chat history with multiple chats', () => {
+                    const stubFirstChatId = "chatId1";
+                    const stubSecondChatId = "chatId2";
+                    const stubFirstUserIdFirstChat = "user1";
+                    const stubFirstUserIdSecondChat = "user3";
+                    const stubSecondUserIdFirstChat = "user2";
+                    const stubSecondUserIdSecondChat = "user4";
+                    const stubTextFirstChat = "textFirstChat";
+                    const stubTextSecondChat = "textSecondChat";
+                    const stubResponseIdFirstChat = "responseId1";
+                    const stubResponseIdSecondChat = "responseId1";
+                    const subReponseTypeFirstChat = ResponseType.TEXT;
+                    const subReponseTypeSecondChat = ResponseType.MULTI_CHOICE;
+
+                    const stubChatHistoryMultipleChats = [
+                        {
+                            id: stubFirstChatId,
+                            participator1UserId: stubFirstUserIdFirstChat,
+                            participator2UserId: stubSecondUserIdFirstChat,
+                            responses: [{
+                                text: stubTextFirstChat,
+                                id: stubResponseIdFirstChat,
+                                type: subReponseTypeFirstChat
+                            }]
+                        },
+                        {
+                            id: stubSecondChatId,
+                            participator1UserId: stubFirstUserIdSecondChat,
+                            participator2UserId: stubSecondUserIdSecondChat,
+                            responses: [{
+                                text: stubTextSecondChat,
+                                id: stubResponseIdSecondChat,
+                                type: subReponseTypeSecondChat
+                            }]
+                        }
+                    ];
+                    it('should call usecaseOutBoundary.sendResultModel with a response model containing multiple chats', async () => {
+                        const chatGatewayStubHistoryMultipleChats: ChatGatewayToViewChatHistory = {
+                            getChatHistoryById: jest.fn().mockResolvedValue(stubChatHistoryMultipleChats)
+                        };
+                        const useCaseWithStubGatewayMultipleChats = new ViewChatHistoryAsUserUseCase(usecaseOutBoundarySpy, chatGatewayStubHistoryMultipleChats);
+                        await useCaseWithStubGatewayMultipleChats.executeViewChatHistory(dummyRequestModel);
+                        
+                        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(
+                            new ViewChatHistoryAsUserResultModel(
+                                dummyUserId,
+                                [
+                                    {
+                                        chatId: stubFirstChatId,
+                                        participator1UserId: stubFirstUserIdFirstChat,
+                                        participator2UserId: stubSecondUserIdFirstChat,
+                                        responses: [
+                                            {
+                                                text: stubTextFirstChat,
+                                                responseId: stubResponseIdFirstChat,
+                                                responseType: subReponseTypeFirstChat
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        chatId: stubSecondChatId,
+                                        participator1UserId: stubFirstUserIdSecondChat,
+                                        participator2UserId: stubSecondUserIdSecondChat,
+                                        responses: [
+                                            {
+                                                text: stubTextSecondChat,
+                                                responseId: stubResponseIdSecondChat,
+                                                responseType: subReponseTypeSecondChat
+                                            }
+                                        ]
+                                    }
+                                ]
                             )
                         );
                     });
