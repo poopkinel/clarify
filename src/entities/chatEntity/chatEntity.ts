@@ -3,10 +3,12 @@ import ChatSharingSettings from '../chatSharingSetting';
 import ChatEntityForShare from './chatEntityForShare';
 import ChatEntityForUserToBeParticipator from './chatEntityForUserToBeParticipator';
 import ChatEntityForViewingChatHistory from './chatEntityForViewingChatHistory';
+import ChatEntityForViewingChat from './chatEntityForViewingChat';
 
 export class ChatEntity implements ChatEntityForShare, 
                                     ChatEntityForUserToBeParticipator,
-                                    ChatEntityForViewingChatHistory{
+                                    ChatEntityForViewingChatHistory,
+                                    ChatEntityForViewingChat {
     id: string;
     name: string;
     creatorUserId: string;

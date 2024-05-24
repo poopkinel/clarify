@@ -124,7 +124,7 @@ class ViewChatHistoryAsUserTest {
                     });
                 });
 
-                describe('Given a chat history with multiple chats', () => {
+                describe('Given a chat history with multiple chats, containing different data for each chat', () => {
                     const stubFirstChatId = "chatId1";
                     const stubSecondChatId = "chatId2";
                     const stubFirstUserIdFirstChat = "user1";
@@ -160,7 +160,8 @@ class ViewChatHistoryAsUserTest {
                             }]
                         }
                     ];
-                    it('should call usecaseOutBoundary.sendResultModel with a response model containing multiple chats', async () => {
+                    it('should call usecaseOutBoundary.sendResultModel with a response model'
+                    + 'containing multiple chats with right data in each chat', async () => {
                         const chatGatewayStubHistoryMultipleChats: ChatGatewayToViewChatHistory = {
                             getChatHistoryById: jest.fn().mockResolvedValue(stubChatHistoryMultipleChats)
                         };
