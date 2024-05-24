@@ -9,7 +9,7 @@ export class UserEntity implements UserEntityForRegister {
     createdAt: Date;
     updatedAt: Date;
 
-    constructor(id: string, username: string, password: string, success: boolean) {
+    constructor(id: string, username: string, password: string, success: boolean = true) {
         this.id = id;
         this.username = username;
         this.password = password;

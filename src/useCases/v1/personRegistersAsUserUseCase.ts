@@ -18,17 +18,11 @@ export class PersonRegistersAsUserUseCase implements WebToUsecaseBoundary {
         throw new Error("Method not implemented.");
     }
 
-    async execute(userModel: UserRequestModel) : Promise<UserEntity | undefined> {
-        const model = await this.userGateway.createUser(userModel);
+    async execute(userModel: UserRequestModel) : Promise<void> {
+        const model = await this.userGateway.createUser(userModel.username, userModel.password);
         if (model === undefined) {
             return undefined;
         }
-        const user = new UserEntity(
-            model.id,
-            model.username,
-            model.password
-        );
-        return user;
     }
 
     async sendUserRequest(userModel: UserRequestModel): Promise<any> {

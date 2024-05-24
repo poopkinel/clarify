@@ -1,6 +1,8 @@
 import { UserGateway } from "../../../boundaries/gateways/userGateway";
 import { UserEntity } from "../../../entities/userEntity/userEntity";
 import { UserRequestModel } from "../../../dataModels/v1/userRequestModel";
+import UserGatewayResultModel from "../../../dataModels/current/general/userGatewayResultModel";
+import UserGatewayCreateUserResultModel from "../../../dataModels/current/specific/userGatewayCreateUserResultModel";
 
 const admin = require("firebase-admin");
 var serviceAccount = require("../../../sak.json");
@@ -23,15 +25,15 @@ export class UserGatewayFirebaseImpl implements UserGateway {
         }
     }
 
-    async createUser(userModel: UserRequestModel): Promise<UserEntity | undefined> {
-        const adjustedUsername = this.adjustUsername(userModel.username);
+    async createUser(username: string, password: string): Promise<UserGatewayCreateUserResultModel> {
+        const adjustedUsername = this.adjustUsername(username);
         let user;
 
         await auth.createUser(
             {
                 email: adjustedUsername,
                 emailVerified: false,
-                password: userModel.password,
+                password: password,
                 displayName: '',
                 disabled: false
             }
@@ -39,15 +41,19 @@ export class UserGatewayFirebaseImpl implements UserGateway {
         .then((userRecord: any) => {
             user = new UserEntity(
                 userRecord.uid,
-                userModel.username,
-                userRecord.password
+                username,
+                userRecord.password,
             );
         })
         .catch((error: any) => {
             console.error('Error creating new user:', error);
         });
         
-        return user;
+        if (!user) {
+            return new UserGatewayCreateUserResultModel(new UserEntity("", "", "", false), false, 'Error creating new user');
+        }
+
+        return new UserGatewayCreateUserResultModel(user, true, '');
     }
     async getUserById(id: string): Promise<UserEntity> {
         try {
