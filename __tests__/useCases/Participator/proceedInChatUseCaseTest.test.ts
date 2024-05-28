@@ -9,6 +9,31 @@ class ProceedInChatUseCaseTest {
             }
             const stubParticipator1UserId = 'participator1UserId';
             const stubParticipator2UserId = 'participator2UserId';
+            
+            const dummyStateInput = {
+                participator1State: '',
+                participator2State: '',
+                proceedEvent: ''
+            };
+            
+            const stubStateInputParticipator1 = 'state1';
+            const stubStateInputParticipator2 = 'state2';
+            const stubStateInputEvent = 'event';
+
+            const stubStateInput = {...dummyStateInput,
+                participator1State: stubStateInputParticipator1,
+                participator2State: stubStateInputParticipator2,
+                proceedEvent: stubStateInputEvent
+            };
+            
+            const stubUserId = stubParticipator1UserId;
+            const stubChatId = 'chatId';
+
+            const stubRequestModel = {
+                userId: stubUserId,
+                chatId: stubChatId,
+                stateInput: dummyStateInput
+            }
 
             describe('Given a stub chat gateway with an invalid chat', () => {
                 const invalidchatIdError = 'Invalid chat id';
@@ -20,19 +45,13 @@ class ProceedInChatUseCaseTest {
                     })
                 }
                 describe('Given a stub request model with empty chat id', () => {
-                    const stubUserId = stubParticipator1UserId;
                     const stubEmptyChatId = '';
-                    const dummyStateInput = {
-                        stateParticipator1: '',
-                        stateParticipator2: '',
-                        event: ''
-                    };
-                    const stubRequestModel = new ProceedInChatRequestModel(
-                        stubUserId,
-                        stubEmptyChatId,
-                        dummyStateInput
-                    )
-                    expectInvalidChatId(usecaseOutBoundarySpy, chatGatewayStub, stubRequestModel);
+                    const stubRequestModelWithEmptyChatId = ProceedInChatRequestModel.fromJson({
+                        ...stubRequestModel,
+                        chatId: stubEmptyChatId
+                    });
+
+                    expectError(usecaseOutBoundarySpy, chatGatewayStub, stubRequestModelWithEmptyChatId, invalidchatIdError);
                 });
             });
 
@@ -42,8 +61,8 @@ class ProceedInChatUseCaseTest {
                         success: true,
                         chat: {
                             currentState: {
-                                participator1: 'state1',
-                                participator2: 'state2',
+                                participator1State: 'state1',
+                                participator2State: 'state2',
                             },
                             participator1UserId: stubParticipator1UserId,
                             participator2UserId: stubParticipator2UserId
@@ -53,19 +72,13 @@ class ProceedInChatUseCaseTest {
                 describe('Given a stub request model with empty user id', () => {
                     const stubUserId = '';
                     const stubChatId = 'chatId';
-                    const stubStateInput = {
-                        stateParticipator1: 'state1',
-                        stateParticipator2: 'state2',
-                        event: 'event'
-                    };
-                    const stubRequestModel = new ProceedInChatRequestModel(
-                        stubUserId,
-                        stubChatId,
-                        stubStateInput
-                    )
+                    const stubRequestModelWithOnlyEmptyUserId = ProceedInChatRequestModel.fromJson({
+                        ...stubRequestModel,
+                        userId: stubUserId
+                    });
                     it('should return an error result', async () => {
                         const dummyUseCase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayStub);
-                        await dummyUseCase.executeProceedInChat(stubRequestModel);
+                        await dummyUseCase.executeProceedInChat(stubRequestModelWithOnlyEmptyUserId);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             errors: expect.arrayContaining(['User is not a participator in this chat'])
                         }));
@@ -73,46 +86,34 @@ class ProceedInChatUseCaseTest {
                 });
             });
 
-            describe('Given a stub chat gateway with a valid chat and user but invalid states', () => {
-                const stubUserId = 'userId';
+            describe('Given a stub chat gateway with valid chat and user but invalid states', () => {
                 const stubChatId = 'chatId';
-
-                const stubStateInputParticipator1 = 'state1';
-                const stubStateInputParticipator2 = 'state2';
-                const stubStateInputEvent = 'event';
 
                 describe('Given only an invalid state for participator 1', () => {
                     const chatGatewayStub = {
                         getChatById: jest.fn().mockResolvedValue({
                             success: true,
                             chat: {
-                                stateInput: {
-                                    stateParticipator1: '',
-                                    stateParticipator2: stubParticipator2UserId,
-                                    event: stubStateInputEvent
-                                },
                                 currentState: {
-                                    participator1: '',
-                                    participator2: stubStateInputParticipator2
+                                    participator1: stubStateInputParticipator1,
+                                    participator2: stubStateInputParticipator2,
+                                    proceedEvent: stubStateInputEvent
                                 }
                             }
                         })
                     }
                     it('should return an error result', async () => {
-                        const stubStateInput = {
-                            stateParticipator1: stubStateInputParticipator1,
-                            stateParticipator2: stubStateInputParticipator2,
-                            event: stubStateInputEvent
+                        const stubStateInputWithOnlyInvalidP1State = {...stubStateInput,
+                            participator1State: '',
                         }
-                        const stubRequestModel = new ProceedInChatRequestModel(
-                            stubUserId,
-                            stubChatId,
-                            stubStateInput
-                        )
+                        const stubRequestModelWithOnlyEmptyP1State = ProceedInChatRequestModel.fromJson({
+                            ...stubRequestModel,
+                            stateInput: stubStateInputWithOnlyInvalidP1State
+                    })
                         const dummyUseCase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayStub);
-                        await dummyUseCase.executeProceedInChat(stubRequestModel);
+                        await dummyUseCase.executeProceedInChat(stubRequestModelWithOnlyEmptyP1State);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                            errors: expect.arrayContaining(['Invalid chat state for participator'])
+                            errors: expect.arrayContaining(['Invalid chat state for participator 1'])
                         }));
                     });
                 });
@@ -127,89 +128,86 @@ class ProceedInChatUseCaseTest {
                                 event: ''
                             },
                             currentState: {
-                                participator1: stubStateInputParticipator1,
-                                participator2: stubStateInputParticipator2
-                            }
+                                participator1State: stubStateInputParticipator1,
+                                participator2State: stubStateInputParticipator2,
+                                proceedEvent: stubStateInputEvent
+                            },
+                            participator1UserId: stubParticipator1UserId,
+                            participator2UserId: stubParticipator2UserId
                         }
                     })
                 }
 
 
-                describe('Given a stub request model with invalid state for participator 1', () => {
+                describe('Given request(V,V,V) with invalid state for participator 1', () => {
                     const stubStateInputParticipator1Empty = ''
-                    const stubStateInput = {
-                        stateParticipator1: stubStateInputParticipator1Empty,
-                        stateParticipator2: stubStateInputParticipator2,
-                        event: stubStateInputEvent
+                    const stubStateInputWithOnlyP1StateEmpty = {...stubStateInput,
+                        participator1State: stubStateInputParticipator1Empty,
                     }
-                    const stubRequestModel = new ProceedInChatRequestModel(
-                        stubUserId,
-                        stubChatId,
-                        stubStateInput
-                    )
+                    const stubRequestModelWithOnlyP1StateEmpty = ProceedInChatRequestModel.fromJson({
+                        ...stubRequestModel,
+                        stateInput: stubStateInputWithOnlyP1StateEmpty
+                    })
 
-                    expectInvalidChatState(usecaseOutBoundarySpy, chatGatewayStub, stubRequestModel);
+                    expectError(usecaseOutBoundarySpy, chatGatewayStub, stubRequestModelWithOnlyP1StateEmpty, 'Invalid chat state for participator 1');
                 });
 
                 describe('Given a stub request model with invalid state for participator 2', () => {
                     const stubStateInputParticipator2Empty = ''
-                    const stubStateInput = {
-                        stateParticipator1: stubStateInputParticipator1,
-                        stateParticipator2: stubStateInputParticipator2Empty,
-                        event: stubStateInputEvent
+                    const stubStateInputWithOnlyP2StateEmpty = {...stubStateInput,
+                        participator2State: stubStateInputParticipator2Empty,
                     }
-                    const stubRequestModel = new ProceedInChatRequestModel(
-                        stubUserId,
-                        stubChatId,
-                        stubStateInput
-                    )
+                    const stubRequestModelWithOnlyP2StateEmpty = ProceedInChatRequestModel.fromJson({
+                        ...stubRequestModel,
+                        stateInput: stubStateInputWithOnlyP2StateEmpty
+                    })
 
-                    expectInvalidChatState(usecaseOutBoundarySpy, chatGatewayStub, stubRequestModel);
+                    expectError(usecaseOutBoundarySpy, chatGatewayStub, stubRequestModelWithOnlyP2StateEmpty, 'Invalid chat state for participator 2');
                 });
                 
                 describe('Given a stub request model with invalid event', () => {
                     const stubStateInputEventEmpty = ''
-                    const stubStateInput = {
-                        stateParticipator1: stubStateInputParticipator1,
-                        stateParticipator2: stubStateInputParticipator2,
-                        event: stubStateInputEventEmpty
+                    const stubStateInputWithOnlyEmptyEvent = {...stubStateInput,
+                        proceedEvent: stubStateInputEventEmpty
                     }
-                    const stubRequestModel = new ProceedInChatRequestModel(
-                        stubUserId,
-                        stubChatId,
-                        stubStateInput
-                    )
+                    const stubRequestModelWithOnlyInputEventEmpty = ProceedInChatRequestModel.fromJson({
+                        ...stubRequestModel,
+                        stateInput: stubStateInputWithOnlyEmptyEvent
+                    });
 
-                    expectInvalidChatState(usecaseOutBoundarySpy, chatGatewayStub, stubRequestModel);
+                    expectError(usecaseOutBoundarySpy, chatGatewayStub, stubRequestModelWithOnlyInputEventEmpty, 'Invalid chat state event');
                 });
             });
+
             describe('Given a stub chat gateway with a valid chat and a valid state', () => {
-                const chatGatewayStub = {
+                const chatGatewaySuccessStub = {
                     getChatById: jest.fn().mockResolvedValue({
                         success: true,
                         chat: {
                             error: '',
-                            currentState: 'valid',
+                            currentState: {
+                                participator1State: 'state1',
+                                participator2State: 'state2',
+                                proceedEvent: 'event'
+                            },
                             participator1UserId: stubParticipator1UserId,
                             participator2UserId: stubParticipator2UserId
                         }
                     })
                 }
                 it('should return a success result', async () => {
-                    const stubUserId = stubParticipator1UserId;
                     const stubChatId = 'chatId';
-                    const stubStateInput = {
-                        stateParticipator1: 'state1',
-                        stateParticipator2: 'state2',
-                        event: 'event'
-                    
+                    const stubStateInputWithAllValidData = {...stubStateInput,
+                        participator1State: 'state1',
+                        participator2State: 'state2',
+                        proceedEvent: 'event'
                     };
                     const stubRequestModel = new ProceedInChatRequestModel(
                         stubUserId,
                         stubChatId,
-                        stubStateInput
+                        stubStateInputWithAllValidData
                     )
-                    await expectNoErrors(usecaseOutBoundarySpy, chatGatewayStub, stubRequestModel);
+                    await expectNoErrors(usecaseOutBoundarySpy, chatGatewaySuccessStub, stubRequestModel);
                 });
             });
         });
@@ -222,32 +220,14 @@ class ProceedInChatUseCaseTest {
             });
         }
 
-        function expectChatDoesNotExist(usecaseOutBoundarySpy: { sendResultModel: any; }, chatGatewayStub: { getChatById: any; }, dummyRequestModel: ProceedInChatRequestModel) {
-            it('should return an error result', async () => {
-                const dummyUseCase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayStub);
-                await dummyUseCase.executeProceedInChat(dummyRequestModel);
-                expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                    errors: expect.arrayContaining(['Chat does not exist'])
-                }));
-            });
-        }
-
-        function expectInvalidChatId(usecaseOutBoundarySpy: { sendResultModel: any; }, chatGatewayStub: { getChatById: any; }, stubRequestModel: ProceedInChatRequestModel) {
+        function expectError(usecaseOutBoundarySpy: { sendResultModel: any; }, chatGatewayStub: { getChatById: any; }, stubRequestModel: ProceedInChatRequestModel,
+            expectedError: string
+        ) {
             it('should return an error result', async () => {
                 const dummyUseCase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayStub);
                 await dummyUseCase.executeProceedInChat(stubRequestModel);
                 expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                    errors: expect.arrayContaining(['Invalid chat id'])
-                }));
-            });
-        }
-
-        function expectInvalidChatState(usecaseOutBoundarySpy: { sendResultModel: any; }, chatGatewayStub: { getChatById: any; }, stubRequestModel: ProceedInChatRequestModel) {
-            it('should return an error result', async () => {
-                const dummyUseCase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayStub);
-                await dummyUseCase.executeProceedInChat(stubRequestModel);
-                expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                    errors: expect.arrayContaining(['Invalid chat current state object'])
+                    errors: expect.arrayContaining([expectedError])
                 }));
             });
         }

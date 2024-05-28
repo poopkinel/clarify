@@ -1,4 +1,5 @@
 export default interface ChatState {
-    participator1: string;
-    participator2: string;
+    participator1State: string;
+    participator2State: string;
+    proceedEvent: string;
 }

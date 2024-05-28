@@ -1,5 +1,6 @@
 import ChatGatewayToProceedInChat from "../../boundaries/gateways/chatGatewayToProceedInChat";
 import UsecaseOutBoundary from "../../boundaries/useCaseBoundaries/usecaseOutBoundary";
+import ChatGatewayCreateChatResultModel from "../../dataModels/current/chatGateway/chatGatewayCreateChatResultModel";
 import ProceedInChatRequestModel from "../../dataModels/useCaseBoundaries/specific/proceedInChatRequestModel";
 import ProceedInChatResultModel from "../../dataModels/useCaseBoundaries/specific/proceedInChatResultModel";
 
@@ -15,7 +16,13 @@ export default class ProceedInChatUseCase {
     }
     async executeProceedInChat(requestModel: ProceedInChatRequestModel) {
         const gatewayResultModel = await this.chatGatewayToProceedInChat.getChatById(requestModel.chatId);
-        var errors: string[] = [];
+        var errors = this.validateInput(requestModel, gatewayResultModel);
+        const result = new ProceedInChatResultModel(errors);
+        await this.usecaseOutBoundary.sendResultModel(result);
+    }
+
+    private validateInput(requestModel: ProceedInChatRequestModel, gatewayResultModel: ChatGatewayCreateChatResultModel) {
+        const errors: string[] = [];
         if (!gatewayResultModel.success) {
             errors.push(gatewayResultModel.error);
         }
@@ -27,13 +34,14 @@ export default class ProceedInChatUseCase {
                 gatewayResultModel.chat.participator2UserId !== requestModel.userId) {
                 errors.push('User is not a participator in this chat');
             }
-            if(gatewayResultModel.chat.currentState.participator1 !== requestModel.stateInput.stateParticipator1){
-                errors.push('Invalid chat state for participator');
-            } else if (gatewayResultModel.chat.currentState.participator2 !== requestModel.stateInput.stateParticipator2) {
-                errors.push('Invalid chat state for participator');
+            if (gatewayResultModel.chat.currentState.participator1State !== requestModel.stateInput.participator1State) {
+                errors.push('Invalid chat state for participator 1');
+            } else if (gatewayResultModel.chat.currentState.participator2State !== requestModel.stateInput.participator2State) {
+                errors.push('Invalid chat state for participator 2');
+            } else if (gatewayResultModel.chat.currentState.proceedEvent !== requestModel.stateInput.proceedEvent) {
+                errors.push('Invalid chat state event');
             }
         }
-        const result = new ProceedInChatResultModel(errors);
-        await this.usecaseOutBoundary.sendResultModel(result);
+        return errors;
     }
 }

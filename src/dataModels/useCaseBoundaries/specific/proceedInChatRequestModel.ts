@@ -1,9 +1,9 @@
 import RequestModel from "../general/requestModel";
 
 type StateInput = {
-    stateParticipator1: string;
-    stateParticipator2: string;
-    event: string;
+    participator1State: string;
+    participator2State: string;
+    proceedEvent: string;
 }
 
 export default class ProceedInChatRequestModel implements RequestModel {
@@ -15,5 +15,9 @@ export default class ProceedInChatRequestModel implements RequestModel {
         this.userId = userId;
         this.chatId = chatId;
         this.stateInput = stateInput;
+    }
+
+    static fromJson(json: any): ProceedInChatRequestModel {
+        return new ProceedInChatRequestModel(json.userId, json.chatId, json.stateInput);
     }
 }
