@@ -1,5 +1,5 @@
 import UserEntityForRegister from "../../../entities/userEntity/userEntityForRegister";
-import UserGatewayResultModel from "../general/userGatewayResultModel";
+import UserGatewayResultModel from "./userGatewayResultModel";
 
 export default class UserGatewayCreateUserResultModel implements UserGatewayResultModel {
     user: UserEntityForRegister;

@@ -1,7 +1,7 @@
 // A use case for an operator to retrieve a chat for inspection
 
 import ChatGatewayToShareChat from "../../boundaries/gateways/chatGatewayToShareChat";
-import RequestModel from "../../dataModels/current/general/requestModel";
+import RequestModel from "../../dataModels/useCaseBoundaries/general/requestModel";
 import RetrieveAChatRequestModel from "../../dataModels/v1/retrieveAChatRequestModel";
 import { ChatEntity } from "../../entities/chatEntity/chatEntity";
 import ChatEntityForShare from "../../entities/chatEntity/chatEntityForShare";

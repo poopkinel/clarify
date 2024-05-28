@@ -2,10 +2,10 @@
 
 import { UserGateway } from "../../boundaries/gateways/userGateway";
 import WebToUsecaseBoundary from "../../boundaries/web/webToUsecaseBoundary";
-import ResultModel from "../../dataModels/current/general/resultModel";
+import ResultModel from "../../dataModels/useCaseBoundaries/general/resultModel";
 import { UserRequestModel } from "../../dataModels/v1/userRequestModel";
 import { UserEntity } from "../../entities/userEntity/userEntity";
-import RequestModel from "../../dataModels/current/general/requestModel";
+import RequestModel from "../../dataModels/useCaseBoundaries/general/requestModel";
 
 export class CreateANewUserUseCase implements WebToUsecaseBoundary {
     userGateway: UserGateway;

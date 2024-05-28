@@ -1,7 +1,7 @@
 import { UserGateway } from "../../../boundaries/gateways/userGateway";
 import { UserEntity } from "../../../entities/userEntity/userEntity";
 import { UserRequestModel } from "../../../dataModels/v1/userRequestModel";
-import UserGatewayCreateUserResultModel from "../../../dataModels/current/specific/userGatewayCreateUserResultModel";
+import UserGatewayCreateUserResultModel from "../../../dataModels/current/userGateway/userGatewayCreateUserResultModel";
 
 export class UserGatewayMockImpl implements UserGateway {
     async createUser(username: string, password: string): Promise<UserGatewayCreateUserResultModel> {

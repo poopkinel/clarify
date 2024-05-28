@@ -1,4 +1,4 @@
-import ResultModel from "../general/resultModel";
+import ResultModel from "../../useCaseBoundaries/general/resultModel";
 
 export default class RegisterResultModel implements ResultModel {
     success: boolean;

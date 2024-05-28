@@ -3,7 +3,7 @@ import UsecaseOutBoundary from '../../boundaries/useCaseBoundaries/usecaseOutBou
 import CreateChatAsUserToBeParticipatorRequestModel from '../../dataModels/current/specific/createChatAsUserToBeParticipatorRequestModel';
 import CreateChatAsUserToBeParticipatorResultModel from '../../dataModels/current/specific/createChatAsUserToBeParticipatorResultModel';
 
-export default class CreateAChatAsUserToBeParticipatorUseCase {
+export default class CreateChatAsUserToBeParticipatorUseCase {
     chatGateway: ChatGatewayToCreateChatToBeParticipator;
     usecaseOutBoundary: UsecaseOutBoundary<CreateChatAsUserToBeParticipatorResultModel>;
 
@@ -14,7 +14,8 @@ export default class CreateAChatAsUserToBeParticipatorUseCase {
     }
 
     async executeCreateChatToBeParticipator(requestModel: CreateChatAsUserToBeParticipatorRequestModel) {
-        const chat = await this.chatGateway.createChatToBeParticipator(requestModel.chatName, requestModel.userId);
+        const chat = await this.chatGateway.createChatToBeParticipator(
+            requestModel.chatName, requestModel.userId, requestModel.flowId);
         let result;
         if (chat.createSuccess) {
             result = new CreateChatAsUserToBeParticipatorResultModel(

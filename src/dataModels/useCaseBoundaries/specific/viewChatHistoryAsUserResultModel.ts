@@ -1,4 +1,4 @@
-import ResultModel from "../general/resultModel";
+import ResultModel from "../../useCaseBoundaries/general/resultModel";
 
 type Response = {
     text: string,

@@ -3,5 +3,5 @@ import ChatEntityForUserToBeParticipator from "../../entities/chatEntity/chatEnt
 import ChatGateway from "./chatGateway";
 
 export default interface ChatGatewayToCreateChatAsParticipator extends ChatGateway {
-    createChatToBeParticipator(userId: string, chatName: string): Promise<ChatEntityForUserToBeParticipator>;
+    createChatToBeParticipator(userId: string, chatName: string, flowId: string): Promise<ChatEntityForUserToBeParticipator>;
 };

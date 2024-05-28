@@ -1,4 +1,4 @@
-import RequestModel from "../general/requestModel";
+import RequestModel from "../../useCaseBoundaries/general/requestModel";
 
 export default class ViewChatHistoryAsUserRequestModel implements RequestModel {
     chatId: string;

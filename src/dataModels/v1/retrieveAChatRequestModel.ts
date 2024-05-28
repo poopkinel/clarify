@@ -1,4 +1,4 @@
-import RequestModel from "../current/general/requestModel";
+import RequestModel from "../useCaseBoundaries/general/requestModel";
 
 export default class RetrieveAChatRequestModel implements RequestModel {
     chatId: string;

@@ -1,4 +1,4 @@
-class ChatState {
+class ChatState_OLD {
     constructor(name) {
         this.name = name;
     }
@@ -17,4 +17,4 @@ class ChatState {
     }
 }
 
-module.exports = ChatState;
+module.exports = ChatState_OLD;

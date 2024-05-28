@@ -1,8 +1,8 @@
 import { UserGateway } from "../../../boundaries/gateways/userGateway";
 import { UserEntity } from "../../../entities/userEntity/userEntity";
 import { UserRequestModel } from "../../../dataModels/v1/userRequestModel";
-import UserGatewayResultModel from "../../../dataModels/current/general/userGatewayResultModel";
-import UserGatewayCreateUserResultModel from "../../../dataModels/current/specific/userGatewayCreateUserResultModel";
+import UserGatewayResultModel from "../../../dataModels/current/userGateway/userGatewayResultModel";
+import UserGatewayCreateUserResultModel from "../../../dataModels/current/userGateway/userGatewayCreateUserResultModel";
 
 const admin = require("firebase-admin");
 var serviceAccount = require("../../../sak.json");

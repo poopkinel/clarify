@@ -42,7 +42,8 @@ class CreateChatAsUserToBeParticipatorUseCaseTest {
                 const dummyUserId = ''
                 const dummyRequestModel = { 
                     userId: dummyUserId,
-                    chatName: ''
+                    chatName: '',
+                    flowId: ''
                 }
 
                 it('should call usecaseOutBoundary.sendResultModel', async () => {
@@ -70,7 +71,8 @@ class CreateChatAsUserToBeParticipatorUseCaseTest {
             const stubUserId: string = 'userId';
             const stubUser2Id: string = 'user2Id';
             const stubChatName: string = 'chatName';
-            
+            const stubFlowId: string = 'flowId';
+
             const stubSuccess = true;
             const stubFail = false;
             const stubSuccessNoError = '';
@@ -100,7 +102,8 @@ class CreateChatAsUserToBeParticipatorUseCaseTest {
             describe('Given a stub request model', () => {
                 const stubRequestModel = {
                     userId: stubUserId,
-                    chatName: stubChatName
+                    chatName: stubChatName,
+                    flowId: stubFlowId
                 }
 
                 const stubUseCase = new CreateChatAsUserToBeParticipatorUseCase(mockChatGateway, this.usecaseOutBoundarySpy);
@@ -108,7 +111,7 @@ class CreateChatAsUserToBeParticipatorUseCaseTest {
                 describe('Given a stub chatName and userId in request model', () => {
                     it('should call chatGateway.createChatToBeParticipator with chatName and userId', async () => {
                         await stubUseCase.executeCreateChatToBeParticipator(stubRequestModel);
-                        expect(mockChatGateway.createChatToBeParticipator).toHaveBeenCalledWith(stubChatName, stubUserId);
+                        expect(mockChatGateway.createChatToBeParticipator).toHaveBeenCalledWith(stubChatName, stubUserId, stubFlowId);
                     });
                 });
                 

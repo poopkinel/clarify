@@ -1,4 +1,4 @@
-import ResultModel from "../current/general/resultModel";
+import ResultModel from "../useCaseBoundaries/general/resultModel";
 
 export default class PersonRegistersAsUserRequestModel implements ResultModel {
 
