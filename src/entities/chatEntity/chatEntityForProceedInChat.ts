@@ -4,4 +4,5 @@ export default interface ChatEntityForProceedInChat {
     currentState: ChatState;
     participator1UserId: string;
     participator2UserId: string;
+    chatFlowId: string;
 };

@@ -9,7 +9,7 @@ type StateInput = {
 export default class ProceedInChatRequestModel implements RequestModel {
     userId: string;
     chatId: string;
-    stateInput: StateInput
+    stateInput: StateInput;
 
     constructor(userId: string, chatId: string, stateInput: StateInput) {
         this.userId = userId;

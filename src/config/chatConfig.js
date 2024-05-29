@@ -1,12 +1,12 @@
-const ChatState = require('../entities/ChatState');
+const ChatState_OLD = require('../entities/ChatState_OLD');
 
 const states = {
-    waiting: new ChatState({ name: 'waiting'}),
-    openSay: new ChatState({ name: 'openSay' }),
-    closedUnderstand: new ChatState({ name: 'closedUnderstand' }),
-    openParaphrase: new ChatState({ name: 'openParaphrase' }),
-    closedConfirmParaphrase: new ChatState({ name: 'closedConfirmParaphrase' }),
-    openQuestion: new ChatState({ name: 'openQuestion' })
+    waiting: new ChatState_OLD({ name: 'waiting'}),
+    openSay: new ChatState_OLD({ name: 'openSay' }),
+    closedUnderstand: new ChatState_OLD({ name: 'closedUnderstand' }),
+    openParaphrase: new ChatState_OLD({ name: 'openParaphrase' }),
+    closedConfirmParaphrase: new ChatState_OLD({ name: 'closedConfirmParaphrase' }),
+    openQuestion: new ChatState_OLD({ name: 'openQuestion' })
 }
 
 const events = {

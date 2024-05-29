@@ -5,6 +5,7 @@ import ChatEntityForUserToBeParticipator from './chatEntityForUserToBeParticipat
 import ChatEntityForViewingChatHistory from './chatEntityForViewingChatHistory';
 import ChatEntityForViewingChat from './chatEntityForViewingChat';
 import ChatEntityForProceedInChat from './chatEntityForProceedInChat';
+import ChatState from '../chatState/chatState';
 
 export class ChatEntity implements ChatEntityForShare, 
                                     ChatEntityForUserToBeParticipator,
@@ -26,7 +27,8 @@ export class ChatEntity implements ChatEntityForShare,
     access: string;
     sharingSettings: ChatSharingSettings;
 
-    currentState: string;
+    chatFlowId: string;
+    currentState: ChatState;
 
     constructor(
         id: string, 
@@ -40,7 +42,8 @@ export class ChatEntity implements ChatEntityForShare,
         access: string = '',
         sharingSettings: ChatSharingSettings = new ChatSharingSettings(id, []),
 
-        currentState: string = ''
+        chatFlowId: string = '',
+        currentState: ChatState
     ) {
         this.id = id;
         this.name = name;
@@ -57,6 +60,7 @@ export class ChatEntity implements ChatEntityForShare,
         this.access = access;
         this.sharingSettings = sharingSettings;
 
+        this.chatFlowId = chatFlowId;
         this.currentState = currentState;
     }
 

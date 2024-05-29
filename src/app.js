@@ -5,7 +5,7 @@ const app = express();
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
 
-const { ChatFlow } = require('./entities/chatFlow');
+const { ChatFlow: ChatFlow_OLD } = require('./entities/chatFlow');
 const { events } = require('./config/chatConfig');
 
 const path = require('path');
@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
       return socket.emit('error', 'Invalid event');
     }
 
-    ChatFlow.Proceed(event);
+    ChatFlow_OLD.Proceed(event);
     socket.emit('eventProcessed', 'Event processed');
   });
 
