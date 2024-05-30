@@ -1,12 +1,29 @@
 import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUseCase";
-import ProceedInChatRequestModel from "../../../src/dataModels/useCaseBoundaries/specific/proceedInChatRequestModel";
 
 class ProceedInChatUseCaseTest {
     runTests() {
         const usecaseOutBoundarySpy = {
             sendResultModel: jest.fn()
         }
-
+        
+        const stateInputStub = {
+            participator1State: 'state',
+            participator2State: 'state',
+            proceedEvent: 'event'
+        }
+        
+        const requestModelStub = {
+            chatId: 'chatId', 
+            userId: 'userId1', 
+            stateInput: stateInputStub
+        }
+        
+        const chatFlowGatewayStub = {
+            getChatFlowById: jest.fn().mockResolvedValue({
+                getNextStateId: jest.fn().mockResolvedValue('state2Id')
+            })
+        }
+        
         const chatCurrentStateStub = {
             participator1State: 'state',
             participator2State: 'state',
@@ -19,22 +36,6 @@ class ProceedInChatUseCaseTest {
             participator2UserId: 'userId2',
         }
 
-        const requestModelStub = {
-            chatId: 'chatId', 
-            userId: 'userId1', 
-            stateInput: {
-            participator1State: 'state',
-            participator2State: 'state',
-            proceedEvent: 'event'
-            }
-        }
-
-        const chatFlowGatewayStub = {
-            getChatFlowById: jest.fn().mockResolvedValue({
-                getNextState: jest.fn().mockResolvedValue('state2Id')
-            })
-        }
-
         const chatGatewayResultModelStub = {
             success: true,
             chat: chatStub
@@ -44,11 +45,16 @@ class ProceedInChatUseCaseTest {
             getChatById: jest.fn().mockResolvedValue(chatGatewayResultModelStub)
         }
 
+        const expectedInResultModel = {
+            errors: [],
+            chatEndStateId: 'nextState'
+        };
+
         describe('Given an empty chat flow gateway stub', () => {
             const chatFlowGatewayOneStateStub = {
                 ...chatFlowGatewayStub,
                 getChatFlowById: jest.fn().mockResolvedValue({
-                    getNextState: jest.fn().mockResolvedValue('start-finish')
+                    getNextStateId: jest.fn().mockResolvedValue('start-finish')
                 })
             };
 
@@ -58,6 +64,7 @@ class ProceedInChatUseCaseTest {
                     await usecase.executeProceedInChat(requestModelStub);
                     
                     expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                        ...expectedInResultModel,
                         chatEndStateId: 'start-finish',
                     }));
                 });
@@ -69,8 +76,7 @@ class ProceedInChatUseCaseTest {
                 ...requestModelStub,
                 chatId: "chatIdTwoStates",
                 stateInput: {
-                    participator1State: 'state1',
-                    participator2State: 'state1',
+                    ...stateInputStub,
                     proceedEvent: 'moveToState2'
                 }
             }
@@ -81,8 +87,7 @@ class ProceedInChatUseCaseTest {
                     chat: {
                         ...chatStub,
                         currentState: {
-                            participator1State: 'state1',
-                            participator2State: 'state1',
+                            ...chatCurrentStateStub,
                             proceedEvent: 'moveToState2'
                         }
                     }
@@ -93,7 +98,7 @@ class ProceedInChatUseCaseTest {
 
                     const chatFlowGatewayStub = {
                         getChatFlowById: jest.fn().mockResolvedValue({
-                            getNextState: jest.fn().mockResolvedValue('state2Id')
+                            getNextStateId: jest.fn().mockResolvedValue('state2Id')
                         })
                     }
 
@@ -101,8 +106,89 @@ class ProceedInChatUseCaseTest {
                     await usecase.executeProceedInChat(requestModelTwoStatesChatFlow);
                     
                     expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                        ...expectedInResultModel,
                         chatEndStateId: 'state2Id',
                     }));
+                });
+            });
+
+            describe('Given a chat flow with 3 states and 2 valid request models', () => {
+                var requestsCounter = 0;
+
+                const chatGatewayFlowWith3StatesMock = {
+                    getChatById: jest.fn().mockImplementation(() => {
+                        if (requestsCounter == 0) {
+                            return {
+                                ...chatGatewayResultModelStub,
+                                chat: {
+                                    ...chatStub,
+                                    currentState: {
+                                        ...chatCurrentStateStub,
+                                        proceedEvent: 'moveToState2'
+                                    }
+                                }
+                            }
+                        } else {
+                            return {
+                                ...chatGatewayResultModelStub,
+                                chat: {
+                                    ...chatStub,
+                                    currentState: {
+                                        ...chatCurrentStateStub,
+                                        proceedEvent: 'moveToState3'
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+
+                const chatFlowGatewayWith3StatesMock = {
+                    getChatFlowById: jest.fn().mockResolvedValue({
+                        getNextStateId: jest.fn().mockImplementation(() => {
+                            if (requestsCounter == 0) {
+                                requestsCounter++;
+                                return 'state2Id';
+                            } else {
+                                return 'state3Id';
+                            }
+                        })
+                    })
+                }
+
+                const requestModel1 = {
+                    ...requestModelStub,
+                    chatId: "chatIdThreeStates",
+                    stateInput: {
+                        ...stateInputStub,
+                        proceedEvent: 'moveToState2'
+                    }
+                }
+
+                const requestModel2 = {
+                    ...requestModelStub,
+                    chatId: "chatIdThreeStates",
+                    stateInput: {
+                        ...stateInputStub,
+                        proceedEvent: 'moveToState3'
+                    }
+                }
+
+                describe('When the request models are sent to the use case sequentially', () => {
+                    const usecase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayFlowWith3StatesMock, chatFlowGatewayWith3StatesMock);
+
+                    it('should send a result model with next state for each request model', async () => {
+                        await usecase.executeProceedInChat(requestModel1);
+                        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                            ...expectedInResultModel,
+                            chatEndStateId: 'state2Id',
+                        }));
+                        await usecase.executeProceedInChat(requestModel2);
+                        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                            ...expectedInResultModel,
+                            chatEndStateId: 'state3Id',
+                        }));
+                    });
                 });
             });
         });

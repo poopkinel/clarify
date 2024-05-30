@@ -24,7 +24,7 @@ export default class ProceedInChatUseCase {
         const chatFlow = await this.chatFlowGateway.getChatFlowById(gatewayResultModel.chat.chatFlowId);
         var nextState = "";
         if (errors.length == 0) {
-            nextState = await chatFlow.getNextState(
+            nextState = await chatFlow.getNextStateId(
                 requestModel.stateInput.participator1State, 
                 requestModel.stateInput.participator2State,
                 requestModel.stateInput.proceedEvent
