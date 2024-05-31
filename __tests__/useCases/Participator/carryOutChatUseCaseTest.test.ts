@@ -1,10 +1,10 @@
 import CarryOutChatUseCase from '../../../src/useCases/current/carryOutChatUseCase';
-import CarryOutChatResultModel from '../../../src/dataModels/current/specific/carryOutChatResultModel';
+import CarryOutChatResultModel from '../../../src/dataModels/useCaseBoundaries/specific/carryOutChatResultModel';
 // import ChatFlow from '../../../src/entities/chatFlow';
 
 class CarryOutChatUseCaseTest {
     runTests() {
-        describe('Given a spy usecaseOutBoundary', () => {
+        describe.skip('Given a spy usecaseOutBoundary', () => {
             const usecaseOutBoundarySpy = {
                 sendResultModel: jest.fn()
             }

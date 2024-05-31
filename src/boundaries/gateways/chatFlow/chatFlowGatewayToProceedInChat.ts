@@ -1,5 +1,5 @@
-import ChatFlowForProceedInChat from "../../../entities/chatFlow/chatFlowForProceedInChat";
+import ChatFlowEntityForProceedInChat from "../../../entities/chatFlow/chatFlowEntityForProceedInChat";
 
 export default interface ChatFlowGatewayToProceedInChat {
-    getChatFlowById(chatId: string): Promise<ChatFlowForProceedInChat>;
+    getChatFlowById(chatId: string): Promise<ChatFlowEntityForProceedInChat>;
 };

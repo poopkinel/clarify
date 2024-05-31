@@ -1,4 +1,4 @@
-import ChatEntityForViewingChat from "../../entities/chatEntity/chatEntityForViewingChat";
+import ChatEntityForViewingChat from "../../../entities/chatEntity/chatEntityForViewingChat";
 import ChatGateway from "./chatGateway";
 
 export default interface ChatGatewayToViewChat extends ChatGateway{

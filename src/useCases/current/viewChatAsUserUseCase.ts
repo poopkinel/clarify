@@ -1,9 +1,7 @@
-import ChatGatewayToViewChat from "../../boundaries/gateways/chatGatewayToViewChat";
-import ChatEntityForViewingChat from "../../entities/chatEntity/chatEntityForViewingChat";
+import ChatGatewayToViewChat from "../../boundaries/gateways/chat/chatGatewayToViewChat";
 import UsercaseOutboundary from "../../boundaries/useCaseBoundaries/usecaseOutBoundary";
-import ViewChatResultModel from "../../dataModels/current/specific/viewChatResultModel";
-import UsercaseInBoundary from "../../boundaries/useCaseBoundaries/usecaseInBoundary";
-import ViewChatRequestModel from "../../dataModels/current/specific/viewChatRequestModel";
+import ViewChatResultModel from "../../dataModels/useCaseBoundaries/specific/viewChatResultModel";
+import ViewChatRequestModel from "../../dataModels/useCaseBoundaries/specific/viewChatRequestModel";
 
 export default class ViewChatAsUserUseCase {
     chatGatewayToViewChatHistory: ChatGatewayToViewChat;

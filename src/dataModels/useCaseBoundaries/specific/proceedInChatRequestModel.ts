@@ -1,8 +1,6 @@
 import RequestModel from "../general/requestModel";
 
 type StateInput = {
-    participator1State: string;
-    participator2State: string;
     proceedEvent: string;
 }
 

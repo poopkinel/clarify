@@ -1,7 +1,7 @@
-import ChatGatewayToViewChatHistory from "../../../src/boundaries/gateways/chatGatewayToViewChatHistory";
+import ChatGatewayToViewChatHistory from "../../../src/boundaries/gateways/chat/chatGatewayToViewChatHistory";
 import ViewChatHistoryAsUserUseCase from "../../../src/useCases/current/viewChatHistoryAsUserUseCase";
-import ViewChatHistoryAsUserResultModel from "../../../src/dataModels/current/specific/viewChatHistoryAsUserResultModel";
-import ViewChatHistoryAsUserRequestModel from "../../../src/dataModels/current/specific/viewChatHistoryAsUserRequestModel";
+import ViewChatHistoryAsUserResultModel from "../../../src/dataModels/useCaseBoundaries/specific/viewChatHistoryAsUserResultModel";
+import ViewChatHistoryAsUserRequestModel from "../../../src/dataModels/useCaseBoundaries/specific/viewChatHistoryAsUserRequestModel";
 import { ResponseType } from "../../../src/entities/responseEntity";
 
 class ViewChatHistoryAsUserTest {

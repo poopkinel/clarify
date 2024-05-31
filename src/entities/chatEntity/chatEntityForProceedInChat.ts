@@ -1,7 +1,7 @@
-import ChatState from "../chatState/chatState";
+import ChatStateForProceedInChat from "../chatState/chatState";
 
 export default interface ChatEntityForProceedInChat {
-    currentState: ChatState;
+    currentState: ChatStateForProceedInChat;
     participator1UserId: string;
     participator2UserId: string;
     chatFlowId: string;

@@ -1,7 +1,7 @@
-import ChatGatewayToCreateChatToBeParticipator from '../../boundaries/gateways/chatGatewayToCreateChatToBeParticipator';
+import ChatGatewayToCreateChatToBeParticipator from '../../boundaries/gateways/chat/chatGatewayToCreateChatToBeParticipator';
 import UsecaseOutBoundary from '../../boundaries/useCaseBoundaries/usecaseOutBoundary';
-import CreateChatAsUserToBeParticipatorRequestModel from '../../dataModels/current/specific/createChatAsUserToBeParticipatorRequestModel';
-import CreateChatAsUserToBeParticipatorResultModel from '../../dataModels/current/specific/createChatAsUserToBeParticipatorResultModel';
+import CreateChatAsUserToBeParticipatorRequestModel from '../../dataModels/useCaseBoundaries/specific/createChatAsUserToBeParticipatorRequestModel';
+import CreateChatAsUserToBeParticipatorResultModel from '../../dataModels/useCaseBoundaries/specific/createChatAsUserToBeParticipatorResultModel';
 
 export default class CreateChatAsUserToBeParticipatorUseCase {
     chatGateway: ChatGatewayToCreateChatToBeParticipator;

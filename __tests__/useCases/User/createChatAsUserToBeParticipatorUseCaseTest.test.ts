@@ -1,7 +1,7 @@
 import CreateChatAsUserToBeParticipatorUseCase from '../../../src/useCases/current/createChatAsUserToBeParticipatorUseCase'
-import ChatGatewayToCreateChatToBeParticipator from '../../../src/boundaries/gateways/chatGatewayToCreateChatToBeParticipator'
+import ChatGatewayToCreateChatToBeParticipator from '../../../src/boundaries/gateways/chat/chatGatewayToCreateChatToBeParticipator'
 import UsecaseOutBoundary from '../../../src/boundaries/useCaseBoundaries/usecaseOutBoundary';
-import CreateChatAsUserToBeParticipatorResultModel from '../../../src/dataModels/current/specific/createChatAsUserToBeParticipatorResultModel';
+import CreateChatAsUserToBeParticipatorResultModel from '../../../src/dataModels/useCaseBoundaries/specific/createChatAsUserToBeParticipatorResultModel';
 
 class CreateChatAsUserToBeParticipatorUseCaseTest {
     private usecaseOutBoundarySpy: UsecaseOutBoundary<CreateChatAsUserToBeParticipatorResultModel> = {

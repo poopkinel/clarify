@@ -1,4 +1,4 @@
-import ChatGatewayToViewChat from "../../../src/boundaries/gateways/chatGatewayToViewChat";
+import ChatGatewayToViewChat from "../../../src/boundaries/gateways/chat/chatGatewayToViewChat";
 import ViewChatAsUserUseCase from "../../../src/useCases/current/viewChatAsUserUseCase";
 
 class ViewChatAsUserUseCaseTest {

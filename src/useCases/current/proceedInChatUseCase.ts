@@ -1,4 +1,4 @@
-import ChatGatewayToProceedInChat from "../../boundaries/gateways/chatEntity/chatGatewayToProceedInChat";
+import ChatGatewayToProceedInChat from "../../boundaries/gateways/chat/chatGatewayToProceedInChat";
 import ChatFlowGatewayToProceedInChat from "../../boundaries/gateways/chatFlow/chatFlowGatewayToProceedInChat";
 import UsecaseOutBoundary from "../../boundaries/useCaseBoundaries/usecaseOutBoundary";
 import ChatGatewayCreateChatResultModel from "../../dataModels/current/chatGateway/chatGatewayCreateChatResultModel";
@@ -20,21 +20,29 @@ export default class ProceedInChatUseCase {
     }
     async executeProceedInChat(requestModel: ProceedInChatRequestModel) {
         const gatewayResultModel = await this.chatGatewayToProceedInChat.getChatById(requestModel.chatId);
-        var errors = this.validateInput(requestModel, gatewayResultModel);
         const chatFlow = await this.chatFlowGateway.getChatFlowById(gatewayResultModel.chat.chatFlowId);
-        var nextState = "";
-        if (errors.length == 0) {
-            nextState = await chatFlow.getNextStateId(
-                requestModel.stateInput.participator1State, 
-                requestModel.stateInput.participator2State,
-                requestModel.stateInput.proceedEvent
-            );
+
+        var errors = this.validateInput(requestModel, gatewayResultModel);
+        var result: ProceedInChatResultModel;
+
+        if (errors.length > 0) {
+            result = new ProceedInChatResultModel(errors, '');
+        } else {
+            const nextStateResult = await chatFlow.tryGetNextState(requestModel.stateInput.proceedEvent);
+            
+            if (!nextStateResult.success) {
+                errors.push(nextStateResult.error);
+            }
+            result = new ProceedInChatResultModel(errors, nextStateResult.nextState.id);
+            result.setResponseOptions(nextStateResult.nextState.responseOptions);
         }
-        const result = new ProceedInChatResultModel(errors, nextState);
         await this.usecaseOutBoundary.sendResultModel(result);
     }
 
-    private validateInput(requestModel: ProceedInChatRequestModel, gatewayResultModel: ChatGatewayCreateChatResultModel) {
+    private validateInput(
+        requestModel: ProceedInChatRequestModel, 
+        gatewayResultModel: ChatGatewayCreateChatResultModel, 
+    ) {
         const errors: string[] = [];
         if (!gatewayResultModel.success) {
             errors.push(gatewayResultModel.error);
@@ -47,14 +55,14 @@ export default class ProceedInChatUseCase {
                 gatewayResultModel.chat.participator2UserId !== requestModel.userId) {
                 errors.push('User is not a participator in this chat');
             }
-            if (gatewayResultModel.chat.currentState.participator1State !== requestModel.stateInput.participator1State) {
-                errors.push('Invalid chat state for participator 1');
-            } else if (gatewayResultModel.chat.currentState.participator2State !== requestModel.stateInput.participator2State) {
-                errors.push('Invalid chat state for participator 2');
-            } else if (gatewayResultModel.chat.currentState.proceedEvent !== requestModel.stateInput.proceedEvent) {
+            if (gatewayResultModel.chat.currentState.proceedEvent !== requestModel.stateInput.proceedEvent) {
                 errors.push('Invalid chat state event');
             }
         }
         return errors;
+    }
+
+    static fromJson(json: any): ProceedInChatUseCase {
+        return new ProceedInChatUseCase(json.usecaseOutBoundary, json.chatGatewayToProceedInChat, json.chatFlowGateway);
     }
 }

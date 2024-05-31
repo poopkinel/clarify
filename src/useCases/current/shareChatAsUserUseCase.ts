@@ -1,14 +1,14 @@
-import AttemptShareChatAsUserRequestModel from "../../dataModels/current/specific/shareChatAsUserRequestModel";
+import AttemptShareChatAsUserRequestModel from "../../dataModels/useCaseBoundaries/specific/attemptShareChatAsUserRequestModel";
 import UsecaseInBoundary from "../../boundaries/useCaseBoundaries/usecaseInBoundary";
 import UsecaseOutBoundary from "../../boundaries/useCaseBoundaries/usecaseOutBoundary";
-import ShareChatAsUserResultModel from "../../dataModels/current/specific/shareChatAsUserResultModel";
-import ChatGatewayToShareChat from "../../boundaries/gateways/chatGatewayToShareChat";
+import AttemptShareChatAsUserResultModel from "../../dataModels/useCaseBoundaries/specific/attemptShareChatAsUserResultModel";
+import ChatGatewayToShareChat from "../../boundaries/gateways/chat/chatGatewayToShareChat";
 
 export default class ShareChatAsUserUseCase implements UsecaseInBoundary<AttemptShareChatAsUserRequestModel> {
-    usecaseOutBoundary: UsecaseOutBoundary<ShareChatAsUserResultModel>;
+    usecaseOutBoundary: UsecaseOutBoundary<AttemptShareChatAsUserResultModel>;
     chatGateway: ChatGatewayToShareChat;
 
-    constructor(usecaseOutBoundary: UsecaseOutBoundary<ShareChatAsUserResultModel>,
+    constructor(usecaseOutBoundary: UsecaseOutBoundary<AttemptShareChatAsUserResultModel>,
                 chatGateway: ChatGatewayToShareChat) {
         this.usecaseOutBoundary = usecaseOutBoundary;
         this.chatGateway = chatGateway;
@@ -29,7 +29,7 @@ export default class ShareChatAsUserUseCase implements UsecaseInBoundary<Attempt
             link = await chat.sharingSettings.getLink();
         };
 
-        const resultModel = new ShareChatAsUserResultModel(
+        const resultModel = new AttemptShareChatAsUserResultModel(
             "chatId", "userId", "all", error, link
         );
             

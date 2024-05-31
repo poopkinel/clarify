@@ -7,8 +7,6 @@ class ProceedInChatUseCaseTest {
         }
         
         const stateInputStub = {
-            participator1State: 'state',
-            participator2State: 'state',
             proceedEvent: 'event'
         }
         
@@ -16,12 +14,6 @@ class ProceedInChatUseCaseTest {
             chatId: 'chatId', 
             userId: 'userId1', 
             stateInput: stateInputStub
-        }
-        
-        const chatFlowGatewayStub = {
-            getChatFlowById: jest.fn().mockResolvedValue({
-                getNextStateId: jest.fn().mockResolvedValue('state2Id')
-            })
         }
         
         const chatCurrentStateStub = {
@@ -50,11 +42,34 @@ class ProceedInChatUseCaseTest {
             chatEndStateId: 'nextState'
         };
 
+        const nextStateStub = {
+            id: 'nextState',
+            participator1State: 'state',
+            participator2State: 'state',
+            proceedEvent: 'event'
+        }
+
+        const nextStateResultStub = {
+            success: true,
+            nextState: nextStateStub
+        }
+        
+        const chatFlowGatewayStub = {
+            getChatFlowById: jest.fn().mockResolvedValue({
+                tryGetNextState: jest.fn().mockResolvedValue(nextStateResultStub)
+            })
+        }
+
         describe('Given an empty chat flow gateway stub', () => {
             const chatFlowGatewayOneStateStub = {
                 ...chatFlowGatewayStub,
                 getChatFlowById: jest.fn().mockResolvedValue({
-                    getNextStateId: jest.fn().mockResolvedValue('start-finish')
+                    tryGetNextState: jest.fn().mockResolvedValue({
+                        ...nextStateResultStub,
+                        nextState: {
+                            id: 'start-finish'
+                        }
+                    })
                 })
             };
 
@@ -93,84 +108,76 @@ class ProceedInChatUseCaseTest {
                     }
                 })
             }
+
+            const chatFlowGatewayTwoStatesStub = {
+                ...chatFlowGatewayStub,
+                getChatFlowById: jest.fn().mockResolvedValue({
+                    tryGetNextState: jest.fn().mockResolvedValue({
+                        ...nextStateResultStub,
+                        nextState: {
+                            ...nextStateStub,
+                            id: 'nextState'
+                        }
+                    })
+                })
+            };
+
             describe('When the request model is sent to the use case', () => {
                 it('should send a result model with the transitioned new state', async () => {
-
-                    const chatFlowGatewayStub = {
-                        getChatFlowById: jest.fn().mockResolvedValue({
-                            getNextStateId: jest.fn().mockResolvedValue('state2Id')
-                        })
-                    }
-
-                    const usecase = new ProceedInChatUseCase(usecaseOutBoundarySpy, gatewayStubWithEventMoveToState2, chatFlowGatewayStub);
+                    const usecase = new ProceedInChatUseCase(usecaseOutBoundarySpy, gatewayStubWithEventMoveToState2, chatFlowGatewayTwoStatesStub);
                     await usecase.executeProceedInChat(requestModelTwoStatesChatFlow);
                     
                     expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         ...expectedInResultModel,
-                        chatEndStateId: 'state2Id',
+                        chatEndStateId: 'nextState',
                     }));
                 });
             });
 
             describe('Given a chat flow with 3 states and 2 valid request models', () => {
                 var requestsCounter = 0;
-
-                const chatGatewayFlowWith3StatesMock = {
-                    getChatById: jest.fn().mockImplementation(() => {
-                        if (requestsCounter == 0) {
-                            return {
-                                ...chatGatewayResultModelStub,
-                                chat: {
-                                    ...chatStub,
-                                    currentState: {
-                                        ...chatCurrentStateStub,
-                                        proceedEvent: 'moveToState2'
-                                    }
-                                }
-                            }
-                        } else {
-                            return {
-                                ...chatGatewayResultModelStub,
-                                chat: {
-                                    ...chatStub,
-                                    currentState: {
-                                        ...chatCurrentStateStub,
-                                        proceedEvent: 'moveToState3'
-                                    }
-                                }
+                const setupChatGatewayResultModelStub = (counter: number) => {
+                    return {
+                        ...chatGatewayResultModelStub,
+                        chat: {
+                            ...chatStub,
+                            currentState: {
+                                ...chatCurrentStateStub,
+                                proceedEvent: `moveToState${counter + 2}`
                             }
                         }
-                    })
-                }
-
-                const chatFlowGatewayWith3StatesMock = {
-                    getChatFlowById: jest.fn().mockResolvedValue({
-                        getNextStateId: jest.fn().mockImplementation(() => {
-                            if (requestsCounter == 0) {
-                                requestsCounter++;
-                                return 'state2Id';
-                            } else {
-                                return 'state3Id';
-                            }
-                        })
-                    })
-                }
-
-                const requestModel1 = {
-                    ...requestModelStub,
-                    chatId: "chatIdThreeStates",
-                    stateInput: {
-                        ...stateInputStub,
-                        proceedEvent: 'moveToState2'
                     }
                 }
 
-                const requestModel2 = {
-                    ...requestModelStub,
-                    chatId: "chatIdThreeStates",
-                    stateInput: {
-                        ...stateInputStub,
-                        proceedEvent: 'moveToState3'
+                const chatGatewayFlowWith3StatesMock = {
+                    getChatById: jest.fn().mockImplementation(() => setupChatGatewayResultModelStub(requestsCounter))
+                }
+
+                const setupNextStateStub = (counter: number) => {
+                    return {
+                        ...nextStateResultStub,
+                        nextState: {
+                            ...nextStateStub,
+                            id: `state${counter + 2}Id`,
+                            proceedEvent: `moveToState${counter + 2}`
+                        }
+                    }   
+                }
+                const chatFlowGatewayWith3StatesMock = {
+                    ...chatFlowGatewayStub,
+                    getChatFlowById: jest.fn().mockResolvedValue({
+                        tryGetNextState: jest.fn().mockImplementation(() => setupNextStateStub(requestsCounter))
+                    })
+                }
+
+                const setupRequestModelStub = (counter: number) => {
+                    return {
+                        ...requestModelStub,
+                        chatId: "chatIdThreeStates",
+                        stateInput: {
+                            ...stateInputStub,
+                            proceedEvent: `moveToState${counter + 2}`
+                        }
                     }
                 }
 
@@ -178,12 +185,15 @@ class ProceedInChatUseCaseTest {
                     const usecase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayFlowWith3StatesMock, chatFlowGatewayWith3StatesMock);
 
                     it('should send a result model with next state for each request model', async () => {
-                        await usecase.executeProceedInChat(requestModel1);
+                        await usecase.executeProceedInChat(setupRequestModelStub(requestsCounter));
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             ...expectedInResultModel,
                             chatEndStateId: 'state2Id',
                         }));
-                        await usecase.executeProceedInChat(requestModel2);
+
+                        requestsCounter++;
+
+                        await usecase.executeProceedInChat(setupRequestModelStub(requestsCounter));
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             ...expectedInResultModel,
                             chatEndStateId: 'state3Id',

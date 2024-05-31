@@ -1,6 +1,6 @@
-import ResultModel from "../../useCaseBoundaries/general/resultModel";
+import ResultModel from "../general/resultModel";
 
-export default class ShareChatAsUserResultModel implements ResultModel {
+export default class AttemptShareChatAsUserResultModel implements ResultModel {
     chatId: string;
     userId: string;
     access: string;

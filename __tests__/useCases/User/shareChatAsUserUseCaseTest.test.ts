@@ -1,7 +1,7 @@
-import AttemptShareChatAsUserRequestModel from '../../../src/dataModels/current/specific/shareChatAsUserRequestModel'
-import ShareChatAsUserResultModel from '../../../src/dataModels/current/specific/shareChatAsUserResultModel'
+import AttemptShareChatAsUserRequestModel from '../../../src/dataModels/useCaseBoundaries/specific/attemptShareChatAsUserRequestModel'
+import AttemptShareChatAsUserResultModel from '../../../src/dataModels/useCaseBoundaries/specific/attemptShareChatAsUserResultModel'
 import ShareChatAsUserUseCase from '../../../src/useCases/current/shareChatAsUserUseCase'
-import ChatGatewayToShareChat from '../../../src/boundaries/gateways/chatGatewayToShareChat'
+import ChatGatewayToShareChat from '../../../src/boundaries/gateways/chat/chatGatewayToShareChat'
 
 class ShareChatAsUserUseCaseTest {
     private usecaseOutBoundary: any;
@@ -35,7 +35,7 @@ class ShareChatAsUserUseCaseTest {
             })
         }
         
-        this.dummyResultModel = new ShareChatAsUserResultModel(
+        this.dummyResultModel = new AttemptShareChatAsUserResultModel(
             this.dummyChatId,
             this.dummyUserId,
             this.dummyAccess,
@@ -105,7 +105,7 @@ class ShareChatAsUserUseCaseTest {
                 await this.executeUseCaseWithStubRequestAndGateway(chatGatewayStubWithLink);
         
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
-                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(new ShareChatAsUserResultModel(
+                expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(new AttemptShareChatAsUserResultModel(
                     this.dummyChatId,
                     this.dummyUserId,
                     this.dummyAccess,
@@ -130,7 +130,7 @@ class ShareChatAsUserUseCaseTest {
         
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
-                    new ShareChatAsUserResultModel(
+                    new AttemptShareChatAsUserResultModel(
                         this.dummyChatId,
                         this.dummyUserId,
                         this.dummyAccess,
@@ -148,7 +148,7 @@ class ShareChatAsUserUseCaseTest {
         
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
-                    new ShareChatAsUserResultModel(
+                    new AttemptShareChatAsUserResultModel(
                         this.dummyChatId,
                         this.dummyUserId,
                         this.dummyAccess,
@@ -166,7 +166,7 @@ class ShareChatAsUserUseCaseTest {
         
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalled();
                 expect(this.usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(
-                    new ShareChatAsUserResultModel(
+                    new AttemptShareChatAsUserResultModel(
                         this.dummyChatId,
                         this.dummyUserId,
                         this.dummyAccess,

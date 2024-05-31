@@ -1,4 +1,4 @@
-import RequestModel from "../../useCaseBoundaries/general/requestModel";
+import RequestModel from "../general/requestModel";
 
 export default class AttemptShareChatAsUserRequestModel implements RequestModel {
     chatId: string;
