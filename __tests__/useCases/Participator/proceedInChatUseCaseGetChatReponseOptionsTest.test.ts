@@ -3,7 +3,7 @@ import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUse
 
 class ProceedInChatUseCaseGetChatReponseOptionsTest {
     runTests() {
-        describe('Given a spy usecaseOutBoundarySpy, chatGateway stub, chatFlowGateway stub, usecase stub and request model stub', () => {
+        describe('Given a usecaseOutBoundarySpy, chatGateway stub, chatFlowGateway stub, usecase stub and request model stub', () => {
             const usecaseOutBoundarySpy = {
                 sendResultModel: jest.fn()
             }
@@ -25,12 +25,18 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                 })
             }
 
+            
+            const responseOptionsStub = {
+                resopnseOptionParticipant1: [],
+                resopnseOptionParticipant2: []
+            }
+
             const nextStateStub = {
                 id: 'nextState',
                 participator1State: 'state',
                 participator2State: 'state',
                 proceedEvent: 'event',
-                responseOptions: []
+                responseOptions: responseOptionsStub
             }
 
             const nextStateResultStub = {
@@ -68,26 +74,38 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                         const usecase = usecaseStub;
                         await usecase.executeProceedInChat(requestModelStub);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                            responseOptions: []
-                        }
-                        ));
+                            responseOptions: {
+                                resopnseOptionParticipant1: [],
+                                resopnseOptionParticipant2: []
+                            }
+                        }));
                     })
                 })
             })
 
-            describe('Given a chatFlowGateway returning a dummy chat state with 1 option', () => {
-                const chatFlowGatewayOneOptionStub = {
+            const setupChatFlowGatewayStub = (responseOptionsP1: any, responseOptionsP2: any) => {
+                return {
                     ...chatFlowGatewayStub,
                     getChatFlowById: jest.fn().mockResolvedValue({
                         tryGetNextState: jest.fn().mockResolvedValue({
                             ...nextStateResultStub,
                             nextState: {
                                 ...nextStateStub,
-                                responseOptions: ["1"]
+                                responseOptions: {
+                                    ...responseOptionsStub,
+                                    resopnseOptionParticipant1: responseOptionsP1,
+                                    resopnseOptionParticipant2: responseOptionsP2
+                                }
                             }
                         })
                     })
                 }
+            }
+
+            
+            describe('Given a chatFlowGateway returning a dummy chat state with 1 option per participant', () => {
+                const chatFlowGatewayOneOptionStub = setupChatFlowGatewayStub(["1"], ["2"]);
+
                 describe('When a request model for chat options is sent', () => {
                     const requestModel = {
                         ...requestModelStub,
@@ -100,33 +118,23 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                         });
                         await usecase.executeProceedInChat(requestModel);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                            responseOptions: ["1"]
+                            responseOptions: {
+                                resopnseOptionParticipant1: ["1"],
+                                resopnseOptionParticipant2: ["2"]
+                            }
                         }));
                     });
                 });
             });
 
             describe('Given a chatFlowGateway returning a stub chat state with 2 options', () => {
-                const chatFlowGatewayTwoOptionStub = {
-                    ...chatFlowGatewayStub,
-                    getChatFlowById: jest.fn().mockResolvedValue({
-                        tryGetNextState: jest.fn().mockResolvedValue({
-                            ...nextStateResultStub,
-                            nextState: {
-                                ...nextStateStub,
-                                responseOptions: ["1", "2"]
-                            }
-                        })
-                    })
-                }
+                const chatFlowGatewayTwoOptionStub = setupChatFlowGatewayStub(["1", "A"], ["2", "B"]);
+
                 describe('When a request model for chat options is sent', () => {
                     const requestModel = {
                         ...requestModelStub,
                         chatId: 'chat2OptionsId',
-                        stateInput: {
-                            ...stateInputStub,
-                            responseOptions: ["1", "2"]
-                        }
+                        stateInput: stateInputStub
                     }
                     it('usecase should be called with a result containing a list with 2 options', async () => {
                         const usecase = ProceedInChatUseCase.fromJson({
@@ -135,7 +143,10 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                         })
                         await usecase.executeProceedInChat(requestModel);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                            responseOptions: ["1", "2"]
+                            responseOptions: {
+                                resopnseOptionParticipant1: ["1", "A"],
+                                resopnseOptionParticipant2: ["2", "B"]
+                            }
                         }));
                     });
                 });
