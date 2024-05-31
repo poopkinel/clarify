@@ -1,5 +1,5 @@
-import { response } from "express"
 import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUseCase"
+import ChatReponseOptions from "../../../src/entities/responseOption/chatResponseOptions"
 
 class ProceedInChatUseCaseGetChatReponseOptionsTest {
     runTests() {
@@ -27,8 +27,8 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
 
             
             const responseOptionsStub = {
-                resopnseOptionParticipant1: [],
-                resopnseOptionParticipant2: []
+                responseOptionsParticipant1: [],
+                responseOptionsParticipant2: []
             }
 
             const nextStateStub = {
@@ -75,15 +75,17 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                         await usecase.executeProceedInChat(requestModelStub);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             responseOptions: {
-                                resopnseOptionParticipant1: [],
-                                resopnseOptionParticipant2: []
+                                responseOptionsParticipant1: [],
+                                responseOptionsParticipant2: []
                             }
                         }));
                     })
                 })
             })
 
-            const setupChatFlowGatewayStub = (responseOptionsP1: any, responseOptionsP2: any) => {
+            const setupChatFlowGatewayStub = (
+                responseOptionsP1: ChatReponseOptions, responseOptionsP2: ChatReponseOptions
+            ) => {
                 return {
                     ...chatFlowGatewayStub,
                     getChatFlowById: jest.fn().mockResolvedValue({
@@ -93,8 +95,8 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                                 ...nextStateStub,
                                 responseOptions: {
                                     ...responseOptionsStub,
-                                    resopnseOptionParticipant1: responseOptionsP1,
-                                    resopnseOptionParticipant2: responseOptionsP2
+                                    responseOptionsParticipant1: responseOptionsP1,
+                                    responseOptionsParticipant2: responseOptionsP2
                                 }
                             }
                         })
@@ -102,15 +104,45 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                 }
             }
 
+            const responseOptionsP1Stub = {
+                options: [{
+                        responseMedia: {
+                        media: 'text'
+                    },
+                    responseRestrictions: {
+                        validatorId: 'CantBeQuestionValidatorId'
+                    }
+                }]
+            }
+
+            const responseOptionsP2Stub = {
+                options: null
+            }
+
+            const responseOptionsP1ResultStub = {
+                options: [{
+                        responseMedia: {
+                        media: 'text'
+                    },
+                    responseRestrictions: {
+                        validatorId: 'CantBeQuestionValidatorId'
+                    }
+                }]
+            }
+
+            const responseOptionsP2ResultStub = {
+                options: null
+            }
             
             describe('Given a chatFlowGateway returning a dummy chat state with 1 option per participant', () => {
-                const chatFlowGatewayOneOptionStub = setupChatFlowGatewayStub(["1"], ["2"]);
+                const chatFlowGatewayOneOptionStub = setupChatFlowGatewayStub(
+                    responseOptionsP1Stub,
+                    responseOptionsP2Stub
+                );
 
                 describe('When a request model for chat options is sent', () => {
-                    const requestModel = {
-                        ...requestModelStub,
-                        chatId: 'chatOnly1OptionId'
-                    }
+                    const requestModel = requestModelStub;
+
                     it('usecase should be called with a result containing a list with 1 option', async () => {
                         const usecase = ProceedInChatUseCase.fromJson({
                             ...usecaseStubJson,
@@ -119,8 +151,8 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                         await usecase.executeProceedInChat(requestModel);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             responseOptions: {
-                                resopnseOptionParticipant1: ["1"],
-                                resopnseOptionParticipant2: ["2"]
+                                responseOptionsParticipant1: responseOptionsP1ResultStub,
+                                responseOptionsParticipant2: responseOptionsP2ResultStub
                             }
                         }));
                     });
@@ -128,7 +160,13 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
             });
 
             describe('Given a chatFlowGateway returning a stub chat state with 2 options', () => {
-                const chatFlowGatewayTwoOptionStub = setupChatFlowGatewayStub(["1", "A"], ["2", "B"]);
+                const chatFlowGatewayTwoOptionStub = setupChatFlowGatewayStub(
+                    {
+                        options: null
+                    }
+                    ,{
+                        options: null
+                    });
 
                 describe('When a request model for chat options is sent', () => {
                     const requestModel = {
@@ -144,8 +182,12 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                         await usecase.executeProceedInChat(requestModel);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             responseOptions: {
-                                resopnseOptionParticipant1: ["1", "A"],
-                                resopnseOptionParticipant2: ["2", "B"]
+                                responseOptionsParticipant1: {
+                                    options: null
+                                },
+                                responseOptionsParticipant2: {
+                                    options: null
+                                }
                             }
                         }));
                     });
