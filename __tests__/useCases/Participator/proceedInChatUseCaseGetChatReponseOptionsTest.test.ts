@@ -165,8 +165,24 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                         options: null
                     }
                     ,{
-                        options: null
-                    });
+                        options: [{
+                            responseMedia: {
+                                media: 'text'
+                            },
+                            responseRestrictions: {
+                                validatorId: 'CantBeQuestionValidatorId'
+                            }
+                        }, {
+                            responseMedia: {
+                                media: 'image'
+                            },
+                            responseRestrictions: {
+                                validatorId: 'CantBeQuestionValidatorId'
+                            }
+                        
+                        }]
+                    }
+                );
 
                 describe('When a request model for chat options is sent', () => {
                     const requestModel = {
@@ -186,7 +202,22 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                                     options: null
                                 },
                                 responseOptionsParticipant2: {
-                                    options: null
+                                    options: [{
+                                        responseMedia: {
+                                            media: 'text'
+                                        },
+                                        responseRestrictions: {
+                                            validatorId: 'CantBeQuestionValidatorId'
+                                        }
+                                    }, {
+                                        responseMedia: {
+                                            media: 'image'
+                                        },
+                                        responseRestrictions: {
+                                            validatorId: 'CantBeQuestionValidatorId'
+                                        }
+                                    
+                                    }]
                                 }
                             }
                         }));

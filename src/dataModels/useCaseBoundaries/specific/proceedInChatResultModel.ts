@@ -1,17 +1,18 @@
+import ChatResponseOptions from "../../../entities/responseOption/chatResponseOptions";
 import ResultModel from "../../useCaseBoundaries/general/resultModel";
 
 export default class ProceedInChatResultModel implements ResultModel {
     errors: string[];
-    chatEndStateId: string;
-    responseOptions: string[];
+    chatNextStateId: string;
+    responseOptions: ChatResponseOptions;
 
-    constructor(errors: string[], chatEndStateId: string) {
+    constructor(errors: string[], chatNextStateId: string) {
         this.errors = errors;
-        this.chatEndStateId = chatEndStateId;
-        this.responseOptions = [];
+        this.chatNextStateId = chatNextStateId;
+        this.responseOptions = { options: null };
     }
 
-    setResponseOptions(responseOptions: string[]) {
+    setResponseOptions(responseOptions: ChatResponseOptions) {
         this.responseOptions = responseOptions;
     }
 }

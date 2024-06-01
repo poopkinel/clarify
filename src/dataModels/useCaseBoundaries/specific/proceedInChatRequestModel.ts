@@ -1,7 +1,16 @@
 import RequestModel from "../general/requestModel";
 
 type StateInput = {
-    proceedEvent: string;
+    // proceedEvent: string;
+    response: {
+        responseMedia: string;
+        responseContent: string;
+        eventValidationResult: {
+            success: boolean;
+            error: string;
+            event: string;
+        }
+    }
 }
 
 export default class ProceedInChatRequestModel implements RequestModel {

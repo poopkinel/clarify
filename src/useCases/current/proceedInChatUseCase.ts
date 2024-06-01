@@ -22,13 +22,14 @@ export default class ProceedInChatUseCase {
         const gatewayResultModel = await this.chatGatewayToProceedInChat.getChatById(requestModel.chatId);
         const chatFlow = await this.chatFlowGateway.getChatFlowById(gatewayResultModel.chat.chatFlowId);
 
-        var errors = this.validateInput(requestModel, gatewayResultModel);
+        var errors = this.validateChatMetaData(requestModel, gatewayResultModel);
         var result: ProceedInChatResultModel;
 
         if (errors.length > 0) {
             result = new ProceedInChatResultModel(errors, '');
         } else {
-            const nextStateResult = await chatFlow.tryGetNextState(requestModel.stateInput.proceedEvent);
+            const response = requestModel.stateInput.response;
+            const nextStateResult = await chatFlow.tryGetNextState(response.eventValidationResult.event);
             
             if (!nextStateResult.success) {
                 errors.push(nextStateResult.error);
@@ -39,7 +40,7 @@ export default class ProceedInChatUseCase {
         await this.usecaseOutBoundary.sendResultModel(result);
     }
 
-    private validateInput(
+    private validateChatMetaData(
         requestModel: ProceedInChatRequestModel, 
         gatewayResultModel: ChatGatewayCreateChatResultModel, 
     ) {
@@ -55,7 +56,8 @@ export default class ProceedInChatUseCase {
                 gatewayResultModel.chat.participator2UserId !== requestModel.userId) {
                 errors.push('User is not a participator in this chat');
             }
-            if (gatewayResultModel.chat.currentState.proceedEvent !== requestModel.stateInput.proceedEvent) {
+            const response = requestModel.stateInput.response;
+            if (gatewayResultModel.chat.currentState.proceedEvent !== response.eventValidationResult.event) {
                 errors.push('Invalid chat state event');
             }
         }
