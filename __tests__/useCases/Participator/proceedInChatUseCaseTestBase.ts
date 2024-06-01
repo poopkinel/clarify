@@ -49,4 +49,14 @@ export default class ProceedInChatUseCaseTestBase {
             tryGetNextState: jest.fn().mockResolvedValue(this.nextStateResultStub)
         })
     }
+
+    eventValidationResultStub = {
+        success: true,
+        error: '',
+        event: 'event'
+    }
+
+    validationGatewayStub = {
+        validateResponseEvent: jest.fn().mockResolvedValue(this.eventValidationResultStub)
+    }
 }

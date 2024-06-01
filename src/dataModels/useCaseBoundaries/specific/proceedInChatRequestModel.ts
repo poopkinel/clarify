@@ -3,11 +3,6 @@ import RequestModel from "../general/requestModel";
 type ResponseInput = {
     responseMedia: string;
     responseContent: string;
-    eventValidationResult: {
-        success: boolean;
-        error: string;
-        event: string;
-    }
 }
 
 type ChatStateInput = {

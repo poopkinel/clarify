@@ -80,6 +80,10 @@ class ProceedInChatValidationUseCaseTest {
                     }
                 }
             });
+
+            const validationGatewayStub = {
+                validateResponseEvent: jest.fn().mockResolvedValue(eventValidationResultStub)
+            }
             
             describe('Given a stub chat gateway with an invalid chat', () => {
                 const invalidchatIdError = 'Invalid chat id';
@@ -215,7 +219,12 @@ class ProceedInChatValidationUseCaseTest {
                 chatFlowGatewayStub: { getChatFlowById: any; },
                 requestModel: ProceedInChatRequestModel
             ) {
-                const dummyUseCase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayStub, chatFlowGatewayStub);
+                const dummyUseCase = ProceedInChatUseCase.fromJson({
+                    usecaseOutBoundary: usecaseOutBoundarySpy, 
+                    chatGatewayToProceedInChat: chatGatewayStub, 
+                    chatFlowGateway: chatFlowGatewayStub,
+                    validationGateway: validationGatewayStub
+                });
                 await dummyUseCase.executeProceedInChat(requestModel);
                 expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                     errors: []
@@ -230,7 +239,12 @@ class ProceedInChatValidationUseCaseTest {
                 expectedError: string
             ) {
                 it(`should return an ${expectedError} result`, async () => {
-                    const dummyUseCase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayStub, chatFlowGatewayStub)
+                    const dummyUseCase = ProceedInChatUseCase.fromJson({
+                        usecaseOutBoundary: usecaseOutBoundarySpy, 
+                        chatGatewayToProceedInChat: chatGatewayStub, 
+                        chatFlowGateway: chatFlowGatewayStub,
+                        validationGateway: validationGatewayStub
+                    })
                     await dummyUseCase.executeProceedInChat(requestModel);
                     expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         errors: expect.arrayContaining([expectedError])
