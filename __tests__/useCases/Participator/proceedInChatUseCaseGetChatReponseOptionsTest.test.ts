@@ -60,6 +60,15 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
 
             const stateInputStub = {
                 proceedEvent: 'event',
+                response: {
+                    responseMedia: 'text',
+                    responseContent: '',
+                    eventValidationResult: {
+                        success: true,
+                        error: '',
+                        event: 'event'
+                    }
+                }
             }
 
             const requestModelStub = {

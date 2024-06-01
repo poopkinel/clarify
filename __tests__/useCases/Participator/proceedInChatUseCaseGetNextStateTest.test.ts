@@ -1,3 +1,4 @@
+import { response } from "express";
 import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUseCase";
 
 class ProceedInChatUseCaseTest {
@@ -5,9 +6,21 @@ class ProceedInChatUseCaseTest {
         const usecaseOutBoundarySpy = {
             sendResultModel: jest.fn()
         }
+
+        const eventValidationResultStub = {
+            success: true,
+            error: '',
+            event: 'event'
+        }
+
+        const responseStub = {
+            responseMedia: 'text',
+            responseContent: '',
+            eventValidationResult: eventValidationResultStub
+        }
         
         const stateInputStub = {
-            proceedEvent: 'event'
+            response: responseStub
         }
         
         const requestModelStub = {
@@ -39,7 +52,7 @@ class ProceedInChatUseCaseTest {
 
         const expectedInResultModel = {
             errors: [],
-            chatEndStateId: 'nextState'
+            chatNextStateId: 'nextState'
         };
 
         const nextStateStub = {
@@ -80,7 +93,7 @@ class ProceedInChatUseCaseTest {
                     
                     expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         ...expectedInResultModel,
-                        chatEndStateId: 'start-finish',
+                        chatNextStateId: 'start-finish',
                     }));
                 });
             });
@@ -92,7 +105,13 @@ class ProceedInChatUseCaseTest {
                 chatId: "chatIdTwoStates",
                 stateInput: {
                     ...stateInputStub,
-                    proceedEvent: 'moveToState2'
+                    response: {
+                        ...responseStub,
+                        eventValidationResult: {
+                            ...eventValidationResultStub,
+                            event: 'moveToState2'
+                        }
+                    }
                 }
             }
 
@@ -129,7 +148,7 @@ class ProceedInChatUseCaseTest {
                     
                     expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         ...expectedInResultModel,
-                        chatEndStateId: 'nextState',
+                        chatNextStateId: 'nextState',
                     }));
                 });
             });
@@ -176,7 +195,13 @@ class ProceedInChatUseCaseTest {
                         chatId: "chatIdThreeStates",
                         stateInput: {
                             ...stateInputStub,
-                            proceedEvent: `moveToState${counter + 2}`
+                            response: {
+                                ...responseStub,
+                                eventValidationResult: {
+                                    ...eventValidationResultStub,
+                                    event: `moveToState${counter + 2}`
+                                }
+                            }
                         }
                     }
                 }
@@ -188,7 +213,7 @@ class ProceedInChatUseCaseTest {
                         await usecase.executeProceedInChat(setupRequestModelStub(requestsCounter));
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             ...expectedInResultModel,
-                            chatEndStateId: 'state2Id',
+                            chatNextStateId: 'state2Id',
                         }));
 
                         requestsCounter++;
@@ -196,7 +221,7 @@ class ProceedInChatUseCaseTest {
                         await usecase.executeProceedInChat(setupRequestModelStub(requestsCounter));
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             ...expectedInResultModel,
-                            chatEndStateId: 'state3Id',
+                            chatNextStateId: 'state3Id',
                         }));
                     });
                 });

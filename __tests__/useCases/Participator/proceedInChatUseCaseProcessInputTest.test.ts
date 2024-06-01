@@ -39,7 +39,7 @@ class ProceedInChatUseCaseProcessInputTest {
                 }
             }
 
-            describe.only('Given a request model stub with input validated on empty event', () => {
+            describe('Given a request model stub with input validated on empty event', () => {
                 const requestModelStub = {
                     chatId: 'chatId',
                     userId: 'userId',

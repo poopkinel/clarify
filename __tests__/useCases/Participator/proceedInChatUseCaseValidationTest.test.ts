@@ -31,8 +31,20 @@ class ProceedInChatValidationUseCaseTest {
             const stubUserId = stubParticipator1UserId;
             const stubChatId = 'chatId';
 
+            const eventValidationResultStub = {
+                success: true,
+                error: '',
+                event: 'event'
+            }
+
+            const inputResponseStub = {
+                responseMedia: 'text',
+                responseContent: 'responseContent',
+                eventValidationResult: eventValidationResultStub
+            }
+
             const dummyStateInput = {
-                proceedEvent: ''
+                response: inputResponseStub
             };
 
             const stubRequestModel = {
@@ -57,6 +69,17 @@ class ProceedInChatValidationUseCaseTest {
                 error: '',
                 chat: dummyChat
             };
+
+            const setupStateInputStubWithEvent = (event: string) => ({
+                ...dummyStateInput,
+                response: {
+                    ...inputResponseStub,
+                    eventValidationResult: {
+                        ...eventValidationResultStub,
+                        event: event
+                    }
+                }
+            });
             
             describe('Given a stub chat gateway with an invalid chat', () => {
                 const invalidchatIdError = 'Invalid chat id';
@@ -83,9 +106,7 @@ class ProceedInChatValidationUseCaseTest {
                 
                 const stubStateInputEvent = 'event';
             
-                const stubStateInput = {...dummyStateInput,
-                    proceedEvent: stubStateInputEvent
-                };
+                const stubStateInput = setupStateInputStubWithEvent(stubStateInputEvent);
                 
                 const chatGatewayStubP1State = 'state1'
                 const chatGatewayStubP2State = 'state2'
@@ -159,12 +180,13 @@ class ProceedInChatValidationUseCaseTest {
                     describe('Given a stub chat flow gateway with a next state', () => {
                         const chatFlowGatewayStubWithNextState = chatFlowGatewayDummy;
 
+                        
+
                         describe('When a request model with a different event is sent to the use case', () => {
+                            const stubStateInput = setupStateInputStubWithEvent('differentEvent');
                             const stubRequestModelWithDifferentEvent = ProceedInChatRequestModel.fromJson({
                                 ...stubRequestModel,
-                                stateInput: {
-                                    proceedEvent: 'differentEvent'
-                                }
+                                stubStateInput
                             });
                             expectError(usecaseOutBoundarySpy, chatGatewayStubWithValidChatAndUser, chatFlowGatewayStubWithNextState,
                                 stubRequestModelWithDifferentEvent, 'Invalid chat state event');
