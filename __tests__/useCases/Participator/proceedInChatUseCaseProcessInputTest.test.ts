@@ -23,30 +23,15 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
             const usecaseJson = {
                 usecaseOutBoundary: this.usecaseOutBoundarySpy,
                 chatGatewayToProceedInChat: this.chatGatewayStub,
-                chatFlowGateway: chatFlowGatewayStub
+                chatFlowGateway: chatFlowGatewayStub,
+                validationGateway: this.validationGatewayStub
             }
 
-            const eventValidationResultStub = {
-                success: true,
-                error: '',
-                event: 'event'
-            }
-
-            const validationGatewayStub = {
-                validateResponseEvent: jest.fn().mockResolvedValue(eventValidationResultStub)
-            }
-
-            describe('Given a request model stub with input validated on successful stub event', () => {
-                const eventValidationResultStub = {
-                    success: true,
-                    error: '',
-                    event: 'event'
-                }
-                
+            describe('Given a request model stub with input validated on successful stub event', () => {          
                 const responseStub = {
                     responseMedia: 'text',
                     responseContent: '',
-                    eventValidationResult: eventValidationResultStub
+                    eventValidationResult: this.eventValidationResultStub
                 }
 
                 const requestModelStub = {
@@ -57,10 +42,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                     }
                 }
                 it('should call the out boundary with a result model containing the state for an empty event input', async () => {
-                    const usecase = ProceedInChatUseCase.fromJson({
-                        ...usecaseJson,
-                        validationGateway: validationGatewayStub
-                    });
+                    const usecase = ProceedInChatUseCase.fromJson(usecaseJson);
                     await usecase.executeProceedInChat(requestModelStub);
                     expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         chatNextStateId: 'afterEmptyEventStateId'
@@ -84,7 +66,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                     }
 
                     const eventValidationResultWithErrorStub = {
-                        ...eventValidationResultStub,
+                        ...this.eventValidationResultStub,
                         success: false,
                         error: 'Content invalid for event',
                         event: ''
