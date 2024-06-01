@@ -1,59 +1,15 @@
 import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUseCase"
 import ChatReponseOptions from "../../../src/entities/responseOption/chatResponseOptions"
+import ProceedInChatUseCaseBaseTest from "./proceedInChatUseCaseTestBase"
 
-class ProceedInChatUseCaseGetChatReponseOptionsTest {
+class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCaseBaseTest {
     runTests() {
-        describe('Given a usecaseOutBoundarySpy, chatGateway stub, chatFlowGateway stub, usecase stub and request model stub', () => {
-            const usecaseOutBoundarySpy = {
-                sendResultModel: jest.fn()
-            }
-
-            const userIdStub = 'userId';
-
-            const chatGatewayStub = {
-                getChatById: jest.fn().mockResolvedValue({
-                    success: true,
-                    chat: {
-                        currentState: {
-                            participator1State: 'state',
-                            participator2State: 'state',
-                            proceedEvent: 'event'
-                        },
-                        participator1UserId: userIdStub,
-                        participator2UserId: 'userId2',
-                    }
-                })
-            }
-
-            
-            const responseOptionsStub = {
-                responseOptionsParticipant1: [],
-                responseOptionsParticipant2: []
-            }
-
-            const nextStateStub = {
-                id: 'nextState',
-                participator1State: 'state',
-                participator2State: 'state',
-                proceedEvent: 'event',
-                responseOptions: responseOptionsStub
-            }
-
-            const nextStateResultStub = {
-                success: true,
-                nextState: nextStateStub
-            }
-
-            const chatFlowGatewayStub = {
-                getChatFlowById: jest.fn().mockResolvedValue({
-                    tryGetNextState: jest.fn().mockResolvedValue(nextStateResultStub)
-                })
-            }
+        describe('Given a usecaseOutBoundarySpy, chatGateway stub, chatFlowGateway stub, usecase stub and request model stub', () => {                     
 
             const usecaseStubJson = {
-                usecaseOutBoundary: usecaseOutBoundarySpy,
-                chatGatewayToProceedInChat: chatGatewayStub,
-                chatFlowGateway: chatFlowGatewayStub
+                usecaseOutBoundary: this.usecaseOutBoundarySpy,
+                chatGatewayToProceedInChat: this.chatGatewayStub,
+                chatFlowGateway: this.chatFlowGatewayStub
             };
 
             const usecaseStub = ProceedInChatUseCase.fromJson(usecaseStubJson);
@@ -73,7 +29,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
 
             const requestModelStub = {
                 chatId: 'chatId',
-                userId: userIdStub,
+                userId: this.userIdStub,
                 stateInput: stateInputStub
             }
 
@@ -82,7 +38,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                     it('usecase should be called with a result containing an empty list', async () => {
                         const usecase = usecaseStub;
                         await usecase.executeProceedInChat(requestModelStub);
-                        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                        expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             responseOptions: {
                                 responseOptionsParticipant1: [],
                                 responseOptionsParticipant2: []
@@ -96,14 +52,14 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                 responseOptionsP1: ChatReponseOptions, responseOptionsP2: ChatReponseOptions
             ) => {
                 return {
-                    ...chatFlowGatewayStub,
+                    ...this.chatFlowGatewayStub,
                     getChatFlowById: jest.fn().mockResolvedValue({
                         tryGetNextState: jest.fn().mockResolvedValue({
-                            ...nextStateResultStub,
+                            ...this.nextStateResultStub,
                             nextState: {
-                                ...nextStateStub,
+                                ...this.nextStateStub,
                                 responseOptions: {
-                                    ...responseOptionsStub,
+                                    ...this.responseOptionsStub,
                                     responseOptionsParticipant1: responseOptionsP1,
                                     responseOptionsParticipant2: responseOptionsP2
                                 }
@@ -158,7 +114,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                             chatFlowGateway: chatFlowGatewayOneOptionStub
                         });
                         await usecase.executeProceedInChat(requestModel);
-                        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                        expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             responseOptions: {
                                 responseOptionsParticipant1: responseOptionsP1ResultStub,
                                 responseOptionsParticipant2: responseOptionsP2ResultStub
@@ -205,7 +161,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest {
                             chatFlowGateway: chatFlowGatewayTwoOptionStub
                         })
                         await usecase.executeProceedInChat(requestModel);
-                        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                        expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             responseOptions: {
                                 responseOptionsParticipant1: {
                                     options: null

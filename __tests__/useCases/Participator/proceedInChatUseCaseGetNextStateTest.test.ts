@@ -1,12 +1,8 @@
-import { response } from "express";
 import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUseCase";
+import ProceedInChatUseCaseBaseTest from "./proceedInChatUseCaseTestBase";
 
-class ProceedInChatUseCaseTest {
+class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
     runTests() {
-        const usecaseOutBoundarySpy = {
-            sendResultModel: jest.fn()
-        }
-
         const eventValidationResultStub = {
             success: true,
             error: '',
@@ -25,29 +21,8 @@ class ProceedInChatUseCaseTest {
         
         const requestModelStub = {
             chatId: 'chatId', 
-            userId: 'userId1', 
+            userId: this.userIdStub, 
             stateInput: stateInputStub
-        }
-        
-        const chatCurrentStateStub = {
-            participator1State: 'state',
-            participator2State: 'state',
-            proceedEvent: 'event'
-        }
-
-        const chatStub = {
-            currentState: chatCurrentStateStub,
-            participator1UserId: 'userId1',
-            participator2UserId: 'userId2',
-        }
-
-        const chatGatewayResultModelStub = {
-            success: true,
-            chat: chatStub
-        }
-
-        const chatGatewayStub = {
-            getChatById: jest.fn().mockResolvedValue(chatGatewayResultModelStub)
         }
 
         const expectedInResultModel = {
@@ -55,30 +30,12 @@ class ProceedInChatUseCaseTest {
             chatNextStateId: 'nextState'
         };
 
-        const nextStateStub = {
-            id: 'nextState',
-            participator1State: 'state',
-            participator2State: 'state',
-            proceedEvent: 'event'
-        }
-
-        const nextStateResultStub = {
-            success: true,
-            nextState: nextStateStub
-        }
-        
-        const chatFlowGatewayStub = {
-            getChatFlowById: jest.fn().mockResolvedValue({
-                tryGetNextState: jest.fn().mockResolvedValue(nextStateResultStub)
-            })
-        }
-
         describe('Given an empty chat flow gateway stub', () => {
             const chatFlowGatewayOneStateStub = {
-                ...chatFlowGatewayStub,
+                ...this.chatFlowGatewayStub,
                 getChatFlowById: jest.fn().mockResolvedValue({
                     tryGetNextState: jest.fn().mockResolvedValue({
-                        ...nextStateResultStub,
+                        ...this.nextStateResultStub,
                         nextState: {
                             id: 'start-finish'
                         }
@@ -88,10 +45,10 @@ class ProceedInChatUseCaseTest {
 
             describe('When a valid request model is sent to the use case', () => {
                 it('should send a chat finished result model with the same state', async () => {
-                    const usecase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayStub, chatFlowGatewayOneStateStub);
+                    const usecase = new ProceedInChatUseCase(this.usecaseOutBoundarySpy, this.chatGatewayStub, chatFlowGatewayOneStateStub);
                     await usecase.executeProceedInChat(requestModelStub);
                     
-                    expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                    expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         ...expectedInResultModel,
                         chatNextStateId: 'start-finish',
                     }));
@@ -117,11 +74,11 @@ class ProceedInChatUseCaseTest {
 
             const gatewayStubWithEventMoveToState2 = {
                 getChatById: jest.fn().mockResolvedValue({
-                    ...chatGatewayResultModelStub,
+                    ...this.chatGatewayResultModelStub,
                     chat: {
-                        ...chatStub,
+                        ...this.chatStub,
                         currentState: {
-                            ...chatCurrentStateStub,
+                            ...this.currentStateStub,
                             proceedEvent: 'moveToState2'
                         }
                     }
@@ -129,12 +86,12 @@ class ProceedInChatUseCaseTest {
             }
 
             const chatFlowGatewayTwoStatesStub = {
-                ...chatFlowGatewayStub,
+                ...this.chatFlowGatewayStub,
                 getChatFlowById: jest.fn().mockResolvedValue({
                     tryGetNextState: jest.fn().mockResolvedValue({
-                        ...nextStateResultStub,
+                        ...this.nextStateResultStub,
                         nextState: {
-                            ...nextStateStub,
+                            ...this.nextStateStub,
                             id: 'nextState'
                         }
                     })
@@ -143,10 +100,10 @@ class ProceedInChatUseCaseTest {
 
             describe('When the request model is sent to the use case', () => {
                 it('should send a result model with the transitioned new state', async () => {
-                    const usecase = new ProceedInChatUseCase(usecaseOutBoundarySpy, gatewayStubWithEventMoveToState2, chatFlowGatewayTwoStatesStub);
+                    const usecase = new ProceedInChatUseCase(this.usecaseOutBoundarySpy, gatewayStubWithEventMoveToState2, chatFlowGatewayTwoStatesStub);
                     await usecase.executeProceedInChat(requestModelTwoStatesChatFlow);
                     
-                    expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                    expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         ...expectedInResultModel,
                         chatNextStateId: 'nextState',
                     }));
@@ -157,11 +114,11 @@ class ProceedInChatUseCaseTest {
                 var requestsCounter = 0;
                 const setupChatGatewayResultModelStub = (counter: number) => {
                     return {
-                        ...chatGatewayResultModelStub,
+                        ...this.chatGatewayResultModelStub,
                         chat: {
-                            ...chatStub,
+                            ...this.chatStub,
                             currentState: {
-                                ...chatCurrentStateStub,
+                                ...this.currentStateStub,
                                 proceedEvent: `moveToState${counter + 2}`
                             }
                         }
@@ -174,16 +131,16 @@ class ProceedInChatUseCaseTest {
 
                 const setupNextStateStub = (counter: number) => {
                     return {
-                        ...nextStateResultStub,
+                        ...this.nextStateResultStub,
                         nextState: {
-                            ...nextStateStub,
+                            ...this.nextStateStub,
                             id: `state${counter + 2}Id`,
                             proceedEvent: `moveToState${counter + 2}`
                         }
                     }   
                 }
                 const chatFlowGatewayWith3StatesMock = {
-                    ...chatFlowGatewayStub,
+                    ...this.chatFlowGatewayStub,
                     getChatFlowById: jest.fn().mockResolvedValue({
                         tryGetNextState: jest.fn().mockImplementation(() => setupNextStateStub(requestsCounter))
                     })
@@ -207,11 +164,11 @@ class ProceedInChatUseCaseTest {
                 }
 
                 describe('When the request models are sent to the use case sequentially', () => {
-                    const usecase = new ProceedInChatUseCase(usecaseOutBoundarySpy, chatGatewayFlowWith3StatesMock, chatFlowGatewayWith3StatesMock);
+                    const usecase = new ProceedInChatUseCase(this.usecaseOutBoundarySpy, chatGatewayFlowWith3StatesMock, chatFlowGatewayWith3StatesMock);
 
                     it('should send a result model with next state for each request model', async () => {
                         await usecase.executeProceedInChat(setupRequestModelStub(requestsCounter));
-                        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                        expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             ...expectedInResultModel,
                             chatNextStateId: 'state2Id',
                         }));
@@ -219,7 +176,7 @@ class ProceedInChatUseCaseTest {
                         requestsCounter++;
 
                         await usecase.executeProceedInChat(setupRequestModelStub(requestsCounter));
-                        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                        expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             ...expectedInResultModel,
                             chatNextStateId: 'state3Id',
                         }));
