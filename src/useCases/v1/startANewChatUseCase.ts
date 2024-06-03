@@ -1,6 +1,6 @@
 // A use case for starting a new chat
 
-import ChatGatewayToShareChat from "../../boundaries/gateways/chatGatewayToShareChat";
+import ChatGatewayToShareChat from "../../boundaries/gateways/chat/chatGatewayToShareChat";
 import { ChatStartRequestModel } from "../../dataModels/v1/chatStartRequestModel";
 import ChatStartResultModel from "../../dataModels/v1/chatStartResultModel";
 

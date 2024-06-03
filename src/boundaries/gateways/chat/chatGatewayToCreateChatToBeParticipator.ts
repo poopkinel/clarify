@@ -1,4 +1,4 @@
-import ChatEntityForUserToBeParticipator from "../../entities/chatEntity/chatEntityForUserToBeParticipator";
+import ChatEntityForUserToBeParticipator from "../../../entities/chatEntity/chatEntityForUserToBeParticipator";
 import ChatGateway from "./chatGateway";
 
 export default interface ChatGatewayToCreateChatAsParticipator extends ChatGateway {

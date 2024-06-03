@@ -30,7 +30,6 @@ export default class ProceedInChatUseCase {
 
     async executeProceedInChat(requestModel: ProceedInChatRequestModel) {
         var errors: string[] = [];
-        
         const { chatGatewayResultModel, eventValidationResult, chat } = await this.catchSetUpErrors(requestModel, errors); 
         
         var result: ProceedInChatResultModel;

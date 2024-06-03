@@ -1,7 +1,7 @@
 // A use case for a user to view a chat
 
 import { UserGateway } from "../../boundaries/gateways/userGateway";
-import ChatGatewayToShareChat from "../../boundaries/gateways/chatGatewayToShareChat";
+import ChatGatewayToShareChat from "../../boundaries/gateways/chat/chatGatewayToShareChat";
 import { UserEntity } from "../../entities/userEntity/userEntity";
 import { ChatViewRequestModel } from "../../dataModels/v1/chatViewRequestModel";
 import { ChatViewResponseModel } from "../../dataModels/v1/chatViewResponseModel";

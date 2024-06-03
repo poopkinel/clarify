@@ -1,6 +1,6 @@
 // An implemenetaion of the chatGateway interface that uses Firebase as a backend
 
-import ChatGatewayToShareChat from "../../../boundaries/gateways/chatGatewayToShareChat";
+import ChatGatewayToShareChat from "../../../boundaries/gateways/chat/chatGatewayToShareChat";
 import { ChatViewResponseModel } from "../../../dataModels/v1/chatViewResponseModel";
 import { ChatMessageResponseModel } from "../../../dataModels/v1/chatMessageResponseModel";
 import { ResponseEntity } from "../../../entities/responseEntity";

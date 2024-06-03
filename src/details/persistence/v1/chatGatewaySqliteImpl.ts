@@ -1,4 +1,4 @@
-import ChatGatewayToShareChat from "../../../boundaries/gateways/chatGatewayToShareChat";
+import ChatGatewayToShareChat from "../../../boundaries/gateways/chat/chatGatewayToShareChat";
 import { ChatViewResponseModel } from "../../../dataModels/v1/chatViewResponseModel";
 import { ChatMessageResponseModel } from "../../../dataModels/v1/chatMessageResponseModel";
 import { ResponseEntity } from "../../../entities/responseEntity";
@@ -68,13 +68,15 @@ export class ChatGatewaySqliteImpl implements ChatGatewayToShareChat {
             const rows = await db.all(sql);  // using all() with async/await
             
             rows.forEach((row: any) => {
-                chats.push(new ChatEntity(
-                    row.id,
-                    row.name,
-                    row.user1,
-                    row.user2,
-                    true
-                ));
+                chats.push({} as ChatEntity
+                    // new ChatEntity(
+                    // row.id,
+                    // row.name,
+                    // row.user1,
+                    // row.user2,
+                    // true
+                // )
+            );
             });
 
             return chats;
@@ -92,21 +94,23 @@ export class ChatGatewaySqliteImpl implements ChatGatewayToShareChat {
 
     async getChatById(chatId: string): Promise<ChatEntity> {
         if (chatId === '0') {
-            return new ChatEntity(
-                "0",
-                "chatName",
-                "user1",
-                "user2",
-                true
-            );
+            return {} as ChatEntity;
+            // new ChatEntity(
+            //     "0",
+            //     "chatName",
+            //     "user1",
+            //     "user2",
+            //     true
+            // );
         } else {
-            return new ChatEntity(
-                "1",
-                "chatName1",
-                "user1",
-                "user2",
-                true
-            );
+            return {} as ChatEntity;
+            // new ChatEntity(
+            //     "1",
+            //     "chatName1",
+            //     "user1",
+            //     "user2",
+            //     true
+            // );
         }
     }
 

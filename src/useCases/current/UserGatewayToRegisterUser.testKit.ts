@@ -1,18 +1,18 @@
-export class UserGatewayToRegisterUserTestKit {
+// export class UserGatewayToRegisterUserTestKit {
 
-    private username = "";
-    private password = "";
+//     private username = "";
+//     private password = "";
 
-    public when = {
-        usernameAndPassword: (username: string, password: string) => {
-            this.username = username;
-            this.password = password;
+//     public when = {
+//         usernameAndPassword: (username: string, password: string) => {
+//             this.username = username;
+//             this.password = password;
 
-            return {return: }
-        }
-    },
-    public given = {
-        success: () => {},
-        fail: () => {},
-    }
-}
+//             return {return: }
+//         }
+//     },
+//     public given = {
+//         success: () => {},
+//         fail: () => {},
+//     }
+// }
