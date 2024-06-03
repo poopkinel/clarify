@@ -5,5 +5,6 @@ export default interface ChatStateForProceedInChat {
     participator1NextState: string;
     participator2NextState: string;
     proceedEvent: string;
-    responseOptions: ChatResponseOptions;
+    participator1Options: ChatResponseOptions;
+    participator2Options: ChatResponseOptions;
 }

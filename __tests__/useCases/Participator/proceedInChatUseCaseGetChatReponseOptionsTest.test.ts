@@ -5,15 +5,6 @@ import ProceedInChatUseCaseBaseTest from "./proceedInChatUseCaseTestBase"
 class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCaseBaseTest {
     runTests() {
         describe('Given a usecaseOutBoundarySpy, chatGateway stub, chatFlowGateway stub, usecase stub and request model stub', () => {                     
-
-            const usecaseStubJson = {
-                usecaseOutBoundary: this.usecaseOutBoundarySpy,
-                chatGatewayToProceedInChat: this.chatGatewayStub,
-                chatFlowGateway: this.chatFlowGatewayStub
-            };
-
-            const usecaseStub = ProceedInChatUseCase.fromJson(usecaseStubJson);
-
             const stateInputStub = {
                 proceedEvent: 'event',
                 response: {
@@ -34,14 +25,36 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
             }
 
             describe('Given a chatFlowGateway returning a dummy chat state with empty options', () => {
+                const chatFlowGatewayEmptyOptionsStub = {
+                    ...this.chatFlowGatewayStub,
+                    getChatFlowById: jest.fn().mockResolvedValue({
+                        tryGetNextState: jest.fn().mockResolvedValue({
+                            ...this.nextStateResultStub,
+                            nextState: {
+                                ...this.nextStateStub,
+                                participator1Options: {
+                                    options: null
+                                },
+                                participator2Options: {
+                                    options: null
+                                }
+                            }
+                        })
+                    })
+                }
                 describe('When a request model for chat options is sent', () => {
                     it('usecase should be called with a result containing an empty list', async () => {
-                        const usecase = usecaseStub;
+                        const usecase = ProceedInChatUseCase.fromJson({
+                            ...this.usecaseStubJson,
+                            chatFlowGateway: chatFlowGatewayEmptyOptionsStub
+                        });
                         await usecase.executeProceedInChat(requestModelStub);
                         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                            responseOptions: {
-                                responseOptionsParticipant1: [],
-                                responseOptionsParticipant2: []
+                            responseOptionsForParticipant: {
+                                options: [] as {
+                                    responseMedia: string,
+                                    responseRestrictions: string
+                                }[]
                             }
                         }));
                     })
@@ -58,11 +71,8 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
                             ...this.nextStateResultStub,
                             nextState: {
                                 ...this.nextStateStub,
-                                responseOptions: {
-                                    ...this.responseOptionsStub,
-                                    responseOptionsParticipant1: responseOptionsP1,
-                                    responseOptionsParticipant2: responseOptionsP2
-                                }
+                                participator1Options: responseOptionsP1,
+                                participator2Options: responseOptionsP2
                             }
                         })
                     })
@@ -71,7 +81,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
 
             const responseOptionsP1Stub = {
                 options: [{
-                        responseMedia: {
+                    responseMedia: {
                         media: 'text'
                     },
                     responseRestrictions: {
@@ -86,17 +96,9 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
 
             const responseOptionsP1ResultStub = {
                 options: [{
-                        responseMedia: {
-                        media: 'text'
-                    },
-                    responseRestrictions: {
-                        validatorId: 'CantBeQuestionValidatorId'
-                    }
+                    responseMedia: 'text',
+                    responseRestrictions: 'CantBeQuestionValidatorId'
                 }]
-            }
-
-            const responseOptionsP2ResultStub = {
-                options: null
             }
             
             describe('Given a chatFlowGateway returning a dummy chat state with 1 option per participant', () => {
@@ -110,15 +112,12 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
 
                     it('usecase should be called with a result containing a list with 1 option', async () => {
                         const usecase = ProceedInChatUseCase.fromJson({
-                            ...usecaseStubJson,
+                            ...this.usecaseStubJson,
                             chatFlowGateway: chatFlowGatewayOneOptionStub
                         });
                         await usecase.executeProceedInChat(requestModel);
                         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                            responseOptions: {
-                                responseOptionsParticipant1: responseOptionsP1ResultStub,
-                                responseOptionsParticipant2: responseOptionsP2ResultStub
-                            }
+                                responseOptionsForParticipant: responseOptionsP1ResultStub,
                         }));
                     });
                 });
@@ -152,38 +151,38 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
                 describe('When a request model for chat options is sent', () => {
                     const requestModel = {
                         ...requestModelStub,
+                        userId: 'participator2Id',
                         chatId: 'chat2OptionsId',
                         stateInput: stateInputStub
                     }
+
+                    const chatGatewayWithParticipator2IdStub = {
+                        ...this.chatGatewayStub,
+                        getChatById: jest.fn().mockResolvedValue({
+                            ...this.chatGatewayResultModelStub,
+                            chat: {
+                                ...this.chatStub,
+                                participator2UserId: 'participator2Id'
+                            }
+                        })
+                    }
+
                     it('usecase should be called with a result containing a list with 2 options', async () => {
                         const usecase = ProceedInChatUseCase.fromJson({
-                            ...usecaseStubJson,
+                            ...this.usecaseStubJson,
+                            chatGatewayToProceedInChat: chatGatewayWithParticipator2IdStub,
                             chatFlowGateway: chatFlowGatewayTwoOptionStub
                         })
                         await usecase.executeProceedInChat(requestModel);
                         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                            responseOptions: {
-                                responseOptionsParticipant1: {
-                                    options: null
-                                },
-                                responseOptionsParticipant2: {
-                                    options: [{
-                                        responseMedia: {
-                                            media: 'text'
-                                        },
-                                        responseRestrictions: {
-                                            validatorId: 'CantBeQuestionValidatorId'
-                                        }
-                                    }, {
-                                        responseMedia: {
-                                            media: 'image'
-                                        },
-                                        responseRestrictions: {
-                                            validatorId: 'CantBeQuestionValidatorId'
-                                        }
-                                    
-                                    }]
-                                }
+                            responseOptionsForParticipant: {
+                                options: [{
+                                    responseMedia: 'text',
+                                    responseRestrictions: 'CantBeQuestionValidatorId'
+                                }, {
+                                    responseMedia: 'image',
+                                    responseRestrictions: 'CantBeQuestionValidatorId',                                
+                                }]
                             }
                         }));
                     });

@@ -11,6 +11,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
             }
 
             const nextStateResultStub = {
+                ...this.nextStateResultStub,
                 success: true,
                 nextState: nextStateAfterEmptyEventStateIdStub
             }
@@ -128,7 +129,8 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                             tryGetNextState: jest.fn().mockResolvedValue({
                                 ...nextStateResultStub,
                                 nextState: {
-                                    id: 'specificStateId'
+                                    ...nextStateAfterEmptyEventStateIdStub,
+                                    id: 'specificStateId',
                                 }
                             })
                         })

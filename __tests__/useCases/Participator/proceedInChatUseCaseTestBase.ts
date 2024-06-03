@@ -1,9 +1,16 @@
+import ResponseValidationGateway from "../../../src/boundaries/gateways/responseValidation/responseValidationGateway";
+import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUseCase";
+
 export default class ProceedInChatUseCaseTestBase {
     usecaseOutBoundarySpy = {
         sendResultModel: jest.fn()
     }
 
     userIdStub = 'userId';
+
+    chatIdStub = 'chatId';
+
+    stubParticipator2UserId = 'userId2';
 
     currentStateStub = {
         participator1State: 'state',
@@ -27,8 +34,18 @@ export default class ProceedInChatUseCaseTestBase {
     }
 
     responseOptionsStub = {
-        responseOptionsParticipant1: [],
-        responseOptionsParticipant2: []
+        options: [
+            {
+                responseMedia: 
+                {
+                    media: 'text'
+                },
+                responseRestrictions: 
+                {
+                    validatorId: 'validatorId'
+                }   
+            }
+        ]
     }
 
     nextStateStub = {
@@ -36,11 +53,13 @@ export default class ProceedInChatUseCaseTestBase {
         participator1State: 'state',
         participator2State: 'state',
         proceedEvent: 'event',
-        responseOptions: this.responseOptionsStub
+        participator1Options: this.responseOptionsStub,
+        participator2Options: this.responseOptionsStub
     }
 
     nextStateResultStub = {
         success: true,
+        error: '',
         nextState: this.nextStateStub
     }
 
@@ -56,7 +75,32 @@ export default class ProceedInChatUseCaseTestBase {
         event: 'event'
     }
 
-    validationGatewayStub = {
+    validationGatewayStub: ResponseValidationGateway = {
         validateResponseEvent: jest.fn().mockResolvedValue(this.eventValidationResultStub)
     }
+
+    requestModelStub = {
+        userId: this.userIdStub,
+        chatId: this.chatIdStub,
+        stateInput: this.currentStateStub
+    }
+
+    usecaseStubJson = {
+        usecaseOutBoundary: this.usecaseOutBoundarySpy,
+        chatGatewayToProceedInChat: this.chatGatewayStub,
+        chatFlowGateway: this.chatFlowGatewayStub,
+        validationGateway: this.validationGatewayStub
+    }
+
+    usecaseStub = ProceedInChatUseCase.fromJson(this.usecaseStubJson);
+
+    runTest() {
+        describe('', () => {
+            it('Nothing', () => {
+                expect(true).toBe(true);
+            });
+        });
+    }
 }
+
+new ProceedInChatUseCaseTestBase().runTest();

@@ -30,6 +30,7 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
                     tryGetNextState: jest.fn().mockResolvedValue({
                         ...this.nextStateResultStub,
                         nextState: {
+                            ...this.nextStateStub,
                             id: 'start-finish'
                         }
                     })

@@ -9,6 +9,6 @@ type ResponseInput = {
     responseContent: string;
 }
 
-export default interface ReponseValidationGateway {
+export default interface ResponseValidationGateway {
     validateResponseEvent(response: ResponseInput): Promise<EventValidationResult>;
 }

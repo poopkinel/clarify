@@ -1,4 +1,4 @@
-import ChatGatewayCreateChatResultModel from "../../dataModels/current/chatGateway/chatGatewayCreateChatResultModel";
+import ChatGatewayCreateChatResultModel from "../../../dataModels/current/chatGateway/chatGatewayCreateChatResultModel";
 import ChatGateway from "./chatGateway";
 
 export default interface ChatGatewayToProceedInChat extends ChatGateway {

@@ -1,46 +1,15 @@
 import ProceedInChatRequestModel from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatRequestModel';
 import ProceedInChatUseCase from '../../../src/useCases/current/proceedInChatUseCase';
+import ResponseValidationGateway from '../../../src/boundaries/gateways/responseValidation/responseValidationGateway';
+import ProceedInChatUseCaseTestBase from './proceedInChatUseCaseTestBase';
 
-class ProceedInChatValidationUseCaseTest {
+class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
     runTests() {
-        describe('Given a spy usecaseOutBoundary, a stub participant 1 User ID and a stub request model', () => {
-            const usecaseOutBoundarySpy = {
-                sendResultModel: jest.fn()
-            }
-
-            const nextStateDummy = {
-                id: 'nextStateId',
-                participator1NextState: '',
-                participator2NextState: '',
-                proceedEvent: ''
-            }
-
-            const nextStateResultDummy = {
-                success: true,
-                error: '',
-                nextState: nextStateDummy
-            }
-
-            const chatFlowGatewayDummy = {
-                getChatFlowById: jest.fn().mockResolvedValue({
-                    tryGetNextState: jest.fn().mockResolvedValue(nextStateResultDummy)
-                })
-            }
-
-            const stubParticipator1UserId = 'participator1UserId';
-            const stubUserId = stubParticipator1UserId;
-            const stubChatId = 'chatId';
-
-            const eventValidationResultStub = {
-                success: true,
-                error: '',
-                event: 'event'
-            }
-
+        describe('Given a spy usecaseOutBoundary, a stub participant 1 User ID and a stub request model', () => {           
             const inputResponseStub = {
                 responseMedia: 'text',
                 responseContent: 'responseContent',
-                eventValidationResult: eventValidationResultStub
+                eventValidationResult: this.eventValidationResultStub
             }
 
             const dummyStateInput = {
@@ -48,26 +17,13 @@ class ProceedInChatValidationUseCaseTest {
             };
 
             const stubRequestModel = {
-                userId: stubUserId,
-                chatId: stubChatId,
+                ...this.requestModelStub,
                 stateInput: dummyStateInput
             }
 
-            const dummyChat = { 
-                currentState: {
-                    participator1State: '',
-                    participator2State: '',
-                    proceedEvent: ''
-                },
-                participator1UserId: '',
-                participator2UserId: '',
-                chatFlowId: ''
-            }
-
-            const dummyChatGatewayResult = {
+            const chatGatewayFailedResult = {
+                ...this.chatGatewayResultModelStub,
                 success: false,
-                error: '',
-                chat: dummyChat
             };
 
             const setupStateInputStubWithEvent = (event: string) => ({
@@ -75,21 +31,17 @@ class ProceedInChatValidationUseCaseTest {
                 response: {
                     ...inputResponseStub,
                     eventValidationResult: {
-                        ...eventValidationResultStub,
+                        ...this.eventValidationResultStub,
                         event: event
                     }
                 }
             });
-
-            const validationGatewayStub = {
-                validateResponseEvent: jest.fn().mockResolvedValue(eventValidationResultStub)
-            }
             
             describe('Given a stub chat gateway with an invalid chat', () => {
                 const invalidchatIdError = 'Invalid chat id';
                 const chatGatewayStubWithInvalidChatError = {
                     getChatById: jest.fn().mockResolvedValue({
-                        ...dummyChatGatewayResult,
+                        ...chatGatewayFailedResult,
                         error: invalidchatIdError
                     })
                 }
@@ -100,40 +52,18 @@ class ProceedInChatValidationUseCaseTest {
                         chatId: stubEmptyChatId
                     });
         
-                    expectError(usecaseOutBoundarySpy, chatGatewayStubWithInvalidChatError, chatFlowGatewayDummy, 
-                        stubRequestModelWithEmptyChatId, invalidchatIdError);
+                    expectError(this.usecaseOutBoundarySpy, chatGatewayStubWithInvalidChatError, this.chatFlowGatewayStub, 
+                        stubRequestModelWithEmptyChatId, this.validationGatewayStub, invalidchatIdError);
                 });
             });
             
             describe('Given participator 2 ID, stub state input, stub chat entity and stub gateway result', () => {
-                const stubParticipator2UserId = 'participator2UserId';
-                
                 const stubStateInputEvent = 'event';
-            
                 const stubStateInput = setupStateInputStubWithEvent(stubStateInputEvent);
-                
-                const chatGatewayStubP1State = 'state1'
-                const chatGatewayStubP2State = 'state2'
-                const chatGatewayStubEvent = 'event'
-            
-                const stubChatEntity = {
-                    currentState: {
-                        participator1State: chatGatewayStubP1State,
-                        participator2State: chatGatewayStubP2State,
-                        proceedEvent: chatGatewayStubEvent
-                    },
-                    participator1UserId: stubParticipator1UserId,
-                    participator2UserId: stubParticipator2UserId,
-                } 
-            
-                const stubChatGatewayResult = {
-                    success: true,
-                    chat: stubChatEntity
-                }
             
                 describe('Given a stub empty success gateway', () => {
                     const chatGatewayStub = {
-                        getChatById: jest.fn().mockResolvedValue(stubChatGatewayResult)
+                        getChatById: jest.fn().mockResolvedValue(this.chatGatewayResultModelStub)
                     }
                     describe('Given a stub request model with empty user id', () => {
                         const stubUserId = '';
@@ -141,50 +71,46 @@ class ProceedInChatValidationUseCaseTest {
                             ...stubRequestModel,
                             userId: stubUserId
                         });
-                        expectError(usecaseOutBoundarySpy, chatGatewayStub, chatFlowGatewayDummy,
-                            stubRequestModelWithOnlyEmptyUserId, 'User is not a participator in this chat');
+                        expectError(this.usecaseOutBoundarySpy, chatGatewayStub, this.chatFlowGatewayStub,
+                            stubRequestModelWithOnlyEmptyUserId, this.validationGatewayStub, 'User is not a participator in this chat');
                     });
                 });
 
-                describe('Given a stub chat gateway with valid chat and user', () => {    
-                    const chatGatewayStubWithOnlyStateInputValuesEmpty = {
-                        getChatById: jest.fn().mockResolvedValue({
-                            ...stubChatGatewayResult,
-                            success: true,
-                            chat: {
-                                ...stubChatEntity,
-                                stateInput: {
-                                    stateParticipator1: '',
-                                    stateParticipator2: '',
-                                    event: ''
-                                }
-                            }
-                        })
-                    }
-                    
+                describe('Given a stub chat gateway with valid chat and user', () => {
                     describe('Given a stub request model with invalid event', () => {
-                        const stubStateInputEventEmpty = ''
-                        const stubStateInputWithOnlyEmptyEvent = {...stubStateInput,
-                            proceedEvent: stubStateInputEventEmpty
+                        const stubStateInputWithOnlyEmptyEvent = {
+                            ...stubStateInput,
                         }
-                        const stubRequestModelWithOnlyInputEventEmpty = ProceedInChatRequestModel.fromJson({
+                        const stubRequestModelWithEmptyInput = ProceedInChatRequestModel.fromJson({
                             ...stubRequestModel,
                             stateInput: stubStateInputWithOnlyEmptyEvent
                         });
-            
-                        expectError(usecaseOutBoundarySpy, chatGatewayStubWithOnlyStateInputValuesEmpty, 
-                            chatFlowGatewayDummy, stubRequestModelWithOnlyInputEventEmpty, 'Invalid chat state event');
+                        
+                        const chatGatewayStubWithOnlyStateInputValuesEmpty = {
+                            getChatById: jest.fn().mockResolvedValue({
+                                ...this.chatGatewayResultModelStub,
+                                chat: {
+                                    ...this.chatStub,
+                                    currentState: {
+                                        ...this.currentStateStub,
+                                        proceedEvent: ''
+                                    }
+                                }
+                            })
+                        }
+
+                        expectError(this.usecaseOutBoundarySpy, chatGatewayStubWithOnlyStateInputValuesEmpty, 
+                            this.chatFlowGatewayStub, stubRequestModelWithEmptyInput, this.validationGatewayStub,
+                            'Invalid chat state event');
                     });
                 });
 
                 describe('Given a stub chat gateway with valid chat gateway result', () => {
                     const chatGatewayStubWithValidChatAndUser = {
-                        getChatById: jest.fn().mockResolvedValue(stubChatGatewayResult)
+                        getChatById: jest.fn().mockResolvedValue(this.chatGatewayResultModelStub)
                     }
                     describe('Given a stub chat flow gateway with a next state', () => {
-                        const chatFlowGatewayStubWithNextState = chatFlowGatewayDummy;
-
-                        
+                        const chatFlowGatewayStubWithNextState = this.chatFlowGatewayStub;
 
                         describe('When a request model with a different event is sent to the use case', () => {
                             const stubStateInput = setupStateInputStubWithEvent('differentEvent');
@@ -192,23 +118,23 @@ class ProceedInChatValidationUseCaseTest {
                                 ...stubRequestModel,
                                 stubStateInput
                             });
-                            expectError(usecaseOutBoundarySpy, chatGatewayStubWithValidChatAndUser, chatFlowGatewayStubWithNextState,
-                                stubRequestModelWithDifferentEvent, 'Invalid chat state event');
+                            expectError(this.usecaseOutBoundarySpy, chatGatewayStubWithValidChatAndUser, chatFlowGatewayStubWithNextState,
+                                stubRequestModelWithDifferentEvent, this.validationGatewayStub, 'Invalid chat state event');
                         });
                     });
                 });
             
                 describe('Given a stub chat gateway with a valid chat and a valid state', () => {
                     const chatGatewaySuccessStub = {
-                        getChatById: jest.fn().mockResolvedValue(stubChatGatewayResult)
+                        getChatById: jest.fn().mockResolvedValue(this.chatGatewayResultModelStub)
                     }
                     it('should return a success result', async () => {
                         const stubRequestModelWithAllValidData = ProceedInChatRequestModel.fromJson({
                             ...stubRequestModel,
                             stateInput: stubStateInput
                         });
-                        await expectNoErrors(usecaseOutBoundarySpy, chatGatewaySuccessStub, 
-                            chatFlowGatewayDummy, stubRequestModelWithAllValidData);
+                        await expectNoErrors(this.usecaseOutBoundarySpy, chatGatewaySuccessStub,
+                            this.chatFlowGatewayStub, this.validationGatewayStub, stubRequestModelWithAllValidData);
                     });
                 });
             });
@@ -217,6 +143,7 @@ class ProceedInChatValidationUseCaseTest {
                 usecaseOutBoundarySpy: { sendResultModel: any; }, 
                 chatGatewayStub: { getChatById: any; }, 
                 chatFlowGatewayStub: { getChatFlowById: any; },
+                validationGatewayStub: ResponseValidationGateway,
                 requestModel: ProceedInChatRequestModel
             ) {
                 const dummyUseCase = ProceedInChatUseCase.fromJson({
@@ -236,16 +163,17 @@ class ProceedInChatValidationUseCaseTest {
                 chatGatewayStub: { getChatById: any; }, 
                 chatFlowGatewayStub: { getChatFlowById: any; },
                 requestModel: ProceedInChatRequestModel,
+                validationGatewayStub: ResponseValidationGateway,
                 expectedError: string
             ) {
                 it(`should return an ${expectedError} result`, async () => {
-                    const dummyUseCase = ProceedInChatUseCase.fromJson({
+                    const usecase = ProceedInChatUseCase.fromJson({
                         usecaseOutBoundary: usecaseOutBoundarySpy, 
                         chatGatewayToProceedInChat: chatGatewayStub, 
                         chatFlowGateway: chatFlowGatewayStub,
                         validationGateway: validationGatewayStub
                     })
-                    await dummyUseCase.executeProceedInChat(requestModel);
+                    await usecase.executeProceedInChat(requestModel);
                     expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         errors: expect.arrayContaining([expectedError])
                     }));
