@@ -96,7 +96,7 @@ export default class ProceedInChatUseCaseTestBase {
 
     runTest() {
         describe('', () => {
-            it('Nothing', () => {
+            it('Base', () => {
                 expect(true).toBe(true);
             });
         });
