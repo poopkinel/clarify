@@ -10,5 +10,5 @@ type ResponseInput = {
 }
 
 export default interface ResponseValidationGateway {
-    validateResponseEvent(response: ResponseInput): Promise<EventValidationResult>;
+    validateResponse(response: ResponseInput): Promise<EventValidationResult>;
 }

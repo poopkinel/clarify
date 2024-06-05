@@ -30,13 +30,13 @@ export default class ProceedInChatUseCase {
 
     async executeProceedInChat(requestModel: ProceedInChatRequestModel) {
         var errors: string[] = [];
-        const { chatGatewayResultModel, eventValidationResult, chat } = await this.catchSetUpErrors(requestModel, errors); 
+        const { chatGatewayResultModel, eventValidationResult, chat } = await this.trySetupCatchErrors(requestModel, errors); 
         
-        var result: ProceedInChatResultModel;
-        
-        var { responseOptionsResult, nextStateResult } = await this.catchNextStateErrors(chatGatewayResultModel, eventValidationResult, errors);
+        var { responseOptionsResult, nextStateResult } = await this.tryNextStateCatchErrors(chatGatewayResultModel, eventValidationResult, errors);
         responseOptionsResult = this.extractResponseOptions(chat, requestModel, responseOptionsResult, nextStateResult);
         
+        var result: ProceedInChatResultModel;
+
         const isError = errors.length != 0;
         if (isError) {
             result = await this.sendErrorResult(errors);
@@ -69,7 +69,7 @@ export default class ProceedInChatUseCase {
         return responseOptionsResult;
     }
 
-    private async catchNextStateErrors(chatGatewayResultModel: ChatGatewayCreateChatResultModel, eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[]) {
+    private async tryNextStateCatchErrors(chatGatewayResultModel: ChatGatewayCreateChatResultModel, eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[]) {
         var responseOptionsResult = {
             options: [] as {
                 responseMedia: string;
@@ -79,26 +79,29 @@ export default class ProceedInChatUseCase {
 
         const chatFlow = await this.chatFlowGateway.getChatFlowById(chatGatewayResultModel.chat.chatFlowId);
         const nextStateResult = await chatFlow.tryGetNextState(eventValidationResult.event);
-        this.catchNextStateResultErrors(nextStateResult, errors);
+        this.catchNextStateResultErrors(nextStateResult, errors, eventValidationResult);
         return { responseOptionsResult, nextStateResult };
     }
 
-    private async catchSetUpErrors(requestModel: ProceedInChatRequestModel, errors: string[]) {
+    private async trySetupCatchErrors(requestModel: ProceedInChatRequestModel, errors: string[]) {
         const chatGatewayResultModel = await this.chatGatewayToProceedInChat.getChatById(requestModel.chatId);
         this.catchChatGatewayErrors(chatGatewayResultModel, errors, requestModel);
 
-        const chat = chatGatewayResultModel.chat;
         const response = requestModel.stateInput.response;
-        const eventValidationResult = await this.validationGateway.validateResponseEvent(response);
+        const eventValidationResult = await this.validationGateway.validateResponse(response);
+        
+        const chat = chatGatewayResultModel.chat;
+        this.catchSuccessAndEventValidationResultErrors(eventValidationResult, errors, chat);
 
-        this.catchEventValidationResultErrors(eventValidationResult, errors, chat);
         this.catchReponseErrors(response, errors);
         return { chatGatewayResultModel, eventValidationResult, chat };
     }
 
-    private catchNextStateResultErrors(nextStateResult: ChatFlowGetNextStateResult, errors: string[]) {
+    private catchNextStateResultErrors(nextStateResult: ChatFlowGetNextStateResult, errors: string[], eventValidationResult: { success: boolean; error: string; event: string; }) {
         if (!nextStateResult.success) {
             errors.push(nextStateResult.error);
+        } else if (nextStateResult.nextState.proceedEvent !== eventValidationResult.event) { // Validate event
+            errors.push('Invalid chat state event');
         }
     }
 
@@ -108,11 +111,10 @@ export default class ProceedInChatUseCase {
         }
     }
 
-    private catchEventValidationResultErrors(eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[], chat: ChatEntityForProceedInChat) {
-        if (!eventValidationResult.success) {
+    // TODO: change name without event
+    private catchSuccessAndEventValidationResultErrors(eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[], chat: ChatEntityForProceedInChat) {
+        if (!eventValidationResult.success) { // Validate success
             errors.push(eventValidationResult.error);
-        } else if (chat.currentState.proceedEvent !== eventValidationResult.event) {
-            errors.push('Invalid chat state event');
         }
     }
 

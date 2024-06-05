@@ -85,22 +85,16 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
                             ...stubRequestModel,
                             stateInput: stubStateInputWithOnlyEmptyEvent
                         });
-                        
-                        const chatGatewayStubWithOnlyStateInputValuesEmpty = {
-                            getChatById: jest.fn().mockResolvedValue({
-                                ...this.chatGatewayResultModelStub,
-                                chat: {
-                                    ...this.chatStub,
-                                    currentState: {
-                                        ...this.currentStateStub,
-                                        proceedEvent: ''
-                                    }
-                                }
+
+                        const validationGatewayStubWithEmptyEvent = {
+                            validateResponse: jest.fn().mockResolvedValue({
+                                ...this.eventValidationResultStub,
+                                event: ''
                             })
                         }
 
-                        expectError(this.usecaseOutBoundarySpy, chatGatewayStubWithOnlyStateInputValuesEmpty, 
-                            this.chatFlowGatewayStub, stubRequestModelWithEmptyInput, this.validationGatewayStub,
+                        expectError(this.usecaseOutBoundarySpy, this.chatGatewayStub, 
+                            this.chatFlowGatewayStub, stubRequestModelWithEmptyInput, validationGatewayStubWithEmptyEvent,
                             'Invalid chat state event');
                     });
                 });
@@ -113,13 +107,15 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
                         const chatFlowGatewayStubWithNextState = this.chatFlowGatewayStub;
 
                         describe('When a request model with a different event is sent to the use case', () => {
-                            const stubStateInput = setupStateInputStubWithEvent('differentEvent');
-                            const stubRequestModelWithDifferentEvent = ProceedInChatRequestModel.fromJson({
-                                ...stubRequestModel,
-                                stubStateInput
-                            });
+                            const validationGatewayStubWithDifferentEvent: ResponseValidationGateway = {
+                                validateResponse: jest.fn().mockResolvedValue({
+                                    ...this.eventValidationResultStub,
+                                    event: 'differentEvent'
+                                })
+                            }
+
                             expectError(this.usecaseOutBoundarySpy, chatGatewayStubWithValidChatAndUser, chatFlowGatewayStubWithNextState,
-                                stubRequestModelWithDifferentEvent, this.validationGatewayStub, 'Invalid chat state event');
+                                stubRequestModel, validationGatewayStubWithDifferentEvent, 'Invalid chat state event');
                         });
                     });
                 });

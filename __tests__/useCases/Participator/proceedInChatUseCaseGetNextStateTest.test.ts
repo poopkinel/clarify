@@ -81,7 +81,8 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
                         ...this.nextStateResultStub,
                         nextState: {
                             ...this.nextStateStub,
-                            id: 'nextState'
+                            id: 'nextState',
+                            proceedEvent: 'moveToState2'
                         }
                     })
                 })
@@ -89,7 +90,7 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
 
             const validationGatewayWithEventMoveToState2Stub = {
                 ...this.validationGatewayStub,
-                validateResponseEvent: jest.fn().mockImplementation(() => {
+                validateResponse: jest.fn().mockImplementation(() => {
                     return {
                         ...this.eventValidationResultStub,
                         event: 'moveToState2'
@@ -159,7 +160,7 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
 
                 const validationGatewayWithCounterStub = {
                     ...this.validationGatewayStub,
-                    validateResponseEvent: jest.fn().mockImplementation(() => {
+                    validateResponse: jest.fn().mockImplementation(() => {
                         return {
                             ...this.eventValidationResultStub,
                             event: `moveToState${requestsCounter + 2}`

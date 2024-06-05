@@ -82,7 +82,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                     }
         
                     const validationGatewayWithErrorStub = {
-                        validateResponseEvent: jest.fn().mockResolvedValue(eventValidationResultWithErrorStub)
+                        validateResponse: jest.fn().mockResolvedValue(eventValidationResultWithErrorStub)
                     }
 
                     const usecase = ProceedInChatUseCase.fromJson({
@@ -91,7 +91,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                     });
                     await usecase.executeProceedInChat(requestModelWithInvalidResponseContentStub);
                     expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                        errors: ['Content invalid for event'],
+                        errors: expect.arrayContaining(['Content invalid for event']),
                         chatNextStateId: ''
                     }));
                 })
@@ -131,6 +131,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                                 nextState: {
                                     ...nextStateAfterEmptyEventStateIdStub,
                                     id: 'specificStateId',
+                                    proceedEvent: 'specificEvent'
                                 }
                             })
                         })
@@ -142,7 +143,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                     }
 
                     const validationGatewayWithSpecificEventStub = {
-                        validateResponseEvent: jest.fn().mockResolvedValue(eventValidationResultWithSpecificEventStub)
+                        validateResponse: jest.fn().mockResolvedValue(eventValidationResultWithSpecificEventStub)
                     }
 
                     it('should call the out boundary with a result model with success and the state corresponding to the event', async () => {

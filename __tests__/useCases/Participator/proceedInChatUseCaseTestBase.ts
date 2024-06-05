@@ -21,7 +21,7 @@ export default class ProceedInChatUseCaseTestBase {
     chatStub = {
         currentState: this.currentStateStub,
         participator1UserId: this.userIdStub,
-        participator2UserId: 'userId2',
+        participator2UserId: this.stubParticipator2UserId,
     }
 
     chatGatewayResultModelStub = {
@@ -76,7 +76,7 @@ export default class ProceedInChatUseCaseTestBase {
     }
 
     validationGatewayStub: ResponseValidationGateway = {
-        validateResponseEvent: jest.fn().mockResolvedValue(this.eventValidationResultStub)
+        validateResponse: jest.fn().mockResolvedValue(this.eventValidationResultStub)
     }
 
     requestModelStub = {
