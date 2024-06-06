@@ -35,29 +35,33 @@ export default class ProceedInChatUseCase {
         var { responseOptionsResult, nextStateResult } = await this.tryNextStateCatchErrors(chat, eventValidationResult, errors);
         responseOptionsResult = this.extractResponseOptions(chat, requestModel, responseOptionsResult, nextStateResult);
         
-        var result: ProceedInChatResultModel;
+        
+        var result: ProceedInChatResultModel = new ProceedInChatResultModel(errors, '');
+        
+        var isEndState = false;
+        if (nextStateResult.nextState.id === 'end') {
+            isEndState = true;
+        }
 
         const isError = errors.length != 0;
         if (isError) {
-            result = await this.sendErrorResult(errors);
+            await this.sendErrorResult(errors, isEndState);
             return;
         }
-
-        result = await this.sendSuccessResult(errors, nextStateResult, responseOptionsResult);
+        
+        await this.sendSuccessResult(errors, nextStateResult, responseOptionsResult, isEndState);
     }
 
-    private async sendSuccessResult(errors: string[], nextStateResult: ChatFlowGetNextStateResult, responseOptionsResult: { options: { responseMedia: string; responseRestrictions: string; }[]; }) {
-        var result = new ProceedInChatResultModel(errors, nextStateResult.nextState.id);
+    private async sendSuccessResult(errors: string[], nextStateResult: ChatFlowGetNextStateResult, responseOptionsResult: { options: { responseMedia: string; responseRestrictions: string; }[]; }, isEndState: boolean) {
+        var result = new ProceedInChatResultModel(errors, nextStateResult.nextState.id, isEndState);
         result.setResponseOptions(responseOptionsResult);
 
         await this.usecaseOutBoundary.sendResultModel(result);
-        return result;
     }
 
-    private async sendErrorResult(errors: string[]) {
-        var result = new ProceedInChatResultModel(errors, '');
+    private async sendErrorResult(errors: string[], isEndState: boolean) {
+        var result = new ProceedInChatResultModel(errors, '', isEndState);
         await this.usecaseOutBoundary.sendResultModel(result);
-        return result;
     }
 
     private extractResponseOptions(chat: ChatEntityForProceedInChat, requestModel: ProceedInChatRequestModel, responseOptionsResult: { options: { responseMedia: string; responseRestrictions: string; }[]; }, nextStateResult: ChatFlowGetNextStateResult) {

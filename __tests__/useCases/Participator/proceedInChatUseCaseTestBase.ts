@@ -62,11 +62,52 @@ export default class ProceedInChatUseCaseTestBase {
         nextState: this.nextStateStub
     }
 
-    chatFlowGatewayStub = {
+    chatFlowGatewayStub_OLD = {
         getChatFlowById: jest.fn().mockResolvedValue({
             tryGetNextState: jest.fn().mockResolvedValue(this.nextStateResultStub)
         })
     }
+
+    participatorFlowStub = {
+        participatorId: 1,
+        states: [
+            {
+                id: 'stateId',
+            }
+        ],
+        transitions: [
+            {
+                fromStateId: 'stateId',
+                toStateId: 'nextStateId',
+                event: 'event'
+            }
+        ]
+    }
+
+    chatFlowGatewayStub = {
+        getChatFlowById: jest.fn().
+            mockResolvedValue({
+                tryGetNextState: jest.fn().mockResolvedValue({
+                    ...this.nextStateResultStub,
+                    nextState: {
+                        ...this.nextStateStub,
+                        id: 'end',
+                        proceedEvent: 'moveToState2'
+                    }
+                }),
+                participatorFlows: [
+                    {
+                        participatorId: 1,
+                        chatFlowId: 'flowId'
+                    },
+                    {
+                        participatorId: 2,
+                        chatFlowId: 'flowId'
+                    }
+                ]
+        })
+    }
+    
 
     eventValidationResultStub = {
         success: true,
@@ -87,7 +128,7 @@ export default class ProceedInChatUseCaseTestBase {
     usecaseStubJson = {
         usecaseOutBoundary: this.usecaseOutBoundarySpy,
         chatGatewayToProceedInChat: this.chatGatewayStub,
-        chatFlowGateway: this.chatFlowGatewayStub,
+        chatFlowGateway: this.chatFlowGatewayStub_OLD,
         validationGateway: this.validationGatewayStub
     }
 

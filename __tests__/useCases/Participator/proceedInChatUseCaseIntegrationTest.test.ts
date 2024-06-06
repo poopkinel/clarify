@@ -2,6 +2,8 @@ import exp from 'constants';
 import UsecaseOutBoundary from '../../../src/boundaries/useCaseBoundaries/usecaseOutBoundary';
 import ProceedInChatUseCase from '../../../src/useCases/current/proceedInChatUseCase';
 import ProceedInChatUseCaseBaseTest from './proceedInChatUseCaseTestBase';
+import { error } from 'console';
+import ProceedInChatRequestModel from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatRequestModel';
 
 class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
     runTests() {
@@ -659,15 +661,58 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                 });
             });
         });
-        describe('Given ChatFlow (list of participatorFlows), states and events defined', () => {
+
+        describe.only('Given ChatFlow (list of participatorFlows), states and events defined', () => {
             describe('Given a list of request models with chat responses (media and content)', () => {
                 describe('When responses are sent to the chatFlow', () => {
                     it('should call sendResult for each valid response, and end with finish state or error state', async () => {
-                        expect(true).toBe(true);
+                        const { usecase, usecaseOutBoundarySpy, requestModel } = this.arrangeChatFlowScenario();
+
+                        await this.actChatFlowScenario(usecase, requestModel);
+
+                        this.assertChatFlowScenario(usecaseOutBoundarySpy);
                     });
                 });
             });
         });
+    }
+
+    private assertChatFlowScenario(usecaseOutBoundarySpy: { sendResultModel: any; }) {
+        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+            isEndState: true,
+        }));
+    }
+
+    private async actChatFlowScenario(usecase: ProceedInChatUseCase, requestModel: ProceedInChatRequestModel) {
+        await usecase.executeProceedInChat(requestModel);
+    }
+
+    private arrangeChatFlowScenario() {
+        const chatGatewayMock = this.chatGatewayStub;
+        const chatFlowGatewayMock = this.chatFlowGatewayStub;
+        const validationGatewayMock = this.validationGatewayStub;
+        const usecaseOutBoundarySpy = this.usecaseOutBoundarySpy;
+
+        const usecase = ProceedInChatUseCase.fromJson({
+            usecaseOutBoundary: usecaseOutBoundarySpy,
+            chatGatewayToProceedInChat: chatGatewayMock,
+            chatFlowGateway: chatFlowGatewayMock,
+            validationGateway: validationGatewayMock
+        });
+
+        const requestModel = {
+            chatId: 'chatId',
+            userId: 'userId1',
+            stateInput: {
+                stateId: 'state0',
+                response: {
+                    responseMedia: 'text',
+                    responseContent: 'content0'
+                }
+            }
+        }
+
+        return { usecase, usecaseOutBoundarySpy, requestModel };
     }
 
     private expectOptionsForState(

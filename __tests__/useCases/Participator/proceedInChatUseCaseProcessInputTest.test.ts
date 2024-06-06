@@ -48,6 +48,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                     chatId: 'chatId',
                     userId: 'userId',
                     stateInput: {
+                        stateId: 'stateId',
                         response: responseStub
                     }
                 }
@@ -70,6 +71,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                     const requestModelWithInvalidResponseContentStub = {
                         ...requestModelStub,
                         stateInput: {
+                            stateId: 'stateId',
                             response: responseWithErrorStub
                         }
                     }
@@ -106,6 +108,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                 const requestModelWithSpecificEventStub = {
                     ...requestModelStub,
                     stateInput: {
+                        stateId: 'stateId', // TODO: clean this, have a ... for a stateInputStub
                         response: responseWithSpecificEventStub
                     }
                 }

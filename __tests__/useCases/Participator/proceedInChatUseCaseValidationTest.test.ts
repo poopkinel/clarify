@@ -13,6 +13,7 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
             }
 
             const dummyStateInput = {
+                stateId: 'stateId',
                 response: inputResponseStub
             };
 
@@ -52,7 +53,7 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
                         chatId: stubEmptyChatId
                     });
         
-                    expectError(this.usecaseOutBoundarySpy, chatGatewayStubWithInvalidChatError, this.chatFlowGatewayStub, 
+                    expectError(this.usecaseOutBoundarySpy, chatGatewayStubWithInvalidChatError, this.chatFlowGatewayStub_OLD, 
                         stubRequestModelWithEmptyChatId, this.validationGatewayStub, invalidchatIdError);
                 });
             });
@@ -71,7 +72,7 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
                             ...stubRequestModel,
                             userId: stubUserId
                         });
-                        expectError(this.usecaseOutBoundarySpy, chatGatewayStub, this.chatFlowGatewayStub,
+                        expectError(this.usecaseOutBoundarySpy, chatGatewayStub, this.chatFlowGatewayStub_OLD,
                             stubRequestModelWithOnlyEmptyUserId, this.validationGatewayStub, 'User is not a participator in this chat');
                     });
                 });
@@ -94,7 +95,7 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
                         }
 
                         expectError(this.usecaseOutBoundarySpy, this.chatGatewayStub, 
-                            this.chatFlowGatewayStub, stubRequestModelWithEmptyInput, validationGatewayStubWithEmptyEvent,
+                            this.chatFlowGatewayStub_OLD, stubRequestModelWithEmptyInput, validationGatewayStubWithEmptyEvent,
                             'Invalid chat state event');
                     });
                 });
@@ -104,7 +105,7 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
                         getChatById: jest.fn().mockResolvedValue(this.chatGatewayResultModelStub)
                     }
                     describe('Given a stub chat flow gateway with a next state', () => {
-                        const chatFlowGatewayStubWithNextState = this.chatFlowGatewayStub;
+                        const chatFlowGatewayStubWithNextState = this.chatFlowGatewayStub_OLD;
 
                         describe('When a request model with a different event is sent to the use case', () => {
                             const validationGatewayStubWithDifferentEvent: ResponseValidationGateway = {
@@ -130,7 +131,7 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
                             stateInput: stubStateInput
                         });
                         await expectNoErrors(this.usecaseOutBoundarySpy, chatGatewaySuccessStub,
-                            this.chatFlowGatewayStub, this.validationGatewayStub, stubRequestModelWithAllValidData);
+                            this.chatFlowGatewayStub_OLD, this.validationGatewayStub, stubRequestModelWithAllValidData);
                     });
                 });
             });

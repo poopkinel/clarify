@@ -6,6 +6,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
     runTests() {
         describe('Given a usecaseOutBoundarySpy, chatGateway stub, chatFlowGateway stub, usecase stub and request model stub', () => {                     
             const stateInputStub = {
+                stateId: 'stateId',
                 response: {
                     responseMedia: 'text',
                     responseContent: '',
@@ -25,7 +26,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
 
             describe('Given a chatFlowGateway returning a dummy chat state with empty options', () => {
                 const chatFlowGatewayEmptyOptionsStub = {
-                    ...this.chatFlowGatewayStub,
+                    ...this.chatFlowGatewayStub_OLD,
                     getChatFlowById: jest.fn().mockResolvedValue({
                         tryGetNextState: jest.fn().mockResolvedValue({
                             ...this.nextStateResultStub,
@@ -64,7 +65,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
                 responseOptionsP1: ChatReponseOptions, responseOptionsP2: ChatReponseOptions
             ) => {
                 return {
-                    ...this.chatFlowGatewayStub,
+                    ...this.chatFlowGatewayStub_OLD,
                     getChatFlowById: jest.fn().mockResolvedValue({
                         tryGetNextState: jest.fn().mockResolvedValue({
                             ...this.nextStateResultStub,

@@ -9,6 +9,7 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
         }
         
         const stateInputStub = {
+            stateId: 'stateId',
             response: responseStub
         }
         
@@ -25,7 +26,7 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
 
         describe('Given an empty chat flow gateway stub', () => {
             const chatFlowGatewayOneStateStub = {
-                ...this.chatFlowGatewayStub,
+                ...this.chatFlowGatewayStub_OLD,
                 getChatFlowById: jest.fn().mockResolvedValue({
                     tryGetNextState: jest.fn().mockResolvedValue({
                         ...this.nextStateResultStub,
@@ -74,7 +75,7 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
             }
 
             const chatFlowGatewayTwoStatesStub = {
-                ...this.chatFlowGatewayStub,
+                ...this.chatFlowGatewayStub_OLD,
                 getChatFlowById: jest.fn().mockResolvedValue({
                     tryGetNextState: jest.fn().mockResolvedValue({
                         ...this.nextStateResultStub,
@@ -131,7 +132,7 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
                     }   
                 }
                 const chatFlowGatewayWith3StatesMock = {
-                    ...this.chatFlowGatewayStub,
+                    ...this.chatFlowGatewayStub_OLD,
                     getChatFlowById: jest.fn().mockResolvedValue({
                         tryGetNextState: jest.fn().mockImplementation(() => setupNextStateStub(requestsCounter))
                     })
