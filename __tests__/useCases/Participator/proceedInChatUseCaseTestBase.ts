@@ -15,7 +15,6 @@ export default class ProceedInChatUseCaseTestBase {
     currentStateStub = {
         participator1State: 'state',
         participator2State: 'state',
-        proceedEvent: 'event'
     }
 
     chatStub = {

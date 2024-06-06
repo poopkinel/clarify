@@ -6,7 +6,6 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
     runTests() {
         describe('Given a usecaseOutBoundarySpy, chatGateway stub, chatFlowGateway stub, usecase stub and request model stub', () => {                     
             const stateInputStub = {
-                proceedEvent: 'event',
                 response: {
                     responseMedia: 'text',
                     responseContent: '',

@@ -1,5 +1,6 @@
 import ChatFlowGetNextStateResult from "../../dataModels/current/chatFlow/chatFlowGetNextStateResult";
+import ChatStateForProceedInChat from "../chatState/chatState";
 
 export default interface ChatFlowEntityForProceedInChat {
-    tryGetNextState(proceedEvent: string): Promise<ChatFlowGetNextStateResult>;
+    tryGetNextState(currentState: ChatStateForProceedInChat, proceedEvent: string): Promise<ChatFlowGetNextStateResult>;
 };

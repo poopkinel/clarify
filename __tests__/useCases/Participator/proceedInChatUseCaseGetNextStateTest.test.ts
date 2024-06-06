@@ -68,7 +68,6 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
                         ...this.chatStub,
                         currentState: {
                             ...this.currentStateStub,
-                            proceedEvent: 'moveToState2'
                         }
                     }
                 })
@@ -117,21 +116,8 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
 
             describe('Given a chat flow with 3 states and 2 valid request models', () => {
                 var requestsCounter = 0;
-                const setupChatGatewayResultModelStub = (counter: number) => {
-                    return {
-                        ...this.chatGatewayResultModelStub,
-                        chat: {
-                            ...this.chatStub,
-                            currentState: {
-                                ...this.currentStateStub,
-                                proceedEvent: `moveToState${counter + 2}`
-                            }
-                        }
-                    }
-                }
-
                 const chatGatewayFlowWith3StatesMock = {
-                    getChatById: jest.fn().mockImplementation(() => setupChatGatewayResultModelStub(requestsCounter))
+                    getChatById: jest.fn().mockResolvedValue(this.chatGatewayResultModelStub)
                 }
 
                 const setupNextStateStub = (counter: number) => {

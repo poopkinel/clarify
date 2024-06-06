@@ -30,9 +30,9 @@ export default class ProceedInChatUseCase {
 
     async executeProceedInChat(requestModel: ProceedInChatRequestModel) {
         var errors: string[] = [];
-        const { chatGatewayResultModel, eventValidationResult, chat } = await this.trySetupCatchErrors(requestModel, errors); 
+        const { eventValidationResult, chat } = await this.trySetupCatchErrors(requestModel, errors); 
         
-        var { responseOptionsResult, nextStateResult } = await this.tryNextStateCatchErrors(chatGatewayResultModel, eventValidationResult, errors);
+        var { responseOptionsResult, nextStateResult } = await this.tryNextStateCatchErrors(chat, eventValidationResult, errors);
         responseOptionsResult = this.extractResponseOptions(chat, requestModel, responseOptionsResult, nextStateResult);
         
         var result: ProceedInChatResultModel;
@@ -69,7 +69,10 @@ export default class ProceedInChatUseCase {
         return responseOptionsResult;
     }
 
-    private async tryNextStateCatchErrors(chatGatewayResultModel: ChatGatewayCreateChatResultModel, eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[]) {
+    private async tryNextStateCatchErrors(
+        chat: ChatEntityForProceedInChat,
+        eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[],
+    ) {
         var responseOptionsResult = {
             options: [] as {
                 responseMedia: string;
@@ -77,8 +80,8 @@ export default class ProceedInChatUseCase {
             }[]
         };
 
-        const chatFlow = await this.chatFlowGateway.getChatFlowById(chatGatewayResultModel.chat.chatFlowId);
-        const nextStateResult = await chatFlow.tryGetNextState(eventValidationResult.event);
+        const chatFlow = await this.chatFlowGateway.getChatFlowById(chat.chatFlowId);
+        const nextStateResult = await chatFlow.tryGetNextState(chat.currentState, eventValidationResult.event);
         this.catchNextStateResultErrors(nextStateResult, errors, eventValidationResult);
         return { responseOptionsResult, nextStateResult };
     }
@@ -91,10 +94,10 @@ export default class ProceedInChatUseCase {
         const eventValidationResult = await this.validationGateway.validateResponse(response);
         
         const chat = chatGatewayResultModel.chat;
-        this.catchSuccessAndEventValidationResultErrors(eventValidationResult, errors, chat);
+        this.catchValidationResultErrors(eventValidationResult, errors, chat);
 
         this.catchReponseErrors(response, errors);
-        return { chatGatewayResultModel, eventValidationResult, chat };
+        return { eventValidationResult, chat };
     }
 
     private catchNextStateResultErrors(nextStateResult: ChatFlowGetNextStateResult, errors: string[], eventValidationResult: { success: boolean; error: string; event: string; }) {
@@ -111,9 +114,8 @@ export default class ProceedInChatUseCase {
         }
     }
 
-    // TODO: change name without event
-    private catchSuccessAndEventValidationResultErrors(eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[], chat: ChatEntityForProceedInChat) {
-        if (!eventValidationResult.success) { // Validate success
+    private catchValidationResultErrors(eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[], chat: ChatEntityForProceedInChat) {
+        if (!eventValidationResult.success) {
             errors.push(eventValidationResult.error);
         }
     }

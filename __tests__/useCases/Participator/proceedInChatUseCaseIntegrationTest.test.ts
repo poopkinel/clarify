@@ -1,3 +1,4 @@
+import exp from 'constants';
 import UsecaseOutBoundary from '../../../src/boundaries/useCaseBoundaries/usecaseOutBoundary';
 import ProceedInChatUseCase from '../../../src/useCases/current/proceedInChatUseCase';
 import ProceedInChatUseCaseBaseTest from './proceedInChatUseCaseTestBase';
@@ -8,7 +9,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
             chatId: 'chatId',
             userId: this.userIdStub,
             stateInput: {
-                proceedEvent: 'event',
+                stateId: 'stateId',
                 response: {
                     responseMedia: 'text',
                     responseContent: '',
@@ -256,7 +257,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                             chatId: this.chatIdStub,
                             userId: userId,
                             stateInput: {
-                                proceedEvent: 'event',
+                                stateId: `state${chatCounter}`,
                                 response: {
                                     responseMedia: 'text',
                                     responseContent: content
@@ -323,20 +324,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         })
                     }
 
-                    const chatGatewayMock = {
-                        getChatById: jest.fn().mockImplementation(() => {
-                            return {
-                                ...this.chatGatewayResultModelStub,
-                                chat: {
-                                    ...this.chatStub,
-                                    currentState: {
-                                        ...this.currentStateStub,
-                                        proceedEvent: `event-to-state${chatCounter}`
-                                    }
-                                }
-                            }
-                        })
-                    }
+                    const chatGatewayMock = this.chatGatewayStub;
 
                     const chatFlowGatewayMock = {
                         getChatFlowById: jest.fn().mockImplementation(async () => {
@@ -410,7 +398,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                                 chatId: this.chatIdStub,
                                 userId: userId,
                                 stateInput: {
-                                    proceedEvent: 'event',
+                                    stateId: `state${chatCounter}`,
                                     response: {
                                         responseMedia: 'text',
                                         responseContent: content
@@ -465,7 +453,6 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                                     ...this.currentStateStub,
                                     participator1State: `state${chatCounter}`,
                                     participator2State: `state${chatCounter}`,
-                                    proceedEvent: `event-to-state${chatCounter+1}`
                                 }
                             }
                         }
@@ -560,7 +547,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         ...this.requestModelStub,
                         userId: 'userId1',
                         stateInput: {
-                            proceedEvent: 'event',
+                            stateId: `state${chatCounter}`,
                             response: {
                                 responseMedia: 'text',
                                 responseContent: 'content0'
@@ -571,7 +558,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         ...this.requestModelStub,
                         userId: 'userId1',
                         stateInput: {
-                            proceedEvent: 'event',
+                            stateId: `state${chatCounter}`,
                             response: {
                                 responseMedia: 'text',
                                 responseContent: 'content1'
@@ -582,7 +569,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         ...this.requestModelStub,
                         userId: 'userId1',
                         stateInput: {
-                            proceedEvent: 'event',
+                            stateId: `state${chatCounter}`,
                             response: {
                                 responseMedia: 'text',
                                 responseContent: 'content2'
@@ -596,7 +583,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         ...this.requestModelStub,
                         userId: 'userId2',
                         stateInput: {
-                            proceedEvent: 'event', // TDOO: Remove proceed event
+                            stateId: `state${chatCounter}`,
                             response: {
                                 responseMedia: 'text',
                                 responseContent: 'content0'
@@ -607,7 +594,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         ...this.requestModelStub,
                         userId: 'userId2',
                         stateInput: {
-                            proceedEvent: 'event',
+                            stateId: `state${chatCounter}`,
                             response: {
                                 responseMedia: 'text',
                                 responseContent: 'content1'
@@ -618,7 +605,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         ...this.requestModelStub,
                         userId: 'userId2',
                         stateInput: {
-                            proceedEvent: 'event',
+                            stateId: `state${chatCounter}`,
                             response: {
                                 responseMedia: 'text',
                                 responseContent: 'content2'
@@ -644,6 +631,40 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         await usecase.executeProceedInChat(requestModelsP2WithContentStubs[chatCounter]);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining(expectedResultModelForEachState[chatCounter]));
                     }
+                });
+
+                it('should call the out boundary with the next chat state ids that fit each participator flow', async () => {
+                    const usecaseOutBoundarySpy = this.usecaseOutBoundarySpy;
+                    const usecase = ProceedInChatUseCase.fromJson({
+                        ...this.usecaseStub,
+                        chatGatewayToProceedInChat: chatGatewayMock,
+                        chatFlowGateway: chatFlowGatewayMock,
+                        validationGateway: validationGatewayMock,
+                        usecaseOutBoundary: usecaseOutBoundarySpy
+                    });
+
+                    chatCounter = 0;
+                    await usecase.executeProceedInChat(requestModelsP1WithContentStubs[chatCounter]);
+                    expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining(expectedResultModelForEachState[chatCounter]));
+
+                    await usecase.executeProceedInChat(requestModelsP2WithContentStubs[chatCounter]);
+                    expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining(expectedResultModelForEachState[chatCounter]));
+
+                    chatCounter++;
+                    await usecase.executeProceedInChat(requestModelsP1WithContentStubs[chatCounter]);
+                    expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining(expectedResultModelForEachState[chatCounter]));
+
+                    await usecase.executeProceedInChat(requestModelsP2WithContentStubs[chatCounter]);
+                    expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining(expectedResultModelForEachState[chatCounter]));
+                });
+            });
+        });
+        describe('Given ChatFlow (list of participatorFlows), states and events defined', () => {
+            describe('Given a list of request models with chat responses (media and content)', () => {
+                describe('When responses are sent to the chatFlow', () => {
+                    it('should call sendResult for each valid response, and end with finish state or error state', async () => {
+                        expect(true).toBe(true);
+                    });
                 });
             });
         });

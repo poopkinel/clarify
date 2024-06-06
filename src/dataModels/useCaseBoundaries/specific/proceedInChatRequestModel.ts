@@ -6,6 +6,7 @@ type ResponseInput = {
 }
 
 type ChatStateInput = {
+    stateId: string;
     response: ResponseInput;
 }
 
