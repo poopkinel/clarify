@@ -38,10 +38,7 @@ export default class ProceedInChatUseCase {
         
         var result: ProceedInChatResultModel = new ProceedInChatResultModel(errors, '');
         
-        var isEndState = false;
-        if (nextStateResult.nextState.id === 'end') {
-            isEndState = true;
-        }
+        const isEndState = nextStateResult.nextState.isEndState;
 
         const isError = errors.length != 0;
         if (isError) {
@@ -77,7 +74,7 @@ export default class ProceedInChatUseCase {
         chat: ChatEntityForProceedInChat,
         eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[],
     ) {
-        var responseOptionsResult = {
+        var responseOptionsResult = { // TODO: move out of method
             options: [] as {
                 responseMedia: string;
                 responseRestrictions: string;

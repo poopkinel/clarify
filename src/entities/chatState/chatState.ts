@@ -7,4 +7,5 @@ export default interface ChatStateForProceedInChat { // split to ChatStateForPro
     proceedEvent: string; // This stays for the next state class
     participator1Options: ChatResponseOptions;
     participator2Options: ChatResponseOptions;
+    isEndState: boolean;
 }

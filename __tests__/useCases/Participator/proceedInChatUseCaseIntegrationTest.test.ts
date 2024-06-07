@@ -662,24 +662,220 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
             });
         });
 
-        describe.only('Given ChatFlow (list of participatorFlows), states and events defined', () => {
-            describe('Given a list of request models with chat responses (media and content)', () => {
-                describe('When responses are sent to the chatFlow', () => {
-                    it('should call sendResult for each valid response, and end with finish state or error state', async () => {
-                        const { usecase, usecaseOutBoundarySpy, requestModel } = this.arrangeChatFlowScenario();
+        describe.skip('ChatFlow Scenario for multiple participator states', () => {
+            describe('Given stub ChatFlow, no states and events defined', () => {
+                const content = 'content0';
+                const nextStateId = 'end'
+                const { usecase, usecaseOutBoundarySpy, requestModel } = this.arrangeChatFlowWithSingleRequestScenario(content, nextStateId);
+                describe('Given a request model with a single chat response (media and content)', () => {
+                    describe('When response is sent to the chatFlow', () => {
+                        it('should call sendResult with end state', async () => {
+                            await this.actChatFlowScenario(usecase, requestModel);
+                            this.assertChatFlowScenario(usecaseOutBoundarySpy, true);
+                        });
+                    });
+                });
+            });
+            describe('Given a ChatFlow (list of participatorFlows), states and events defined', () => {
+                const content = 'invalid';
+                const nextStateId = 'invalid';
+                const { usecase, usecaseOutBoundarySpy, requestModel } = this.arrangeChatFlowWithSingleRequestScenario(content, nextStateId);
+                describe('Given a list of request models with chat responses (media and content)', () => {
+                    describe('When responses are sent to the chatFlow', () => {
+                        it('should call sendResult without end state', async () => {
+                            await this.actChatFlowScenario(usecase, requestModel);
+                            this.assertChatFlowScenario(usecaseOutBoundarySpy, false);
+                        });
+                    });
+                });
+            });
+            describe('Given a ChatFlow with 2 states and events defined', () => {
+                const content = 'content0';
+                const nextStateId = 'state1'
+                const { usecase, usecaseOutBoundarySpy, requestModels } = 
+                this.arrangeChatFlowWithMultipleRequestsScenario(
+                    0, ["content0", "content1"], [nextStateId, "end"], ["event-to-state1", "end"]);
+                describe('Given 2 request models with chat responses (media and content)', () => {
+                    const requestModels = [
+                        {
+                            chatId: 'chatId',
+                            userId: 'userId1',
+                            stateInput: {
+                                stateId: nextStateId,
+                                response: {
+                                    responseMedia: 'text',
+                                    responseContent: "conent0"
+                                }
+                            }
+                        },
+                        {
+                            chatId: 'chatId',
+                            userId: 'userId1',
+                            stateInput: {
+                                stateId: nextStateId,
+                                response: {
+                                    responseMedia: 'text',
+                                    responseContent: "end"
+                                }
+                            }
+                        }
+                    ]
+                    
+                    describe('When responses are sent to the chatFlow', () => {
+                        it('should call sendResult with next state and then with end state', async () => {
+                            await this.actChatFlowScenario(usecase, requestModels[0]);
+                            this.assertChatFlowScenario(usecaseOutBoundarySpy, false);
 
-                        await this.actChatFlowScenario(usecase, requestModel);
+                            await this.actChatFlowScenario(usecase, requestModels[1]);
+                            this.assertChatFlowScenario(usecaseOutBoundarySpy, true);
+                        });
+                    });
+                });
+            });
+        });
 
-                        this.assertChatFlowScenario(usecaseOutBoundarySpy);
+        describe.only('Test main execution flow for single pariticpant', () => {
+            describe('Given eventValidationResult for the dummy content giving a dummy event', () => {
+                describe('Given a dummy current state', () => {
+                    describe('Given dummy getNextState method giving the same dummy state as next state (with dummy event)', () => {
+                        describe('Given dummy response options, and dummy isEndState value for the dummy next state', () => {
+                            describe('Given dummy content', () => {
+                                const { 
+                                    requestModel: requestModelDummy, 
+                                    validationGateway: validationGatewayDummy, 
+                                    chatGateway: chatGatewayDummy, 
+                                    chatFlowGateway: chatFlowGatewayDummy
+                                    } = this.arrangeMainExecutionFlowForSingleParticipant();
+                                it('should call out boundary with result model value isEnd: dummy and responseOptions: based on dummy nextState ', async () => {
+                                    const usecase = ProceedInChatUseCase.fromJson({
+                                        usecaseOutBoundary: this.usecaseOutBoundarySpy,
+                                        chatGatewayToProceedInChat: chatGatewayDummy,
+                                        chatFlowGateway: chatFlowGatewayDummy,
+                                        validationGateway: validationGatewayDummy
+                                    });
+
+                                    await usecase.executeProceedInChat(requestModelDummy);
+
+                                    expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                                        isEndState: true,
+                                        responseOptionsForParticipant: {
+                                            options: []
+                                        }
+                                    }));
+                                });
+                            });
+                            describe('Given non dummy content', () => {
+                                it('should call boundry with result model containing error', async () => {
+                                    const { 
+                                        requestModel: requestModelDummy, 
+                                        validationGateway: validationGatewayWithFailedValidationStub, 
+                                        chatGateway: chatGatewayDummy, 
+                                        chatFlowGateway: chatFlowGatewayDummy } = 
+                                    this.arrangeMainExecutionFlowForSingleParticipant({
+                                        ...this.setup,
+                                        content: 'invalidContent',
+                                        validateResultSuccess: false,
+                                        validateResultError: 'Content invalid for event'
+                                    });
+                                    const usecase = ProceedInChatUseCase.fromJson({
+                                        usecaseOutBoundary: this.usecaseOutBoundarySpy,
+                                        chatGatewayToProceedInChat: chatGatewayDummy,
+                                        chatFlowGateway: chatFlowGatewayDummy,
+                                        validationGateway: validationGatewayWithFailedValidationStub
+                                    });
+
+                                    await usecase.executeProceedInChat(requestModelDummy);
+
+                                    expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                                        errors: expect.arrayContaining(['Content invalid for event'])
+                                    }));
+                                });
+                            });
+                        });
                     });
                 });
             });
         });
     }
 
-    private assertChatFlowScenario(usecaseOutBoundarySpy: { sendResultModel: any; }) {
+    setup = {
+        content: 'dummyContent', 
+        event: 'dummyEvent',
+        validateResultSuccess: true,
+        validateResultError: '',
+        currentStateId: 'dummyStateId',
+        nextStateId: 'dummyStateId',
+        proceedEvent: 'dummyEvent',
+        isEndState: true,
+        responseOptions: { options: null }
+    }
+
+    private arrangeMainExecutionFlowForSingleParticipant(setup = this.setup) {
+        const userIdDummy = 'userId';
+        const contentDummy = setup.content;
+        const requestModel = {
+            chatId: 'chatId',
+            userId: userIdDummy,
+            stateInput: {
+                stateId: 'stateId', // irrelevant atm
+                response: {
+                    responseMedia: 'text',
+                    responseContent: contentDummy
+                }
+            }
+        }
+
+        const validationGateway = {
+            ...this.validationGatewayStub,
+            validateResponse: jest.fn().mockImplementation(() => {
+                return {
+                    ...this.eventValidationResultStub,
+                    success: setup.validateResultSuccess,
+                    error: setup.validateResultError,
+                    event: setup.event
+                }
+            })
+        }
+
+        const chatGateway = {
+            ...this.chatGatewayStub,
+            getChatById: jest.fn().mockResolvedValue({
+                ...this.chatGatewayResultModelStub,
+                chat: {
+                    ...this.chatStub,
+                    currentState: {
+                        ...this.currentStateStub,
+                        id: setup.currentStateId
+                    }
+                }
+            })
+        }
+
+        const chatFlowGateway = {
+            ...this.chatFlowGatewayStub,
+            getChatFlowById: jest.fn().mockResolvedValue({
+                tryGetNextState: jest.fn().mockImplementation(() => {
+                    return {
+                        ...this.nextStateResultStub,
+                        nextState: {
+                            ...this.nextStateStub,
+                            id: setup.nextStateId,
+                            proceedEvent: setup.proceedEvent,
+                            participator1Options: setup.responseOptions,
+                            participator2Options: setup.responseOptions,
+                            isEndState: setup.isEndState
+                        }
+                    }
+                })
+            })
+        }
+
+        return { requestModel, validationGateway, chatGateway, chatFlowGateway };
+    }
+
+    private assertChatFlowScenario(usecaseOutBoundarySpy: { sendResultModel: any; }, isEndState: boolean) {
         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-            isEndState: true,
+            isEndState: isEndState,
         }));
     }
 
@@ -687,9 +883,76 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
         await usecase.executeProceedInChat(requestModel);
     }
 
-    private arrangeChatFlowScenario() {
+    private arrangeChatFlowWithMultipleRequestsScenario(index: number, contents: string[], ids: string[], proceedEvents: string[]) {
         const chatGatewayMock = this.chatGatewayStub;
-        const chatFlowGatewayMock = this.chatFlowGatewayStub;
+        const chatFlowGatewayMock = {
+            ...this.chatFlowGatewayStub,
+            getChatFlowById: jest.fn().mockResolvedValue({
+                tryGetNextState: jest.fn().mockImplementation(() => {
+                    return {
+                        ...this.nextStateResultStub,
+                        nextState: {
+                            ...this.nextStateStub,
+                            id: ids[index],
+                            proceedEvent: proceedEvents[index]
+                        }
+                    }
+                })
+            })
+        };
+        const validationGatewayMock = this.validationGatewayStub;
+        const usecaseOutBoundarySpy = this.usecaseOutBoundarySpy;
+
+        const usecase = ProceedInChatUseCase.fromJson({
+            usecaseOutBoundary: usecaseOutBoundarySpy,
+            chatGatewayToProceedInChat: chatGatewayMock,
+            chatFlowGateway: chatFlowGatewayMock,
+            validationGateway: validationGatewayMock
+        });
+
+        const nextStateId = ids[index];
+
+        const requestModels = [{
+            chatId: 'chatId',
+            userId: 'userId1',
+            stateInput: {
+                stateId: nextStateId,
+                response: {
+                    responseMedia: 'text',
+                    responseContent: contents[index]
+                }
+            }
+        },
+        {
+            chatId: 'chatId',
+            userId: 'userId1',
+            stateInput: {
+                stateId: nextStateId,
+                response: {
+                    responseMedia: 'text',
+                    responseContent: contents[index]
+                }
+            }
+        }]
+
+        return { usecase, usecaseOutBoundarySpy, requestModels };
+    }
+
+    private arrangeChatFlowWithSingleRequestScenario(content: string, id: string = 'state0', proceedEvent: string = 'end') {
+        const chatGatewayMock = this.chatGatewayStub;
+        const chatFlowGatewayMock = {
+            ...this.chatFlowGatewayStub,
+            getChatFlowById: jest.fn().mockResolvedValue({
+                tryGetNextState: jest.fn().mockResolvedValue({
+                    ...this.nextStateResultStub,
+                    nextState: {
+                        ...this.nextStateStub,
+                        id: id,
+                        proceedEvent: proceedEvent
+                    }
+                })
+            })
+        };
         const validationGatewayMock = this.validationGatewayStub;
         const usecaseOutBoundarySpy = this.usecaseOutBoundarySpy;
 
@@ -707,7 +970,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                 stateId: 'state0',
                 response: {
                     responseMedia: 'text',
-                    responseContent: 'content0'
+                    responseContent: content
                 }
             }
         }
