@@ -8,9 +8,10 @@ export default class ChatStateImpl implements ChatStateForProceedInChat {
     proceedEvent: string;
     participator1Options: ChatResponseOptions;
     participator2Options: ChatResponseOptions;
+    isEndState: boolean;
 
     constructor(id: string, participator1State: string, participator2State: string, proceedEvent: string, 
-        participator1Options: ChatResponseOptions, participator2Options: ChatResponseOptions
+        participator1Options: ChatResponseOptions, participator2Options: ChatResponseOptions, isEndState: boolean
     ) {
         this.id = id;
         this.participator1NextState = participator1State;
@@ -20,5 +21,6 @@ export default class ChatStateImpl implements ChatStateForProceedInChat {
         this.participator1Options = participator1Options;
         this.participator2Options = participator2Options;
 
+        this.isEndState = isEndState;
     }
 }
