@@ -1,28 +1,28 @@
 import ResultModel from "../../useCaseBoundaries/general/resultModel";
 
-type ChatResponseOption = {
+export type ChatResponseOptionResult = {
     responseMedia: string;
     responseRestrictions: string;
 }
 
-type ChatResponseOptions = {
-    options: ChatResponseOption[] | null;
+export type ChatResponseOptionsResult = {
+    options: ChatResponseOptionResult[] | null;
 }
 
-export default class ProceedInChatResultModel implements ResultModel {
+export class ProceedInChatResultModel implements ResultModel {
     errors: string[];
     chatNextStateId: string;
-    responseOptionsForParticipant: ChatResponseOptions;
+    responseOptionsForParticipant: ChatResponseOptionsResult;
     isEndState: boolean = false;
 
     constructor(errors: string[], chatNextStateId: string, isEndState: boolean = false) {
         this.errors = errors;
         this.chatNextStateId = chatNextStateId;
-        this.responseOptionsForParticipant = { options: null };
+        this.responseOptionsForParticipant = { options: [] };
         this.isEndState = isEndState;
     }
 
-    setResponseOptions(responseOptions: ChatResponseOptions) {
+    setResponseOptions(responseOptions: ChatResponseOptionsResult) {
         this.responseOptionsForParticipant = responseOptions;
     }
 

@@ -5,56 +5,17 @@ import ProceedInChatUseCaseBaseTest from "./proceedInChatUseCaseTestBase";
 class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest {
     runTests() {
         describe('Given an usecaseOutBoundarySpy, a chatGateway stub, chatFlowGateway stub, usecase stub', () => {
-            const nextStateAfterEmptyEventStateIdStub = {
-                ...this.nextStateStub,
-                id: 'afterEmptyEventStateId'
-            }
-
-            const nextStateResultStub = {
-                ...this.nextStateResultStub,
-                success: true,
-                nextState: nextStateAfterEmptyEventStateIdStub
-            }
-
-            const chatFlowGatewayStub = {
-                getChatFlowById: jest.fn().mockResolvedValue({
-                    tryGetNextState: jest.fn().mockResolvedValue(nextStateResultStub)
-                })
-            }
-
-            const usecaseJson = {
-                usecaseOutBoundary: this.usecaseOutBoundarySpy,
-                chatGatewayToProceedInChat: this.chatGatewayStub,
-                chatFlowGateway: chatFlowGatewayStub,
-                validationGateway: this.validationGatewayStub
-            }
-
-            const responseStub = {
-                responseMedia: 'text',
-                responseContent: '',
-            }
-
-            const requestModelStub = {
-                chatId: 'chatId',
-                userId: 'userId',
-                stateInput: {
-                    response: responseStub
-                }
-            }
-
-            describe('Given a request model stub with input validated on successful stub event', () => {          
-
-                const requestModelStub = {
-                    chatId: 'chatId',
-                    userId: 'userId',
-                    stateInput: {
-                        stateId: 'stateId',
-                        response: responseStub
-                    }
-                }
+            describe('Given a request model stub with input validated on successful stub event', () => {
                 it('should call the out boundary with a result model containing the state for an empty event input', async () => {
-                    const usecase = ProceedInChatUseCase.fromJson(usecaseJson);
-                    await usecase.executeProceedInChat(requestModelStub);
+                    const setupData = {
+                        ...this.setupData,
+                        nextStateId: 'afterEmptyEventStateId',
+                        content: '',
+                    }
+
+                    const { usecase, requestModel } = this.generateUsecaseAndRequestModelBasedOnSetupDataForSingleRequestSingleParticipator(setupData);
+                    await usecase.executeProceedInChat(requestModel);
+
                     expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         chatNextStateId: 'afterEmptyEventStateId'
                     }));
@@ -63,35 +24,16 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
 
             describe('Given a request model stub with input validated on failed stub event', () => {
                 it('should call the out boundary with a result model containing error and success set to false', async () => {                    
-                    const responseWithErrorStub = {
-                        responseMedia: 'text',
-                        responseContent: 'content inavalidated for event',
+                    const setupData = {
+                        ...this.setupData,
+                        content: 'content inavalidated for event',
+                        validateResultSuccess: false,
+                        validateResultError: 'Content invalid for event',
                     }
 
-                    const requestModelWithInvalidResponseContentStub = {
-                        ...requestModelStub,
-                        stateInput: {
-                            stateId: 'stateId',
-                            response: responseWithErrorStub
-                        }
-                    }
+                    const { usecase, requestModel } = this.generateUsecaseAndRequestModelBasedOnSetupDataForSingleRequestSingleParticipator(setupData);
+                    await usecase.executeProceedInChat(requestModel);
 
-                    const eventValidationResultWithErrorStub = {
-                        ...this.eventValidationResultStub,
-                        success: false,
-                        error: 'Content invalid for event',
-                        event: ''
-                    }
-        
-                    const validationGatewayWithErrorStub = {
-                        validateResponse: jest.fn().mockResolvedValue(eventValidationResultWithErrorStub)
-                    }
-
-                    const usecase = ProceedInChatUseCase.fromJson({
-                        ...usecaseJson,
-                        validationGateway: validationGatewayWithErrorStub
-                    });
-                    await usecase.executeProceedInChat(requestModelWithInvalidResponseContentStub);
                     expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         errors: expect.arrayContaining(['Content invalid for event']),
                         chatNextStateId: ''
@@ -100,63 +42,19 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
             });
 
             describe('Given a request model stub with input validated on a successful specific stub event', () => {
-                const responseWithSpecificEventStub = {
-                    ...responseStub,
-                    responseContent: 'content validated for specific event'
-                }
-
-                const requestModelWithSpecificEventStub = {
-                    ...requestModelStub,
-                    stateInput: {
-                        stateId: 'stateId', // TODO: clean this, have a ... for a stateInputStub
-                        response: responseWithSpecificEventStub
-                    }
-                }
                 describe('Given a chatGateway, chatFlow and validationGateway stubs with a specific event', () => {
-                    const chatGatewayWithSpecificEventStub = {
-                        ...this.chatGatewayStub,
-                        getChatById: jest.fn().mockResolvedValue({
-                            ...this.chatGatewayResultModelStub,
-                            chat: {
-                                ...this.chatStub,
-                                currentState: {
-                                    ...this.currentStateStub,
-                                    proceedEvent: 'specificEvent'
-                                }
-                            }
-                        })
-                    }
-
-                    const chatFlowGatewayWithSpecificEventStub = {
-                        getChatFlowById: jest.fn().mockResolvedValue({
-                            tryGetNextState: jest.fn().mockResolvedValue({
-                                ...nextStateResultStub,
-                                nextState: {
-                                    ...nextStateAfterEmptyEventStateIdStub,
-                                    id: 'specificStateId',
-                                    proceedEvent: 'specificEvent'
-                                }
-                            })
-                        })
-                    }
-
-                    const eventValidationResultWithSpecificEventStub = {
-                        ...this.eventValidationResultStub,
-                        event: 'specificEvent'
-                    }
-
-                    const validationGatewayWithSpecificEventStub = {
-                        validateResponse: jest.fn().mockResolvedValue(eventValidationResultWithSpecificEventStub)
-                    }
-
                     it('should call the out boundary with a result model with success and the state corresponding to the event', async () => {
-                        const usecase = ProceedInChatUseCase.fromJson({
-                            ...usecaseJson,
-                            chatFlowGateway: chatFlowGatewayWithSpecificEventStub,
-                            chatGatewayToProceedInChat: chatGatewayWithSpecificEventStub,
-                            validationGateway: validationGatewayWithSpecificEventStub
-                        });
-                        await usecase.executeProceedInChat(requestModelWithSpecificEventStub);
+                        const setupData = {
+                            ...this.setupData,
+                            nextStateId: 'specificStateId',
+                            content: 'content validated for specific event',
+                            validatedEvent: 'specificEvent',
+                            proceedEvent: 'specificEvent'
+                        }
+                        
+                        const { usecase, requestModel } = this.generateUsecaseAndRequestModelBasedOnSetupDataForSingleRequestSingleParticipator(setupData);
+                        await usecase.executeProceedInChat(requestModel);
+
                         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             chatNextStateId: 'specificStateId'
                         }));

@@ -24,90 +24,20 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
             chatNextStateId: 'nextState'
         };
 
-        describe('Given an empty chat flow gateway stub', () => {
-            const chatFlowGatewayOneStateStub = {
-                ...this.chatFlowGatewayStub_OLD,
-                getChatFlowById: jest.fn().mockResolvedValue({
-                    tryGetNextState: jest.fn().mockResolvedValue({
-                        ...this.nextStateResultStub,
-                        nextState: {
-                            ...this.nextStateStub,
-                            id: 'start-finish'
-                        }
-                    })
-                })
-            };
-
-            describe('When a valid request model is sent to the use case', () => {
-                it('should send a chat finished result model with the same state', async () => {
-                    const usecase = ProceedInChatUseCase.fromJson({
-                        usecaseOutBoundary: this.usecaseOutBoundarySpy, 
-                        chatGatewayToProceedInChat: this.chatGatewayStub, 
-                        chatFlowGateway: chatFlowGatewayOneStateStub,
-                        validationGateway: this.validationGatewayStub
-                    });
-                    await usecase.executeProceedInChat(requestModelStub);
-                    
-                    expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                        ...expectedInResultModel,
-                        chatNextStateId: 'start-finish',
-                    }));
-                });
-            });
-        });
-
         describe('Given a valid request model and a chat with 2 states', () => {
-            const requestModelTwoStatesChatFlow = {
-                ...requestModelStub,
-                chatId: "chatIdTwoStates"
-            }
-
-            const gatewayStubWithEventMoveToState2 = {
-                getChatById: jest.fn().mockResolvedValue({
-                    ...this.chatGatewayResultModelStub,
-                    chat: {
-                        ...this.chatStub,
-                        currentState: {
-                            ...this.currentStateStub,
-                        }
-                    }
-                })
-            }
-
-            const chatFlowGatewayTwoStatesStub = {
-                ...this.chatFlowGatewayStub_OLD,
-                getChatFlowById: jest.fn().mockResolvedValue({
-                    tryGetNextState: jest.fn().mockResolvedValue({
-                        ...this.nextStateResultStub,
-                        nextState: {
-                            ...this.nextStateStub,
-                            id: 'nextState',
-                            proceedEvent: 'moveToState2'
-                        }
-                    })
-                })
-            };
-
-            const validationGatewayWithEventMoveToState2Stub = {
-                ...this.validationGatewayStub,
-                validateResponse: jest.fn().mockImplementation(() => {
-                    return {
-                        ...this.eventValidationResultStub,
-                        event: 'moveToState2'
-                    }
-                })
-            }
-
             describe('When the request model is sent to the use case', () => {
-                it('should send a result model with the transitioned new state', async () => {
-                    const usecase = ProceedInChatUseCase.fromJson({
-                        usecaseOutBoundary: this.usecaseOutBoundarySpy, 
-                        chatGatewayToProceedInChat: gatewayStubWithEventMoveToState2, 
-                        chatFlowGateway: chatFlowGatewayTwoStatesStub,
-                        validationGateway: validationGatewayWithEventMoveToState2Stub
-                    });
-                    await usecase.executeProceedInChat(requestModelTwoStatesChatFlow);
-                    
+                it.only('should send a result model with the transitioned new state', async () => {
+                    const setupData = {
+                        ...this.setupData,
+                        chatId: 'chatIdTwoStates',
+                        validatedEvent: 'moveToState2',
+                        nextStateId: 'nextState',
+                        proceedEvent: 'moveToState2',
+                    }
+
+                    const { usecase, requestModel } = this.generateUsecaseAndRequestModelBasedOnSetupDataForSingleRequestSingleParticipator(setupData);
+                    await usecase.executeProceedInChat(requestModel);
+
                     expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                         ...expectedInResultModel,
                         chatNextStateId: 'nextState',

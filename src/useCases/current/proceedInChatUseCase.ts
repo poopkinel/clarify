@@ -5,7 +5,7 @@ import UsecaseOutBoundary from "../../boundaries/useCaseBoundaries/usecaseOutBou
 import ChatFlowGetNextStateResult from "../../dataModels/current/chatFlow/chatFlowGetNextStateResult";
 import ChatGatewayCreateChatResultModel from "../../dataModels/current/chatGateway/chatGatewayCreateChatResultModel";
 import ProceedInChatRequestModel from "../../dataModels/useCaseBoundaries/specific/proceedInChatRequestModel";
-import ProceedInChatResultModel from "../../dataModels/useCaseBoundaries/specific/proceedInChatResultModel";
+import { ProceedInChatResultModel, ChatResponseOptionResult } from "../../dataModels/useCaseBoundaries/specific/proceedInChatResultModel";
 import ChatEntityForProceedInChat from "../../entities/chatEntity/chatEntityForProceedInChat";
 
 const firstParticipatorIdInChat = 1;
@@ -75,10 +75,7 @@ export default class ProceedInChatUseCase {
         eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[],
     ) {
         var responseOptionsResult = { // TODO: move out of method
-            options: [] as {
-                responseMedia: string;
-                responseRestrictions: string;
-            }[]
+            options: [] as ChatResponseOptionResult[]
         };
 
         const chatFlow = await this.chatFlowGateway.getChatFlowById(chat.chatFlowId);
@@ -129,6 +126,9 @@ export default class ProceedInChatUseCase {
         if (!chat.currentState) {
             errors.push('Invalid chat current state object');
         }
+        if (chat.currentState.isEndState) {
+            errors.push('Chat ended');
+        }
         if (chat.participator1UserId !== requestModel.userId &&
             chat.participator2UserId !== requestModel.userId) {
             errors.push('User is not a participator in this chat');
@@ -141,10 +141,7 @@ export default class ProceedInChatUseCase {
         if (participatorIdInChat === 1) {
             if (nextStateResult.nextState.participator1Options.options === null) {
                 responseOptionsResult = {
-                    options: [] as {
-                        responseMedia: string;
-                        responseRestrictions: string;
-                    }[]
+                    options: [] as ChatResponseOptionResult[]
                 };
             } else {
                 responseOptionsResult = {
@@ -159,10 +156,7 @@ export default class ProceedInChatUseCase {
         } else if (participatorIdInChat === 2) {
             if (nextStateResult.nextState.participator2Options.options === null) {
                 responseOptionsResult = {
-                    options: [] as {
-                        responseMedia: string;
-                        responseRestrictions: string;
-                    }[]
+                    options: [] as ChatResponseOptionResult[]
                 };
             } else {
                 responseOptionsResult = {
@@ -176,10 +170,7 @@ export default class ProceedInChatUseCase {
             }
         } else {
             responseOptionsResult = {
-                options: [] as {
-                    responseMedia: string;
-                    responseRestrictions: string;
-                }[]
+                options: [] as ChatResponseOptionResult[]
             };
         }
         return responseOptionsResult;

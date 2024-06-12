@@ -141,6 +141,217 @@ export default class ProceedInChatUseCaseTestBase {
             });
         });
     }
+
+    async executeUsecaseWithSetupData(setupData = this.setupData) {
+        const { usecase, requestModel } = this.generateUsecaseAndRequestModelBasedOnSetupDataForSingleRequestSingleParticipator(setupData);
+        return await usecase.executeProceedInChat(requestModel);
+    }
+
+    setupData = {
+        chatId: 'chatId',
+        requestModelUserId: 'userId',
+        content: 'dummyContent', 
+        validatedEvent: 'dummyEvent',
+        validateResultSuccess: true,
+        validateResultError: '',
+        chatGatewayResultSuccess: true,
+        chatGatewayResultError: '',
+        currentStateId: 'dummyStateId',
+        nextStateResultSuccess: true,
+        nextStateId: 'dummyStateId',
+        nextStateResultError: '',
+        proceedEvent: 'dummyEvent',
+        isNextStateEndState: true,
+        isCurrentStateEndState: true,
+        responseOptions: { options: null } as any
+    }
+
+    generateUsecaseAndRequestModelBasedOnSetupDataForSingleRequestSingleParticipator(setup = this.setupData) {
+        const { 
+            requestModel, 
+            validationGateway, 
+            chatGateway, 
+            chatFlowGateway
+            } = this.arrangeMainExecutionFlowForSingleRequestAndSingleParticipant(setup);
+        const usecase = ProceedInChatUseCase.fromJson({
+            usecaseOutBoundary: this.usecaseOutBoundarySpy,
+            chatGatewayToProceedInChat: chatGateway,
+            chatFlowGateway: chatFlowGateway,
+            validationGateway: validationGateway
+        });
+
+        return { usecase, requestModel };
+    }
+
+    arrangeMainExecutionFlowForSingleRequestAndSingleParticipant(setup = this.setupData) {
+        const contentDummy = setup.content;
+        const requestModel = {
+            chatId: setup.chatId,
+            userId: setup.requestModelUserId,
+            stateInput: {
+                stateId: 'stateId', // irrelevant atm
+                response: {
+                    responseMedia: 'text',
+                    responseContent: contentDummy
+                }
+            }
+        }
+
+        const validationGateway = {
+            ...this.validationGatewayStub,
+            validateResponse: jest.fn().mockImplementation(() => {
+                return {
+                    ...this.eventValidationResultStub,
+                    success: setup.validateResultSuccess,
+                    error: setup.validateResultError,
+                    event: setup.validatedEvent
+                }
+            })
+        }
+
+        const chatGateway = {
+            ...this.chatGatewayStub,
+            getChatById: jest.fn().mockResolvedValue({
+                ...this.chatGatewayResultModelStub,
+                success: setup.chatGatewayResultSuccess,
+                error: setup.chatGatewayResultError,
+                chat: {
+                    ...this.chatStub,
+                    currentState: {
+                        ...this.currentStateStub,
+                        id: setup.currentStateId,
+                        isEndState: setup.isCurrentStateEndState
+                    }
+                }
+            })
+        }
+
+        const chatFlowGateway = {
+            ...this.chatFlowGatewayStub,
+            getChatFlowById: jest.fn().mockResolvedValue({
+                tryGetNextState: jest.fn().mockImplementation(() => {
+                    return {
+                        ...this.nextStateResultStub,
+                        success: setup.nextStateResultSuccess,
+                        error: setup.nextStateResultError,
+                        nextState: {
+                            ...this.nextStateStub,
+                            id: setup.nextStateId,
+                            proceedEvent: setup.proceedEvent,
+                            participator1Options: setup.responseOptions,
+                            participator2Options: setup.responseOptions,
+                            isEndState: setup.isNextStateEndState
+                        }
+                    }
+                })
+            })
+        }
+
+        return { requestModel, validationGateway, chatGateway, chatFlowGateway };
+    }
+    
+    generateUsecaseAndRequestModelBasedOnSetupDataForTwoRequests(setup = this.setupData) {
+        const {
+            requestModels,
+            validationGateway,
+            chatGateway,
+            chatFlowGateway
+        } = this.arrangeMainExecutionFlowForTwoRequests(setup);
+        const usecase = ProceedInChatUseCase.fromJson({
+            usecaseOutBoundary: this.usecaseOutBoundarySpy,
+            chatGatewayToProceedInChat: chatGateway,
+            chatFlowGateway: chatFlowGateway,
+            validationGateway: validationGateway
+        });
+        return { usecase, requestModels };
+    }
+
+    arrangeMainExecutionFlowForTwoRequests(setup = this.setupData) {
+        const contentDummy = setup.content;
+        const requestModels = [
+            {
+                chatId: setup.chatId,
+                userId: setup.requestModelUserId,
+                stateInput: {
+                    stateId: 'stateId', // irrelevant atm
+                    response: {
+                        responseMedia: 'text',
+                        responseContent: contentDummy
+                    }
+                }
+            },
+            {
+                chatId: setup.chatId,
+                userId: setup.requestModelUserId,
+                stateInput: {
+                    stateId: 'stateId', // irrelevant atm
+                    response: {
+                        responseMedia: 'text',
+                        responseContent: contentDummy
+                    }
+                }
+            }
+        ]
+
+        const validationGateway = {
+            ...this.validationGatewayStub,
+            validateResponse: jest.fn().mockImplementation(() => {
+                return {
+                    ...this.eventValidationResultStub,
+                    success: setup.validateResultSuccess,
+                    error: setup.validateResultError,
+                    event: setup.validatedEvent
+                }
+            })
+        }
+
+        const chatGateway = {
+            ...this.chatGatewayStub,
+            getChatById: jest.fn().mockResolvedValue({
+                ...this.chatGatewayResultModelStub,
+                success: setup.chatGatewayResultSuccess,
+                error: setup.chatGatewayResultError,
+                chat: {
+                    ...this.chatStub,
+                    currentState: {
+                        ...this.currentStateStub,
+                        id: setup.currentStateId
+                    }
+                }
+            })
+        }
+
+        const chatFlowGateway = {
+            ...this.chatFlowGatewayStub,
+            getChatFlowById: jest.fn().mockResolvedValue({
+                tryGetNextState: jest.fn().mockImplementation(() => {
+                    return {
+                        ...this.nextStateResultStub,
+                        success: setup.nextStateResultSuccess,
+                        error: setup.nextStateResultError,
+                        nextState: {
+                            ...this.nextStateStub,
+                            id: setup.nextStateId,
+                            proceedEvent: setup.proceedEvent,
+                            participator1Options: setup.responseOptions,
+                            participator2Options: setup.responseOptions,
+                            isEndState: setup.isNextStateEndState
+                        }
+                    }
+                })
+            })
+        }
+
+        return { requestModels, validationGateway, chatGateway, chatFlowGateway };
+    }
+
+    setupSingleResultModel(errors: string[] = [], isEndState = true, chatNextStateId = '') {
+        return {
+            errors: errors,
+            chatNextStateId: chatNextStateId,
+            isEndState: isEndState
+        }
+    }
 }
 
 new ProceedInChatUseCaseTestBase().runTest();
