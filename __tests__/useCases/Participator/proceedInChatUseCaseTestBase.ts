@@ -316,6 +316,7 @@ export default class ProceedInChatUseCaseTestBase {
                 error: setup.chatGatewayResultError,
                 chat: {
                     ...this.chatStub,
+                    isEnded: setup.isChatEnded,
                     currentState: {
                         ...this.currentStateStub,
                         id: setup.currentStateId

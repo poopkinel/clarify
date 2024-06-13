@@ -200,7 +200,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
                     this.assertCalledWithResultModel([], false, expectedResponseOptions);
                 });
                 describe('Given isChatEnded true', () => {
-                    it('should call with result model containing the non dummy response options', async () => {
+                    it('should call with result model containing chat ended error', async () => {
                         const setupData = {
                             ...this.setupData,
                             responseOptions: {
