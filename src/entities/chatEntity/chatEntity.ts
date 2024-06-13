@@ -30,6 +30,8 @@ export class ChatEntity implements ChatEntityForShare,
     chatFlowId: string;
     currentState: ChatStateForProceedInChat;
 
+    isEnded: boolean;
+
     constructor(
         id: string, 
         name: string, 
@@ -43,7 +45,9 @@ export class ChatEntity implements ChatEntityForShare,
         sharingSettings: ChatSharingSettings = new ChatSharingSettings(id, []),
 
         chatFlowId: string = '',
-        currentState: ChatStateForProceedInChat
+        currentState: ChatStateForProceedInChat,
+
+        isEnded: boolean = false
     ) {
         this.id = id;
         this.name = name;
@@ -62,6 +66,8 @@ export class ChatEntity implements ChatEntityForShare,
 
         this.chatFlowId = chatFlowId;
         this.currentState = currentState;
+
+        this.isEnded = isEnded;
     }
 
 
