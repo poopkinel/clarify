@@ -5,7 +5,7 @@ import UsecaseOutBoundary from "../../boundaries/useCaseBoundaries/usecaseOutBou
 import ChatFlowGetNextStateResult from "../../dataModels/current/chatFlow/chatFlowGetNextStateResult";
 import ChatGatewayCreateChatResultModel from "../../dataModels/current/chatGateway/chatGatewayCreateChatResultModel";
 import ProceedInChatRequestModel from "../../dataModels/useCaseBoundaries/specific/proceedInChatRequestModel";
-import { ProceedInChatResultModel, ChatResponseOptionResult } from "../../dataModels/useCaseBoundaries/specific/proceedInChatResultModel";
+import { ProceedInChatResultModel, ChatResponseOptionResult, ChatResponseOptionsResult } from "../../dataModels/useCaseBoundaries/specific/proceedInChatResultModel";
 import ChatEntityForProceedInChat from "../../entities/chatEntity/chatEntityForProceedInChat";
 
 const firstParticipatorIdInChat = 1;
@@ -38,19 +38,24 @@ export default class ProceedInChatUseCase {
         
         var result: ProceedInChatResultModel = new ProceedInChatResultModel(errors, '');
         
-        const isEndState = nextStateResult.nextState.isEndState;
+        const isEnded = chat.isEnded;
 
         const isError = errors.length != 0;
         if (isError) {
-            await this.sendErrorResult(errors, isEndState);
+            await this.sendErrorResult(errors, isEnded);
             return;
         }
         
-        await this.sendSuccessResult(errors, nextStateResult, responseOptionsResult, isEndState);
+        await this.sendSuccessResult(errors, nextStateResult, responseOptionsResult, isEnded);
     }
 
-    private async sendSuccessResult(errors: string[], nextStateResult: ChatFlowGetNextStateResult, responseOptionsResult: { options: { responseMedia: string; responseRestrictions: string; }[]; }, isEndState: boolean) {
-        var result = new ProceedInChatResultModel(errors, nextStateResult.nextState.id, isEndState);
+    private async sendSuccessResult(
+        errors: string[], 
+        nextStateResult: ChatFlowGetNextStateResult, 
+        responseOptionsResult: ChatResponseOptionsResult,
+        isChatEnded: boolean
+    ) {
+        var result = new ProceedInChatResultModel(errors, nextStateResult.nextState.id, isChatEnded);
         result.setResponseOptions(responseOptionsResult);
 
         await this.usecaseOutBoundary.sendResultModel(result);
@@ -120,14 +125,14 @@ export default class ProceedInChatUseCase {
 
     private catchChatGatewayErrors(chatGatewayResultModel: ChatGatewayCreateChatResultModel, errors: string[], requestModel: ProceedInChatRequestModel) {
         const chat = chatGatewayResultModel.chat;
+        if (chat.isEnded) {
+            errors.push('Chat ended');
+        }
         if (!chatGatewayResultModel.success || chat === null) {
             errors.push(chatGatewayResultModel.error);
         }
         if (!chat.currentState) {
             errors.push('Invalid chat current state object');
-        }
-        if (chat.currentState.isEndState) {
-            errors.push('Chat ended');
         }
         if (chat.participator1UserId !== requestModel.userId &&
             chat.participator2UserId !== requestModel.userId) {

@@ -5,4 +5,5 @@ export default interface ChatEntityForProceedInChat {
     participator1UserId: string;
     participator2UserId: string;
     chatFlowId: string;
+    isEnded: boolean;
 };

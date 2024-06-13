@@ -21,6 +21,7 @@ export default class ProceedInChatUseCaseTestBase {
         currentState: this.currentStateStub,
         participator1UserId: this.userIdStub,
         participator2UserId: this.stubParticipator2UserId,
+        isEnded: false
     }
 
     chatGatewayResultModelStub = {
@@ -163,6 +164,7 @@ export default class ProceedInChatUseCaseTestBase {
         proceedEvent: 'dummyEvent',
         isNextStateEndState: true,
         isCurrentStateEndState: true,
+        isChatEnded: false,
         responseOptions: { options: null } as any
     }
 
@@ -217,6 +219,7 @@ export default class ProceedInChatUseCaseTestBase {
                 error: setup.chatGatewayResultError,
                 chat: {
                     ...this.chatStub,
+                    isEnded: setup.isChatEnded,
                     currentState: {
                         ...this.currentStateStub,
                         id: setup.currentStateId,

@@ -13,20 +13,20 @@ export class ProceedInChatResultModel implements ResultModel {
     errors: string[];
     chatNextStateId: string;
     responseOptionsForParticipant: ChatResponseOptionsResult;
-    isEndState: boolean = false;
+    isChatEnded: boolean = false;
 
-    constructor(errors: string[], chatNextStateId: string, isEndState: boolean = false) {
+    constructor(errors: string[], chatNextStateId: string, isChatEnded: boolean = false) {
         this.errors = errors;
         this.chatNextStateId = chatNextStateId;
         this.responseOptionsForParticipant = { options: [] };
-        this.isEndState = isEndState;
+        this.isChatEnded = isChatEnded;
     }
 
     setResponseOptions(responseOptions: ChatResponseOptionsResult) {
         this.responseOptionsForParticipant = responseOptions;
     }
 
-    setIsEndState(isEndState: boolean) {
-        this.isEndState = isEndState;
+    setisChatEnded(isChatEnded: boolean) {
+        this.isChatEnded = isChatEnded;
     }
 }
