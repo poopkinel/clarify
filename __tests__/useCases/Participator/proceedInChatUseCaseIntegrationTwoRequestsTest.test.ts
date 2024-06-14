@@ -1,5 +1,6 @@
 import ProceedInChatUseCaseBaseTest from './proceedInChatUseCaseTestBase';
-import { ProceedInChatResultModel, ChatResponseOptionsResult, ChatResponseOptionResult } from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatResultModel';
+import { ChatResponseOptionsResult, ChatResponseOptionResult } from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatResultModel';
+import ChatGatewayMock from '../../chatGateway/ChatGatewayMock';
 
 class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCaseBaseTest
 {
@@ -16,8 +17,8 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
             describe('Two dummy requests when chat ended', () => {
                 it('should call with error twice', async () => {
                     const setupData = {
-                        ...this.setupData,
-                        isChatEnded: true
+                        ...this.setupDataTwoRequests,
+                        first: { ...this.setupData, isChatEnded: true }
                     }
 
                     const { usecase, requestModels } = 
@@ -31,7 +32,7 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
 
                     for (let i = 0; i < 2; i++) {
                         await usecase.executeProceedInChat(requestModels[i]);
-                        this.assertCalledWith(setupExpectedResults);
+                        this.assertCalledWith(setupExpectedResults, i);
                     }
                 });
             });
@@ -42,23 +43,30 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
 
                     for (let i = 0; i < 2; i++) {
                         await usecase.executeProceedInChat(requestModels[i]);
-                        this.assertCalledWith();
+                        this.assertCalledWith(this.setupExpectedResults, i);
                     }
                 });
             });
-            describe('Same dummy requests twice, same state for start and end', () => {
-                it.only('should call with the same dummy result model twice', async () => {
+            describe('Same dummy requests twice, isChatEnd false before first request true after second', () => {
+                it.only('should call with a dummy result model and then with chat end error', async () => {
+                    const twoRequestsSetupData = {
+                        ...this.setupDataTwoRequests,
+                        first: { ...this.setupData, isChatEnded: false },
+                        second: { ...this.setupData, isChatEnded: true }
+                    }
+                    
                     const { usecase, requestModels } = 
-                        this.generateUsecaseAndRequestModelBasedOnSetupDataForTwoRequests();
+                        this.generateUsecaseAndRequestModelBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
 
                     const setupExpectedResults = {
                         ...this.setupExpectedResults,
-                        isChatEnded: [true, true],
+                        isChatEnded: [false, true],
+                        errors: [[], ['Chat ended']]
                     }
 
                     for (let i = 0; i < 2; i++) {
                         await usecase.executeProceedInChat(requestModels[i]);
-                        this.assertCalledWith(setupExpectedResults);
+                        this.assertCalledWith(setupExpectedResults, i);
                     }
                 })
             })
@@ -130,10 +138,8 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
         }); 
     }
 
-    private assertCalledWith(setup = this.setupExpectedResults) {
-        for (let i = 0; i < 2; i++) {
-            this.assertCalledWithOnce(setup.errors[i], setup.isChatEnded[i], setup.responseOptions[i]);
-        }
+    private assertCalledWith(setup = this.setupExpectedResults, i = 0) {
+        this.assertCalledWithOnce(setup.errors[i], setup.isChatEnded[i], setup.responseOptions[i]);
     }
 
     private assertCalledWithOnce(

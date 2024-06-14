@@ -1,6 +1,8 @@
 import ResponseValidationGateway from "../../../src/boundaries/gateways/responseValidation/responseValidationGateway";
 import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUseCase";
 
+import ChatGatewayMock from "../../chatGateway/ChatGatewayMock";
+
 export default class ProceedInChatUseCaseTestBase {
     usecaseOutBoundarySpy = {
         sendResultModel: jest.fn()
@@ -253,13 +255,24 @@ export default class ProceedInChatUseCaseTestBase {
         return { requestModel, validationGateway, chatGateway, chatFlowGateway };
     }
     
-    generateUsecaseAndRequestModelBasedOnSetupDataForTwoRequests(setup = this.setupData) {
+    setupDataTwoRequests = {
+        first: this.setupData,
+        second: this.setupData,
+        common: {
+        }
+    }
+
+    generateUsecaseAndRequestModelBasedOnSetupDataForTwoRequests(setupData = this.setupDataTwoRequests) {
+        const firstSetupData = setupData.first;
+        const secondSetupData = setupData.second;
+        const commonSetupData = setupData.common;
+
         const {
             requestModels,
             validationGateway,
             chatGateway,
             chatFlowGateway
-        } = this.arrangeMainExecutionFlowForTwoRequests(setup);
+        } = this.arrangeMainExecutionFlowForTwoRequests(firstSetupData, secondSetupData, commonSetupData);
         const usecase = ProceedInChatUseCase.fromJson({
             usecaseOutBoundary: this.usecaseOutBoundarySpy,
             chatGatewayToProceedInChat: chatGateway,
@@ -269,28 +282,31 @@ export default class ProceedInChatUseCaseTestBase {
         return { usecase, requestModels };
     }
 
-    arrangeMainExecutionFlowForTwoRequests(setup = this.setupData) {
-        const contentDummy = setup.content;
+    arrangeMainExecutionFlowForTwoRequests(
+        firstSetupData = this.setupData,
+        secondSetupData = this.setupData,
+        commonSetupData = this.setupDataTwoRequests.common,
+    ) {
         const requestModels = [
             {
-                chatId: setup.chatId,
-                userId: setup.requestModelUserId,
+                chatId: firstSetupData.chatId,
+                userId: firstSetupData.requestModelUserId,
                 stateInput: {
                     stateId: 'stateId', // irrelevant atm
                     response: {
                         responseMedia: 'text',
-                        responseContent: contentDummy
+                        responseContent: firstSetupData.content
                     }
                 }
             },
             {
-                chatId: setup.chatId,
-                userId: setup.requestModelUserId,
+                chatId: secondSetupData.chatId,
+                userId: secondSetupData.requestModelUserId,
                 stateInput: {
                     stateId: 'stateId', // irrelevant atm
                     response: {
                         responseMedia: 'text',
-                        responseContent: contentDummy
+                        responseContent: secondSetupData.content
                     }
                 }
             }
@@ -301,29 +317,20 @@ export default class ProceedInChatUseCaseTestBase {
             validateResponse: jest.fn().mockImplementation(() => {
                 return {
                     ...this.eventValidationResultStub,
-                    success: setup.validateResultSuccess,
-                    error: setup.validateResultError,
-                    event: setup.validatedEvent
+                    success: firstSetupData.validateResultSuccess,
+                    error: firstSetupData.validateResultError,
+                    event: firstSetupData.validatedEvent
                 }
             })
         }
 
-        const chatGateway = {
-            ...this.chatGatewayStub,
-            getChatById: jest.fn().mockResolvedValue({
-                ...this.chatGatewayResultModelStub,
-                success: setup.chatGatewayResultSuccess,
-                error: setup.chatGatewayResultError,
-                chat: {
-                    ...this.chatStub,
-                    isEnded: setup.isChatEnded,
-                    currentState: {
-                        ...this.currentStateStub,
-                        id: setup.currentStateId
-                    }
-                }
-            })
-        }
+        const chatGateway = new ChatGatewayMock(
+            this.chatGatewayResultModelStub,
+            this.chatStub,
+            this.currentStateStub,
+            firstSetupData,
+            secondSetupData
+        );
 
         const chatFlowGateway = {
             ...this.chatFlowGatewayStub,
@@ -331,15 +338,15 @@ export default class ProceedInChatUseCaseTestBase {
                 tryGetNextState: jest.fn().mockImplementation(() => {
                     return {
                         ...this.nextStateResultStub,
-                        success: setup.nextStateResultSuccess,
-                        error: setup.nextStateResultError,
+                        success: firstSetupData.nextStateResultSuccess,
+                        error: firstSetupData.nextStateResultError,
                         nextState: {
                             ...this.nextStateStub,
-                            id: setup.nextStateId,
-                            proceedEvent: setup.proceedEvent,
-                            participator1Options: setup.responseOptions,
-                            participator2Options: setup.responseOptions,
-                            isEndState: setup.isNextStateEndState
+                            id: firstSetupData.nextStateId,
+                            proceedEvent: firstSetupData.proceedEvent,
+                            participator1Options: firstSetupData.responseOptions,
+                            participator2Options: firstSetupData.responseOptions,
+                            isEndState: firstSetupData.isNextStateEndState
                         }
                     }
                 })
