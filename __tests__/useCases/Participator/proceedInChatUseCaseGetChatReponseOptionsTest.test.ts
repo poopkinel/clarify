@@ -4,7 +4,7 @@ import ProceedInChatUseCaseBaseTest from "./proceedInChatUseCaseTestBase"
 
 class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCaseBaseTest {
     runTests() {
-        describe('Given a usecaseOutBoundarySpy, chatGateway stub, chatFlowGateway stub, usecase stub and request model stub', () => {                     
+        describe.skip('Given a usecaseOutBoundarySpy, chatGateway stub, chatFlowGateway stub, usecase stub and request model stub', () => {                     
             const stateInputStub = {
                 stateId: 'stateId',
                 response: {

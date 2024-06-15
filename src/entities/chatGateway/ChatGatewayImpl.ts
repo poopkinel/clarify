@@ -6,7 +6,6 @@ export default class ChatGatewayImpl implements ChatGatewayToProceedInChat {
     }
 
     async getChatById(chatId: string): Promise<ChatGatewayCreateChatResultModel> {
-        // raise unimplemented exception
         throw new Error('Method not implemented.');        
     }
 }

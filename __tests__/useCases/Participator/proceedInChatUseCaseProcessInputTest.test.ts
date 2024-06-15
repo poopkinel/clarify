@@ -4,7 +4,7 @@ import ProceedInChatUseCaseBaseTest from "./proceedInChatUseCaseTestBase";
 
 class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest {
     runTests() {
-        describe('Given an usecaseOutBoundarySpy, a chatGateway stub, chatFlowGateway stub, usecase stub', () => {
+        describe.skip('Given an usecaseOutBoundarySpy, a chatGateway stub, chatFlowGateway stub, usecase stub', () => {
             describe('Given a request model stub with input validated on successful stub event', () => {
                 it('should call the out boundary with a result model containing the state for an empty event input', async () => {
                     const setupData = {

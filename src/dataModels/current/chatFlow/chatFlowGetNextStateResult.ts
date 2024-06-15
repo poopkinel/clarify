@@ -1,4 +1,4 @@
-import ChatStateForProceedInChat from "../../../entities/chatState/ChatStateForProceedInChat";
+import ChatStateForProceedInChat from "../../../entities/chatState/chatState";
 
 export default class ChatFlowGetNextStateResult {
     success: boolean;

@@ -5,7 +5,7 @@ import ChatEntityForUserToBeParticipator from './chatEntityForUserToBeParticipat
 import ChatEntityForViewingChatHistory from './chatEntityForViewingChatHistory';
 import ChatEntityForViewingChat from './chatEntityForViewingChat';
 import ChatEntityForProceedInChat from './chatEntityForProceedInChat';
-import ChatStateForProceedInChat from '../chatState/ChatStateForProceedInChat';
+import ChatStateForProceedInChat from '../chatState/chatState';
 
 export class ChatEntity implements ChatEntityForShare, 
                                     ChatEntityForUserToBeParticipator,
@@ -69,7 +69,7 @@ export class ChatEntity implements ChatEntityForShare,
 
         this.isEnded = isEnded;
     }
-    
+
     setCurrentState(newCurrentState: ChatStateForProceedInChat): void {
         throw new Error('Method not implemented.');
     }

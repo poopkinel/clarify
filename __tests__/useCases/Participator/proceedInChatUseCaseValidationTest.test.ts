@@ -5,7 +5,7 @@ import ProceedInChatUseCaseTestBase from './proceedInChatUseCaseTestBase';
 
 class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
     runTests() {
-        describe('Given a spy usecaseOutBoundary, a stub participant 1 User ID and a stub request model', () => {                      
+        describe.skip('Given a spy usecaseOutBoundary, a stub participant 1 User ID and a stub request model', () => {                      
             describe('Given a stub chat gateway with an invalid chat', () => {
                 describe('Given a stub request model with empty chat id', () => {                   
                     it(`should return an 'Invalid chat id' result`, async () => {

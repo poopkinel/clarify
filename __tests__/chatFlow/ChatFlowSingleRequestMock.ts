@@ -1,6 +1,6 @@
 import ChatFlowGetNextStateResult from "../../src/dataModels/current/chatFlow/chatFlowGetNextStateResult";
 import ChatFlowEntityForProceedInChat from "../../src/entities/chatFlow/chatFlowEntityForProceedInChat";
-import ChatStateForProceedInChat from "../../src/entities/chatState/ChatStateForProceedInChat";
+import ChatStateForProceedInChat from "../../src/entities/chatState/chatState";
 import ChatResponseOptions from "../../src/entities/responseOption/chatResponseOptions";
 
 export default class ChatFlowSingleRequestMock implements ChatFlowEntityForProceedInChat{

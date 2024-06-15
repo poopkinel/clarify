@@ -1,5 +1,5 @@
 import ChatFlowGetNextStateResult from "../../dataModels/current/chatFlow/chatFlowGetNextStateResult";
-import ChatStateForProceedInChat from "../chatState/ChatStateForProceedInChat";
+import ChatStateForProceedInChat from "../chatState/chatState";
 import ChatResponseOptions from "../responseOption/chatResponseOptions";
 import ChatFlowEntityForProceedInChat from "./chatFlowEntityForProceedInChat";
 

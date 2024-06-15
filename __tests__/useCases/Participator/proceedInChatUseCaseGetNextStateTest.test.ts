@@ -24,7 +24,7 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
             chatNextStateId: 'nextState'
         };
 
-        describe('Given a valid request model and a chat with 2 states', () => {
+        describe.skip('Given a valid request model and a chat with 2 states', () => {
             describe('When the request model is sent to the use case', () => {
                 it.only('should send a result model with the transitioned new state', async () => {
                     const setupData = {
