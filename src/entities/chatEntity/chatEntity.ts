@@ -69,6 +69,10 @@ export class ChatEntity implements ChatEntityForShare,
 
         this.isEnded = isEnded;
     }
+    
+    setCurrentState(newCurrentState: ChatStateForProceedInChat): void {
+        throw new Error('Method not implemented.');
+    }
 
 
     getLink(): Promise<string> {
