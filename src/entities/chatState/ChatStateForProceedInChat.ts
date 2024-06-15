@@ -1,6 +1,6 @@
 import ChatResponseOptions from "../responseOption/chatResponseOptions";
 
-export default interface ChatStateForProceedInChat { // split to ChatStateForProceedInChatNextState and ChatStateForProceedInChatCurrentState
+export default interface ChatStateForProceedInChat { // TODO: split to ChatStateForProceedInChatNextState and ChatStateForProceedInChatCurrentState
     id: string;
     participator1NextState: string;
     participator2NextState: string;

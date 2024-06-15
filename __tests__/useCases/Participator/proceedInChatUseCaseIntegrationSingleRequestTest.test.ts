@@ -155,7 +155,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
 
                     await this.executeUsecaseWithSetupData(setupData);
 
-                    this.assertCalledWithResultModel([], true);
+                    this.assertCalledWithResultModel(['Chat ended'], true);
                 });
                 describe('Given isChatEnded false', () => {
                     it('should call with result model containing no errors', async () => {
@@ -230,6 +230,14 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
         isChatEnded: boolean = false, 
         responseOptions: ChatResponseOptionsResult = { options: [] }
     ) {
+        if (errors.length === 0) {
+            expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                errors: errors,
+                isChatEnded: isChatEnded,
+                responseOptionsForParticipant: responseOptions
+            }));
+            return;
+        }
         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
             errors: expect.arrayContaining(errors),
             isChatEnded: isChatEnded,

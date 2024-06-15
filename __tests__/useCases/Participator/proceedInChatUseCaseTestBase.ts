@@ -165,8 +165,6 @@ export default class ProceedInChatUseCaseTestBase {
         nextStateId: 'dummyStateId',
         nextStateResultError: '',
         proceedEvent: 'dummyEvent',
-        isNextStateEndState: true,
-        isCurrentStateEndState: true,
         isChatEnded: false,
         responseOptions: { options: null } as any
     }
@@ -226,7 +224,6 @@ export default class ProceedInChatUseCaseTestBase {
                     currentState: {
                         ...this.currentStateStub,
                         id: setup.currentStateId,
-                        isEndState: setup.isCurrentStateEndState
                     }
                 }
             })
@@ -246,7 +243,6 @@ export default class ProceedInChatUseCaseTestBase {
                             proceedEvent: setup.proceedEvent,
                             participator1Options: setup.responseOptions,
                             participator2Options: setup.responseOptions,
-                            isEndState: setup.isNextStateEndState
                         }
                     }
                 })
@@ -259,11 +255,13 @@ export default class ProceedInChatUseCaseTestBase {
     setupDataTwoRequests = {
         first: this.setupData,
         second: this.setupData,
+        common: {}
     }
 
     generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(setupData = this.setupDataTwoRequests) {
         const firstSetupData = setupData.first;
         const secondSetupData = setupData.second;
+        const commonSetupData = setupData.common;
 
         const {
             requestModels,
@@ -271,7 +269,7 @@ export default class ProceedInChatUseCaseTestBase {
             chatGateway,
             chatFlowGateway,
             usecaseOutBoundary
-        } = this.arrangeMainExecutionFlowForTwoRequests(firstSetupData, secondSetupData);
+        } = this.arrangeMainExecutionFlowForTwoRequests(firstSetupData, secondSetupData, commonSetupData);
         const usecase = ProceedInChatUseCase.fromJson({
             usecaseOutBoundary: usecaseOutBoundary,
             chatGatewayToProceedInChat: chatGateway,
@@ -284,6 +282,7 @@ export default class ProceedInChatUseCaseTestBase {
     arrangeMainExecutionFlowForTwoRequests(
         firstSetupData = this.setupData,
         secondSetupData = this.setupData,
+        commonSetupData : any = {}
     ) {
         const requestModels = [
             {
@@ -324,7 +323,7 @@ export default class ProceedInChatUseCaseTestBase {
             secondSetupData
         );
 
-        const chatFlowGateway = {
+        var chatFlowGateway = {
             ...this.chatFlowGatewayStub,
             getChatFlowById: jest.fn().mockResolvedValue({
                 tryGetNextState: jest.fn().mockImplementation(() => {
@@ -338,13 +337,16 @@ export default class ProceedInChatUseCaseTestBase {
                             proceedEvent: firstSetupData.proceedEvent,
                             participator1Options: firstSetupData.responseOptions,
                             participator2Options: firstSetupData.responseOptions,
-                            isEndState: firstSetupData.isNextStateEndState
                         }
                     }
                 })
             })
         }
 
+        if (commonSetupData.chatFlowGatewayStub) {
+            chatFlowGateway = commonSetupData.chatFlowGatewayStub;
+        }
+        
         const usecaseOutBoundary = {
             sendResultModel: jest.fn()
         }

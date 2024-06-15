@@ -1,5 +1,5 @@
 import ChatResponseOptions from "../responseOption/chatResponseOptions";
-import ChatStateForProceedInChat from "./chatState";
+import ChatStateForProceedInChat from "./ChatStateForProceedInChat";
 
 export default class ChatStateImpl implements ChatStateForProceedInChat {
     id: string;

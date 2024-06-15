@@ -5,7 +5,7 @@ import ChatEntityForUserToBeParticipator from './chatEntityForUserToBeParticipat
 import ChatEntityForViewingChatHistory from './chatEntityForViewingChatHistory';
 import ChatEntityForViewingChat from './chatEntityForViewingChat';
 import ChatEntityForProceedInChat from './chatEntityForProceedInChat';
-import ChatStateForProceedInChat from '../chatState/chatState';
+import ChatStateForProceedInChat from '../chatState/ChatStateForProceedInChat';
 
 export class ChatEntity implements ChatEntityForShare, 
                                     ChatEntityForUserToBeParticipator,

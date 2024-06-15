@@ -2,6 +2,7 @@ import ProceedInChatUseCaseBaseTest from './proceedInChatUseCaseTestBase';
 import { ChatResponseOptionsResult, ChatResponseOptionResult } from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatResultModel';
 import ProceedInChatUseCase from '../../../src/useCases/current/proceedInChatUseCase';
 import ProceedInChatRequestModel from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatRequestModel';
+import ChatFlowGatewayTwoRequestMock from '../../chatFlowGateway/ChatFlowGatewayMock';
 
 class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCaseBaseTest
 {
@@ -145,6 +146,105 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                         );
 
                     await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
+                });
+            });
+
+            describe('Two requests with invalid validated event', () => {
+                it('should call with an error for the invalid event twice', async () => {
+                    const setupData = {
+                        ...this.setupDataTwoRequests,
+                        first: { ...this.setupData, validatedEvent: 'invalidEvent' },
+                        second: { ...this.setupData, validatedEvent: 'invalidEvent' }
+                    }
+
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(setupData);
+
+                    const setupExpectedResults = 
+                        this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(
+                            false, false, ['Invalid chat state event'], ['Invalid chat state event']
+                        );
+
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
+                });
+            });
+
+            describe('One request with end state and second with invalid validated event', () => {
+                it('should call with a chat end error and then with error for the invalid event', async () => {
+                    const setupData = {
+                        ...this.setupDataTwoRequests,
+                        first: { ...this.setupData, isChatEnded: true },
+                        second: { ...this.setupData, validatedEvent: 'invalidEvent' }
+                    }
+
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(setupData);
+
+                    const setupExpectedResults = 
+                        this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(
+                            true, false, ['Chat ended'], ['Invalid chat state event']
+                        );
+
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
+                })
+            });
+
+            describe('One request with invalid validated event and second with end state', () => {
+                it('should call with an error for the invalid event and then with a chat end error', async () => {
+                    const setupData = {
+                        ...this.setupDataTwoRequests,
+                        first: { ...this.setupData, validatedEvent: 'invalidEvent' },
+                        second: { ...this.setupData, isChatEnded: true },
+                    }
+
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(setupData);
+
+                    const setupExpectedResults = 
+                        this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(
+                            false, true, ['Invalid chat state event'], ['Chat ended']
+                        );
+
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
+                })
+            });
+            describe('Given a chatFlowGateway with a transition from first state to second state', () => {
+                describe('One request with valid content and event, and second with invalid content', () => {
+                    it('should call with a dummy result model and then with an error for the invalid content', async () => {
+                        const setupData = {
+                            ...this.setupDataTwoRequests,
+                            first: this.setupData,
+                            second: {
+                                ...this.setupData,
+                                content: 'invalidContent',
+                                validateResultSuccess: false,
+                                validateResultError: 'Content invalid for event'
+                            },
+                            common: {
+                                chatFlowGateway: new ChatFlowGatewayTwoRequestMock(
+                                    this.nextStateResultStub,
+                                    this.nextStateStub,
+                                    this.setupData,
+                                    {
+                                        ...this.setupData,
+                                        content: 'invalidContent',
+                                        validateResultSuccess: false,
+                                        validateResultError: 'Content invalid for event'
+                                    }
+                                )
+                            }
+                        }
+
+                        const { usecase, requestModels, usecaseOutBoundary } = 
+                            this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(setupData);
+
+                        const setupExpectedResults = 
+                            this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(
+                                false, false, [], ['Content invalid for event']
+                            );
+
+                        await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
+                    })
                 });
             });
         }); 
