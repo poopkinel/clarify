@@ -12,7 +12,20 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
             { options: [] as ChatResponseOptionResult[] }, { options: [] as ChatResponseOptionResult[] }
         ]
     }
-
+    
+    setupExpectedResultsWithDifferentIsChatEndedAndErrors = (
+        firstIsEnded: boolean, 
+        secondIsEnded: boolean,
+        firstErrors: string[],
+        secondErrors: string[]
+    ) => {
+        return {
+            ...this.setupExpectedResults,
+            isChatEnded: [firstIsEnded, secondIsEnded],
+            errors: [firstErrors, secondErrors]
+        }
+    }
+    
     runTests() {
         describe('Test flow for two requests', () => {
             describe('Two dummy requests when chat ended', () => {
@@ -25,11 +38,7 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                     const { usecase, requestModels, usecaseOutBoundary } = 
                         this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(setupData);
     
-                    const setupExpectedResults = {
-                        ...this.setupExpectedResults,
-                        errors: [['Chat ended'], ['Chat ended']],
-                        isChatEnded: [true, true],
-                    }
+                    const setupExpectedResults = this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(true, true, ['Chat ended'], ['Chat ended'])
 
                     await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
                 });
@@ -51,19 +60,6 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                 }
             }
 
-            const setupExpectedResultsWithDifferentIsChatEndedAndErrors = (
-                firstIsEnded: boolean, 
-                secondIsEnded: boolean,
-                firstErrors: string[],
-                secondErrors: string[]
-            ) => {
-                return {
-                    ...this.setupExpectedResults,
-                    isChatEnded: [firstIsEnded, secondIsEnded],
-                    errors: [firstErrors, secondErrors]
-                }
-            }
-
             describe('Same dummy requests twice, first chat state isEnd is false, second is true', () => {
                 it('should call with a dummy result model and then with chat end error', async () => {
                     const twoRequestsSetupData = twoRequestsSetupDataWithOnlyDifferentIsChatEnded(false, true);
@@ -71,7 +67,7 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                     const { usecase, requestModels, usecaseOutBoundary } = 
                         this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
 
-                    const setupExpectedResults = setupExpectedResultsWithDifferentIsChatEndedAndErrors(false, true, [], ['Chat ended'])
+                    const setupExpectedResults = this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(false, true, [], ['Chat ended'])
 
                     await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
                 })
@@ -83,7 +79,7 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                     const { usecase, requestModels, usecaseOutBoundary } = 
                         this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
 
-                    const setupExpectedResults = setupExpectedResultsWithDifferentIsChatEndedAndErrors(true, false, ['Chat ended'], [])
+                    const setupExpectedResults = this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(true, false, ['Chat ended'], [])
 
                     await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
                 })
@@ -116,7 +112,7 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                         this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
 
                     const setupExpectedResults = 
-                        setupExpectedResultsWithDifferentIsChatEndedAndErrors(false, false, [], ['Content invalid for event']);
+                        this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(false, false, [], ['Content invalid for event']);
 
                     await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
                 });
@@ -130,53 +126,25 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                         this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
 
                     const setupExpectedResults = 
-                        setupExpectedResultsWithDifferentIsChatEndedAndErrors(false, false, ['Content invalid for event'], []);
+                        this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(false, false, ['Content invalid for event'], []);
 
                     await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
                 });
             });
 
-            describe('First request with dummy content and second with invalid content', () => {
-                it('should call with the dummy result model and then with an error for the invalid content', async () => {
-                    const setupData = {
-                        ...this.setupData,
-                        content: 'invalidContent',
-                        validateResultSuccess: false,
-                        validateResultError: 'Content invalid for event'
-                    }
-
-                    const expectedIsEndState = true;
-                    const expectedEmptyOptionsResult = {
-                        options: [] as ChatResponseOptionResult[]
-                    }
-
-                    await this.executeUsecaseWithSetupData();
-                    // this.assertCalledWith(expectedIsEndState, expectedEmptyOptionsResult);
-
-                    await this.executeUsecaseWithSetupData(setupData);
-                    expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                        errors: expect.arrayContaining(['Content invalid for event'])
-                    }));
-                });
-            });
             describe('Two requests with invalid content', () => {
                 it('should call with an error for the invalid content twice', async () => {
-                    const setupData = {
-                        ...this.setupData,
-                        content: 'invalidContent',
-                        validateResultSuccess: false,
-                        validateResultError: 'Content invalid for event'
-                    }
+                    const twoRequestsSetupData = twoRequestsSetupDataWithOnlyDifferentInvalidContent(true, false);
 
-                    await this.executeUsecaseWithSetupData(setupData);
-                    expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                        errors: expect.arrayContaining(['Content invalid for event'])
-                    }));
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
 
-                    await this.executeUsecaseWithSetupData(setupData);
-                    expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                        errors: expect.arrayContaining(['Content invalid for event'])
-                    }));
+                    const setupExpectedResults = 
+                        this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(
+                            false, false, ['Content invalid for event'], ['Content invalid for event']
+                        );
+
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
                 });
             });
         }); 
