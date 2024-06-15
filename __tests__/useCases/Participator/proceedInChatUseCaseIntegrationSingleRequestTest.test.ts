@@ -226,7 +226,10 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
     }
 
     private assertCalledWithResultModel(
-        errors: string[] = [], isChatEnded: boolean = false, responseOptions: ChatResponseOptionsResult = { options: [] }) {
+        errors: string[] = [], 
+        isChatEnded: boolean = false, 
+        responseOptions: ChatResponseOptionsResult = { options: [] }
+    ) {
         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
             errors: expect.arrayContaining(errors),
             isChatEnded: isChatEnded,

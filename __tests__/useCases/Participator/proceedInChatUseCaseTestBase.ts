@@ -2,6 +2,7 @@ import ResponseValidationGateway from "../../../src/boundaries/gateways/response
 import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUseCase";
 
 import ChatGatewayMock from "../../chatGateway/ChatGatewayMock";
+import ValidationGatewayMock from "../../validationGateway/ValidationGatewayMock";
 
 export default class ProceedInChatUseCaseTestBase {
     usecaseOutBoundarySpy = {
@@ -258,34 +259,31 @@ export default class ProceedInChatUseCaseTestBase {
     setupDataTwoRequests = {
         first: this.setupData,
         second: this.setupData,
-        common: {
-        }
     }
 
-    generateUsecaseAndRequestModelBasedOnSetupDataForTwoRequests(setupData = this.setupDataTwoRequests) {
+    generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(setupData = this.setupDataTwoRequests) {
         const firstSetupData = setupData.first;
         const secondSetupData = setupData.second;
-        const commonSetupData = setupData.common;
 
         const {
             requestModels,
             validationGateway,
             chatGateway,
-            chatFlowGateway
-        } = this.arrangeMainExecutionFlowForTwoRequests(firstSetupData, secondSetupData, commonSetupData);
+            chatFlowGateway,
+            usecaseOutBoundary
+        } = this.arrangeMainExecutionFlowForTwoRequests(firstSetupData, secondSetupData);
         const usecase = ProceedInChatUseCase.fromJson({
-            usecaseOutBoundary: this.usecaseOutBoundarySpy,
+            usecaseOutBoundary: usecaseOutBoundary,
             chatGatewayToProceedInChat: chatGateway,
             chatFlowGateway: chatFlowGateway,
             validationGateway: validationGateway
         });
-        return { usecase, requestModels };
+        return { usecase, requestModels, usecaseOutBoundary };
     }
 
     arrangeMainExecutionFlowForTwoRequests(
         firstSetupData = this.setupData,
         secondSetupData = this.setupData,
-        commonSetupData = this.setupDataTwoRequests.common,
     ) {
         const requestModels = [
             {
@@ -312,17 +310,11 @@ export default class ProceedInChatUseCaseTestBase {
             }
         ]
 
-        const validationGateway = {
-            ...this.validationGatewayStub,
-            validateResponse: jest.fn().mockImplementation(() => {
-                return {
-                    ...this.eventValidationResultStub,
-                    success: firstSetupData.validateResultSuccess,
-                    error: firstSetupData.validateResultError,
-                    event: firstSetupData.validatedEvent
-                }
-            })
-        }
+        const validationGateway = new ValidationGatewayMock(
+            this.eventValidationResultStub,
+            firstSetupData,
+            secondSetupData
+        );
 
         const chatGateway = new ChatGatewayMock(
             this.chatGatewayResultModelStub,
@@ -353,7 +345,11 @@ export default class ProceedInChatUseCaseTestBase {
             })
         }
 
-        return { requestModels, validationGateway, chatGateway, chatFlowGateway };
+        const usecaseOutBoundary = {
+            sendResultModel: jest.fn()
+        }
+
+        return { requestModels, validationGateway, chatGateway, chatFlowGateway, usecaseOutBoundary };
     }
 
     setupSingleResultModel(errors: string[] = [], isEndState = true, chatNextStateId = '') {

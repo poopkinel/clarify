@@ -1,6 +1,7 @@
 import ProceedInChatUseCaseBaseTest from './proceedInChatUseCaseTestBase';
 import { ChatResponseOptionsResult, ChatResponseOptionResult } from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatResultModel';
-import ChatGatewayMock from '../../chatGateway/ChatGatewayMock';
+import ProceedInChatUseCase from '../../../src/useCases/current/proceedInChatUseCase';
+import ProceedInChatRequestModel from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatRequestModel';
 
 class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCaseBaseTest
 {
@@ -21,8 +22,8 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                         first: { ...this.setupData, isChatEnded: true }
                     }
 
-                    const { usecase, requestModels } = 
-                        this.generateUsecaseAndRequestModelBasedOnSetupDataForTwoRequests(setupData);
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(setupData);
     
                     const setupExpectedResults = {
                         ...this.setupExpectedResults,
@@ -30,68 +31,111 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                         isChatEnded: [true, true],
                     }
 
-                    for (let i = 0; i < 2; i++) {
-                        await usecase.executeProceedInChat(requestModels[i]);
-                        this.assertCalledWith(setupExpectedResults, i);
-                    }
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
                 });
             });
             describe('Two dummy requests when chat not ended', () => {
                 it('should call with the dummy result model twice', async () => {
-                    const { usecase, requestModels } = 
-                        this.generateUsecaseAndRequestModelBasedOnSetupDataForTwoRequests();
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests();
 
-                    for (let i = 0; i < 2; i++) {
-                        await usecase.executeProceedInChat(requestModels[i]);
-                        this.assertCalledWith(this.setupExpectedResults, i);
-                    }
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels);
                 });
             });
-            describe('Same dummy requests twice, isChatEnd false before first request true after second', () => {
-                it.only('should call with a dummy result model and then with chat end error', async () => {
-                    const twoRequestsSetupData = {
-                        ...this.setupDataTwoRequests,
-                        first: { ...this.setupData, isChatEnded: false },
-                        second: { ...this.setupData, isChatEnded: true }
-                    }
+
+            const twoRequestsSetupDataWithOnlyDifferentIsChatEnded = (firstIsEnded: boolean, secondIsEnded: boolean) => {
+                return {
+                    ...this.setupDataTwoRequests,
+                    first: { ...this.setupData, isChatEnded: firstIsEnded },
+                    second: { ...this.setupData, isChatEnded: secondIsEnded }
+                }
+            }
+
+            const setupExpectedResultsWithDifferentIsChatEndedAndErrors = (
+                firstIsEnded: boolean, 
+                secondIsEnded: boolean,
+                firstErrors: string[],
+                secondErrors: string[]
+            ) => {
+                return {
+                    ...this.setupExpectedResults,
+                    isChatEnded: [firstIsEnded, secondIsEnded],
+                    errors: [firstErrors, secondErrors]
+                }
+            }
+
+            describe('Same dummy requests twice, first chat state isEnd is false, second is true', () => {
+                it('should call with a dummy result model and then with chat end error', async () => {
+                    const twoRequestsSetupData = twoRequestsSetupDataWithOnlyDifferentIsChatEnded(false, true);
                     
-                    const { usecase, requestModels } = 
-                        this.generateUsecaseAndRequestModelBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
 
-                    const setupExpectedResults = {
-                        ...this.setupExpectedResults,
-                        isChatEnded: [false, true],
-                        errors: [[], ['Chat ended']]
-                    }
+                    const setupExpectedResults = setupExpectedResultsWithDifferentIsChatEndedAndErrors(false, true, [], ['Chat ended'])
 
-                    for (let i = 0; i < 2; i++) {
-                        await usecase.executeProceedInChat(requestModels[i]);
-                        this.assertCalledWith(setupExpectedResults, i);
-                    }
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
                 })
             })
+            describe('Same dummy requests twice, first chat state isEnd true, second is false', () => {
+                it('should call with error result model and then with a dummy result', async () => {
+                    const twoRequestsSetupData = twoRequestsSetupDataWithOnlyDifferentIsChatEnded(true, false);
+                    
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
 
-            describe('One dummy request and one request with invalid content', () => {
-                it('should call with the dummy result model and then with an error for the invalid content', async () => {
-                    const setupData = {
+                    const setupExpectedResults = setupExpectedResultsWithDifferentIsChatEndedAndErrors(true, false, ['Chat ended'], [])
+
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
+                })
+            });
+
+            const twoRequestsSetupDataWithOnlyDifferentInvalidContent = (firstInvalidContent: boolean, secondInvalidContent: boolean) => {
+                return {
+                    ...this.setupDataTwoRequests,
+                    first: firstInvalidContent ? {
                         ...this.setupData,
                         content: 'invalidContent',
                         validateResultSuccess: false,
                         validateResultError: 'Content invalid for event'
-                    }
+                    } : this.setupData,
 
-                    const expectedIsEndState = true;
-                    const expectedEmptyOptionsResult = {
-                        options: [] as ChatResponseOptionResult[]
-                    }
+                    second: secondInvalidContent ? {
+                        ...this.setupData,
+                        content: 'invalidContent',
+                        validateResultSuccess: false,
+                        validateResultError: 'Content invalid for event'
+                    } : this.setupData
+                }
+            }
 
-                    await this.executeUsecaseWithSetupData();
-                    // this.assertCalledWith(expectedIsEndState, expectedEmptyOptionsResult);
+            describe('One dummy request and one request with invalid content', () => {
+                it('should call with the dummy result model and then with an error for the invalid content', async () => {
+                    const twoRequestsSetupData = twoRequestsSetupDataWithOnlyDifferentInvalidContent(false, true);
 
-                    await this.executeUsecaseWithSetupData(setupData);
-                    // this.assertCalledWith(expectedIsEndState, expectedEmptyOptionsResult, ['Content invalid for event']);
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
+
+                    const setupExpectedResults = 
+                        setupExpectedResultsWithDifferentIsChatEndedAndErrors(false, false, [], ['Content invalid for event']);
+
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
                 });
             });
+
+            describe('One request with invalid content and dummy request', () => {
+                it('should call with the dummy result model and then with an error for the invalid content', async () => {
+                    const twoRequestsSetupData = twoRequestsSetupDataWithOnlyDifferentInvalidContent(true, false);
+
+                    const { usecase, requestModels, usecaseOutBoundary } = 
+                        this.generateUsecaseRequestModelAndOutboundaryBasedOnSetupDataForTwoRequests(twoRequestsSetupData);
+
+                    const setupExpectedResults = 
+                        setupExpectedResultsWithDifferentIsChatEndedAndErrors(false, false, ['Content invalid for event'], []);
+
+                    await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
+                });
+            });
+
             describe('First request with dummy content and second with invalid content', () => {
                 it('should call with the dummy result model and then with an error for the invalid content', async () => {
                     const setupData = {
@@ -138,16 +182,30 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
         }); 
     }
 
-    private assertCalledWith(setup = this.setupExpectedResults, i = 0) {
-        this.assertCalledWithOnce(setup.errors[i], setup.isChatEnded[i], setup.responseOptions[i]);
+    private async actAssertLoop(
+        usecaseOutBoundarySpy: any,
+        usecase: ProceedInChatUseCase, 
+        requestModels: ProceedInChatRequestModel[], 
+        setup = this.setupExpectedResults, 
+        times = 2
+    ) {
+        for (let i = 0; i < times; i++) {
+            await usecase.executeProceedInChat(requestModels[i]);
+            this.assertCalledWith(setup, i, usecaseOutBoundarySpy);
+        }
+    }
+
+    private assertCalledWith(setup = this.setupExpectedResults, i = 0, usecaseOutBoundarySpy: any) {
+        this.assertCalledWithOnce(setup.errors[i], setup.isChatEnded[i], setup.responseOptions[i], usecaseOutBoundarySpy);
     }
 
     private assertCalledWithOnce(
         errors: string[] = [],
         isChatEnded: boolean = false,
         responseOptions: ChatResponseOptionsResult = { options: [] }, 
+        usecaseOutBoundarySpy: any
     ) {
-        expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+        expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
             errors: expect.arrayContaining(errors),
             isChatEnded: isChatEnded,
             responseOptionsForParticipant: responseOptions
