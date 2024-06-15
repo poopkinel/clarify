@@ -205,6 +205,14 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
         responseOptions: ChatResponseOptionsResult = { options: [] }, 
         usecaseOutBoundarySpy: any
     ) {
+        if (errors.length === 0) {
+            expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
+                errors: errors,
+                isChatEnded: isChatEnded,
+                responseOptionsForParticipant: responseOptions
+            }));
+            return;
+        }
         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
             errors: expect.arrayContaining(errors),
             isChatEnded: isChatEnded,
