@@ -1,6 +1,5 @@
 import ChatGatewayToShareChat from "../../../boundaries/gateways/chat/chatGatewayToShareChat";
-import { ChatEntity } from "../../../entities/chatEntity/chatEntity";
-import ChatSharingSetting from "../../../entities/chatSharingSetting";
+import ChatEntity from "../../../entities/chatEntity/chatEntity";
 
 export default class ChatGatewayMockImpl implements ChatGatewayToShareChat {
     createChat(chatName: string, user1: string, user2: string): Promise<string> {

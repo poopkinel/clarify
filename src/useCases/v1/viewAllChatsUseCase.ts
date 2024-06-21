@@ -1,7 +1,7 @@
 // A use case where the operator views all chats
 
 import ChatGatewayToShareChat from "../../boundaries/gateways/chat/chatGatewayToShareChat";
-import { ChatEntity } from "../../entities/chatEntity/chatEntity";
+import ChatEntity from "../../entities/chatEntity/chatEntity";
 
 export class ViewAllChatsUseCase {
     private chatGateway: ChatGatewayToShareChat;

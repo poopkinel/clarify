@@ -6,7 +6,7 @@ const { User } = require('../src/entities/userEntity/userEntity');
 const { UserRequestModel } = require('../src/dataModels/old/userRequestModel');
 const { ChatGatewaySqliteImpl } = require('../src/details/persistence/v1/chatGatewaySqliteImpl');
 const { RetrieveAChatUseCase } = require('../src/useCases/retrieveAChatUseCase');
-const { ChatEntity } = require('../src/entities/chatEntity');
+const ChatEntity = require('../src/entities/chatEntity');
 
 describe.skip('createUser', () => {
     it.skip('should create a new user', async () => {

@@ -1,4 +1,3 @@
-import { ChatEntity } from "../../../entities/chatEntity/chatEntity";
 import ChatEntityForViewingChatHistory from "../../../entities/chatEntity/chatEntityForViewingChatHistory";
 import ChatGateway from "./chatGateway";
 

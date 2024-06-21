@@ -4,7 +4,7 @@ import ChatGatewayToShareChat from "../../../boundaries/gateways/chat/chatGatewa
 import { ChatViewResponseModel } from "../../../dataModels/v1/chatViewResponseModel";
 import { ChatMessageResponseModel } from "../../../dataModels/v1/chatMessageResponseModel";
 import { ResponseEntity } from "../../../entities/responseEntity";
-import { ChatEntity } from "../../../entities/chatEntity/chatEntity";
+import ChatEntity from "../../../entities/chatEntity/chatEntity";
 
 const admin = require("firebase-admin");
 var serviceAccount = require("../../../sak.json");

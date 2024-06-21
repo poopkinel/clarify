@@ -1,5 +1,6 @@
 import ChatEntityForProceedInChat from '../../src/entities/chatEntity/chatEntityForProceedInChat';
 import ChatFlowEntity from '../../src/entities/chatFlow/chatFlowEntity';
+import ChatEntity from '../../src/entities/chatEntity/chatEntity';
 
 class StateTransitionTest {
     currentStateStub = {
@@ -13,7 +14,6 @@ class StateTransitionTest {
             options: [],
         },
         isEndState: false,
-        proceedEvent: "", // TODO: remove proceedEvent
     };
 
     chatStub = {
@@ -40,17 +40,16 @@ class StateTransitionTest {
     }
 
     private arrange() {
-        const chat: ChatEntityForProceedInChat = {
-            ...this.chatStub,
-            currentState: {
-                ...this.currentStateStub
-            },
-            setCurrentState: jest.fn().mockImplementation(
-                (newCurrentState) => {
-                    chat.currentState = newCurrentState;
-                }
-            ),
-        };
+        const chat = ChatEntity.fromJson({
+            id: "chatId",
+            name: "chatName",
+            participator1UserId: "participator1UserId",
+            participator2UserId: "participator2UserId",
+            createSuccess: true, 
+            currentState: this.currentStateStub,
+            isEnded: false
+        }) as ChatEntityForProceedInChat;
+        
         const event = "event";
 
         const chatFlow = new ChatFlowEntity();

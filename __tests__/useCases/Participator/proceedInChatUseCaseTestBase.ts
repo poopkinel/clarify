@@ -1,8 +1,9 @@
 import ResponseValidationGateway from "../../../src/boundaries/gateways/responseValidation/responseValidationGateway";
 import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUseCase";
 
-import ChatGatewayMock from "../../chatGateway/ChatGatewayMock";
-import ValidationGatewayMock from "../../validationGateway/ValidationGatewayMock";
+import ChatGatewayMock from "../../../src/mocks/chatGateway/ChatGatewayMock";
+import ValidationGatewayMock from "../../../src/mocks/validationGateway/ValidationGatewayMock";
+import ChatFlowGatewayMock from "../../../src/mocks/chatFlowGateway/ChatFlowGatewayMock";
 
 export default class ProceedInChatUseCaseTestBase {
     usecaseOutBoundarySpy = {
@@ -55,7 +56,6 @@ export default class ProceedInChatUseCaseTestBase {
         id: 'nextState',
         participator1State: 'state',
         participator2State: 'state',
-        proceedEvent: 'event',
         participator1Options: this.responseOptionsStub,
         participator2Options: this.responseOptionsStub
     }
@@ -96,8 +96,8 @@ export default class ProceedInChatUseCaseTestBase {
                     nextState: {
                         ...this.nextStateStub,
                         id: 'end',
-                        proceedEvent: 'moveToState2'
-                    }
+                    },
+                    proceedEvent: 'moveToState2'
                 }),
                 participatorFlows: [
                     {
@@ -240,10 +240,10 @@ export default class ProceedInChatUseCaseTestBase {
                         nextState: {
                             ...this.nextStateStub,
                             id: setup.nextStateId,
-                            proceedEvent: setup.proceedEvent,
                             participator1Options: setup.responseOptions,
                             participator2Options: setup.responseOptions,
-                        }
+                        },
+                        proceedEvent: setup.proceedEvent,
                     }
                 })
             })
@@ -323,25 +323,12 @@ export default class ProceedInChatUseCaseTestBase {
             secondSetupData
         );
 
-        var chatFlowGateway = {
-            ...this.chatFlowGatewayStub,
-            getChatFlowById: jest.fn().mockResolvedValue({
-                tryGetNextState: jest.fn().mockImplementation(() => {
-                    return {
-                        ...this.nextStateResultStub,
-                        success: firstSetupData.nextStateResultSuccess,
-                        error: firstSetupData.nextStateResultError,
-                        nextState: {
-                            ...this.nextStateStub,
-                            id: firstSetupData.nextStateId,
-                            proceedEvent: firstSetupData.proceedEvent,
-                            participator1Options: firstSetupData.responseOptions,
-                            participator2Options: firstSetupData.responseOptions,
-                        }
-                    }
-                })
-            })
-        }
+        var chatFlowGateway = new ChatFlowGatewayMock(
+            this.nextStateResultStub,
+            this.nextStateStub,
+            firstSetupData,
+            secondSetupData
+        );
 
         if (commonSetupData.chatFlowGatewayStub) {
             chatFlowGateway = commonSetupData.chatFlowGatewayStub;

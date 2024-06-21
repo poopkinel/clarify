@@ -4,14 +4,17 @@ export default class ChatFlowGetNextStateResult {
     success: boolean;
     error: string;
     nextState: ChatStateForProceedInChat;
+    proceedEvent: string;
 
     constructor(
         success: boolean,
         error: string,
-        nextState: ChatStateForProceedInChat
+        nextState: ChatStateForProceedInChat,
+        proceedEvent: string
     ) {
         this.success = success;
         this.error = error;
         this.nextState = nextState;
+        this.proceedEvent = proceedEvent;
     }
 }

@@ -2,15 +2,17 @@ import ProceedInChatUseCaseBaseTest from './proceedInChatUseCaseTestBase';
 import { ChatResponseOptionsResult, ChatResponseOptionResult } from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatResultModel';
 import ProceedInChatUseCase from '../../../src/useCases/current/proceedInChatUseCase';
 import ProceedInChatRequestModel from '../../../src/dataModels/useCaseBoundaries/specific/proceedInChatRequestModel';
-import ChatFlowGatewayTwoRequestMock from '../../chatFlowGateway/ChatFlowGatewayMock';
+import ChatFlowGatewayTwoRequestMock from '../../../src/mocks/chatFlowGateway/ChatFlowGatewayMock';
 
 class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCaseBaseTest
 {
     setupExpectedResults = {
         errors: [[],[]] as string[][],
         isChatEnded: [false, false],
-        responseOptions: [
-            { options: [] as ChatResponseOptionResult[] }, { options: [] as ChatResponseOptionResult[] }
+        responseOptions: 
+        [
+            { options: [] as ChatResponseOptionResult[] }, 
+            { options: [] as ChatResponseOptionResult[] }
         ]
     }
     
@@ -153,8 +155,18 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                 it('should call with an error for the invalid event twice', async () => {
                     const setupData = {
                         ...this.setupDataTwoRequests,
-                        first: { ...this.setupData, validatedEvent: 'invalidEvent' },
-                        second: { ...this.setupData, validatedEvent: 'invalidEvent' }
+                        first: {
+                            ...this.setupData, 
+                            validatedEvent: 'event invalid for next state',
+                            nextStateResultSuccess: false,
+                            nextStateResultError: 'Event invalid for next state'
+                        },
+                        second: {
+                            ...this.setupData, 
+                            validatedEvent: 'event invalid for next state',
+                            nextStateResultSuccess: false,
+                            nextStateResultError: 'Event invalid for next state'
+                        }
                     }
 
                     const { usecase, requestModels, usecaseOutBoundary } = 
@@ -162,7 +174,7 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
 
                     const setupExpectedResults = 
                         this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(
-                            false, false, ['Invalid chat state event'], ['Invalid chat state event']
+                            false, false, ['Event invalid for next state'], ['Event invalid for next state']
                         );
 
                     await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
@@ -173,8 +185,16 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                 it('should call with a chat end error and then with error for the invalid event', async () => {
                     const setupData = {
                         ...this.setupDataTwoRequests,
-                        first: { ...this.setupData, isChatEnded: true },
-                        second: { ...this.setupData, validatedEvent: 'invalidEvent' }
+                        first: {
+                            ...this.setupData, 
+                            isChatEnded: true
+                        },
+                        second: {
+                            ...this.setupData, 
+                            validatedEvent: 'event invalid for next state',
+                            nextStateResultSuccess: false,
+                            nextStateResultError: 'Event invalid for next state'
+                        }
                     }
 
                     const { usecase, requestModels, usecaseOutBoundary } = 
@@ -182,7 +202,7 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
 
                     const setupExpectedResults = 
                         this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(
-                            true, false, ['Chat ended'], ['Invalid chat state event']
+                            true, false, ['Chat ended'], ['Event invalid for next state']
                         );
 
                     await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);
@@ -193,8 +213,16 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
                 it('should call with an error for the invalid event and then with a chat end error', async () => {
                     const setupData = {
                         ...this.setupDataTwoRequests,
-                        first: { ...this.setupData, validatedEvent: 'invalidEvent' },
-                        second: { ...this.setupData, isChatEnded: true },
+                        first: {
+                            ...this.setupData, 
+                            validatedEvent: 'event invalid for next state',
+                            nextStateResultSuccess: false,
+                            nextStateResultError: 'Event invalid for next state'
+                        },
+                        second: {
+                            ...this.setupData, 
+                            isChatEnded: true
+                        },
                     }
 
                     const { usecase, requestModels, usecaseOutBoundary } = 
@@ -202,7 +230,7 @@ class ProceedInChatUseCaseIntegrationTwoRequestsTest extends ProceedInChatUseCas
 
                     const setupExpectedResults = 
                         this.setupExpectedResultsWithDifferentIsChatEndedAndErrors(
-                            false, true, ['Invalid chat state event'], ['Chat ended']
+                            false, true, ['Event invalid for next state'], ['Chat ended']
                         );
 
                     await this.actAssertLoop(usecaseOutBoundary, usecase, requestModels, setupExpectedResults);

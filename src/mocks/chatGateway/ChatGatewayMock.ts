@@ -1,4 +1,4 @@
-import ChatGatewayToProceedInChat from '../../src/boundaries/gateways/chat/chatGatewayToProceedInChat';
+import ChatGatewayToProceedInChat from '../../boundaries/gateways/chat/chatGatewayToProceedInChat';
 
 export default class ChatGatewayMock implements ChatGatewayToProceedInChat {
     constructor(

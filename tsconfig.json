@@ -10,7 +10,7 @@
       },
       "include": [
         "src/**/*"
-      ],
+, "__tests__/chatEntity", "__tests__/chatFlow", "__tests__/chatFlowGateway", "__tests__/chatGateway", "__tests__/validationGateway"      ],
       "exclude": [
         "node_modules"
       ],

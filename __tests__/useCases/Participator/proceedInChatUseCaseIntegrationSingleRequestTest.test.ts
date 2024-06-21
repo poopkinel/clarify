@@ -52,23 +52,27 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
                     });
                 });
             })
-            describe('Given a validated event different from proceed event', () => {
+            describe('Given a an event from validation gateway that is invalid for next state', () => {
                 it('should call with result model containing the invalid event error', async () => {
                     const setupData = {
                         ...this.setupData,
-                        validatedEvent: 'different',
+                        nextStateResultSuccess: false,
+                        nextStateResultError: 'Event invalid for next state',
+                        validatedEvent: 'event not in next state events',
                         isChatEnded: false
                     }
 
                     await this.executeUsecaseWithSetupData(setupData);
                     
-                    this.assertCalledWithResultModel(['Invalid chat state event']);
+                    this.assertCalledWithResultModel(['Event invalid for next state']);
                 });
                 describe('Given state is end state', () => {
                     it('should call with error result model: Chat ended', async () => {
                         const setupData = {
                             ...this.setupData,
-                            validatedEvent: 'different',
+                            nextStateResultSuccess: false,
+                            nextStateResultError: 'Event invalid for next state',
+                            validatedEvent: 'event not in next state events',
                             isChatEnded: true
                         }
 

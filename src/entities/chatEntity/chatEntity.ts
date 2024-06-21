@@ -7,7 +7,7 @@ import ChatEntityForViewingChat from './chatEntityForViewingChat';
 import ChatEntityForProceedInChat from './chatEntityForProceedInChat';
 import ChatStateForProceedInChat from '../chatState/chatState';
 
-export class ChatEntity implements ChatEntityForShare, 
+export default class ChatEntity implements ChatEntityForShare, 
                                     ChatEntityForUserToBeParticipator,
                                     ChatEntityForViewingChatHistory,
                                     ChatEntityForViewingChat,
@@ -70,8 +70,24 @@ export class ChatEntity implements ChatEntityForShare,
         this.isEnded = isEnded;
     }
 
+    public static fromJson(json: any): ChatEntity {
+        return new ChatEntity(
+            json.id,
+            json.name,
+            json.participator1UserId,
+            json.participator2UserId,
+            json.createSuccess,
+            json.createError,
+            json.access,
+            json.sharingSettings,
+            json.chatFlowId,
+            json.currentState,
+            json.isEnded
+        );
+    }
+
     setCurrentState(newCurrentState: ChatStateForProceedInChat): void {
-        throw new Error('Method not implemented.');
+        this.currentState = newCurrentState ;
     }
 
 

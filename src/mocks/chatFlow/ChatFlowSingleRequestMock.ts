@@ -1,7 +1,7 @@
-import ChatFlowGetNextStateResult from "../../src/dataModels/current/chatFlow/chatFlowGetNextStateResult";
-import ChatFlowEntityForProceedInChat from "../../src/entities/chatFlow/chatFlowEntityForProceedInChat";
-import ChatStateForProceedInChat from "../../src/entities/chatState/chatState";
-import ChatResponseOptions from "../../src/entities/responseOption/chatResponseOptions";
+import ChatFlowGetNextStateResult from "../../dataModels/current/chatFlow/chatFlowGetNextStateResult";
+import ChatFlowEntityForProceedInChat from "../../entities/chatFlow/chatFlowEntityForProceedInChat";
+import ChatStateForProceedInChat from "../../entities/chatState/chatState";
+import ChatResponseOptions from "../../entities/responseOption/chatResponseOptions";
 
 export default class ChatFlowSingleRequestMock implements ChatFlowEntityForProceedInChat{
     constructor(
@@ -30,8 +30,8 @@ export default class ChatFlowSingleRequestMock implements ChatFlowEntityForProce
                 participator1Options: this.participator1Options,
                 participator2Options: this.participator2Options,
                 isEndState: this.isEndState,
-                proceedEvent: this.proceedEvent // Remove proceedEvent
-            }
+            },
+            proceedEvent: this.proceedEvent,
         }
     }
 }

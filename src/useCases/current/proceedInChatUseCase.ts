@@ -106,8 +106,6 @@ export default class ProceedInChatUseCase {
     private catchNextStateResultErrors(nextStateResult: ChatFlowGetNextStateResult, errors: string[], eventValidationResult: { success: boolean; error: string; event: string; }) {
         if (!nextStateResult.success) {
             errors.push(nextStateResult.error);
-        } else if (nextStateResult.nextState.proceedEvent !== eventValidationResult.event) { // Validate event
-            errors.push('Invalid chat state event');
         }
     }
 

@@ -1,4 +1,4 @@
-import ResponseValidationGateway from "../../src/boundaries/gateways/responseValidation/responseValidationGateway";
+import ResponseValidationGateway from "../../boundaries/gateways/responseValidation/responseValidationGateway";
 
 export default class ValidationGatewayMock implements ResponseValidationGateway {
     constructor(
