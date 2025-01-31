@@ -6,16 +6,16 @@ import ChatFlowGateway from "../../src/mocks/chatFlowGateway/ChatFlowGatewayMock
 
 class ChatFlowGatewayTest {
     setup = {
-        states: [
+        states: (
             {
                 id: "state1",
                 participator1NextState: "state2",
                 participator2NextState: "state2",
                 participator1Options: {
-                    options: [],
+                    options: (),
                 },
                 participator2Options: {
-                    options: [],
+                    options: (),
                 },
                 isEndState: false,
             },
@@ -24,24 +24,24 @@ class ChatFlowGatewayTest {
                 participator1NextState: "state3",
                 participator2NextState: "state3",
                 participator1Options: {
-                    options: [],
+                    options: (),
                 },
                 participator2Options: {
-                    options: [],
+                    options: (),
                 },
                 isEndState: true,
             }
-        ],
+        ),
 
-        events: [
+        events: (
             'event1',
             'event2'
-        ],
+        ),
 
-        transitions: [
+        transitions: (
             {state: "state1", event: "event1", nextState: "state2"},
             {state: "state2", event: "event2", nextState: "state3"}
-        ]
+        )
 
     }
 
@@ -55,7 +55,7 @@ class ChatFlowGatewayTest {
                         participator1UserId: "participator1UserId",
                         participator2UserId: "participator2UserId",
                         createSuccess: true,
-                        currentState: this.setup.states[0] as ChatStateForProceedInChat,
+                        currentState: this.setup.states(0) as ChatStateForProceedInChat,
                         isEnded: false
                     }
                 ) as ChatEntityForProceedInChat;

@@ -17,7 +17,7 @@ export default class ChatEntity implements ChatEntityForShare,
     creatorUserId: string;
     participator1UserId: string;
     participator2UserId: string;
-    responses: ResponseEntity[];
+    responses: ResponseEntity();
     createdAt: Date;
     updatedAt: Date;
 
@@ -42,7 +42,7 @@ export default class ChatEntity implements ChatEntityForShare,
         createError: string = '',
 
         access: string = '',
-        sharingSettings: ChatSharingSettings = new ChatSharingSettings(id, []),
+        sharingSettings: ChatSharingSettings = new ChatSharingSettings(id, ()),
 
         chatFlowId: string = '',
         currentStateId: string = '',
@@ -54,7 +54,7 @@ export default class ChatEntity implements ChatEntityForShare,
         this.creatorUserId = user1;
         this.participator1UserId = user1;
         this.participator2UserId = user2;
-        this.responses = [];
+        this.responses = ();
         this.createdAt = new Date();
         this.updatedAt = new Date();
 

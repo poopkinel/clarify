@@ -6,7 +6,7 @@ export default interface ChatEntityForUserToBeParticipator {
     name: string;
     creatorUserId: string;
     participator2UserId: string;
-    responses: ResponseEntity[];
+    responses: ResponseEntity();
     // createdAt: Date;
     // updatedAt: Date;
     createSuccess: boolean;

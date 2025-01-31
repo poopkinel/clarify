@@ -20,7 +20,7 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
                         await usecase.executeProceedInChat(requestModel);
 
                         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                            errors: expect.arrayContaining(['Invalid chat id'])
+                            errors: expect.arrayContaining(('Invalid chat id'))
                         }));
                     });
                 });
@@ -41,7 +41,7 @@ class ProceedInChatValidationUseCaseTest extends ProceedInChatUseCaseTestBase{
                             await usecase.executeProceedInChat(requestModel);
 
                             expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                                errors: expect.arrayContaining([expectedError])
+                                errors: expect.arrayContaining((expectedError))
                             }));
                         });
                     });

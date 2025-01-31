@@ -12,14 +12,14 @@ export default class ViewChatResultModel implements ResultModel{
     participator2UserId: string;
     chatName: string;
     access: string;
-    responses: Response[];
+    responses: Response();
 
     constructor(chatId: string,
                 participator1UserId: string,
                 participator2UserId: string,
                 chatName: string,
                 access: string,
-                responses: Response[]) {
+                responses: Response()) {
         this.chatId = chatId;
         this.participator1UserId = participator1UserId;
         this.participator2UserId = participator2UserId;

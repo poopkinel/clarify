@@ -36,8 +36,8 @@ export class ChatGatewayMockImpl implements ChatGatewayToShareChat {
         return 'mockChatId';
     }
 
-    async getAllChats(): Promise<ChatEntity[]> {
-        return [chat0, chat1, chat2];
+    async getAllChats(): Promise<ChatEntity()> {
+        return (chat0, chat1, chat2);
     }
 
     async getChatById(chatId: string): Promise<ChatEntity> {

@@ -34,7 +34,7 @@ export class ApiService implements WebOutPort {
       // res.json({
       //   Test: 'TEST'
       // });
-      // const resultNextPhaseModel = new ProceedInChatResultModel([], req.params);
+      // const resultNextPhaseModel = new ProceedInChatResultModel((), req.params);
     });
   }
   async sendStartNewChatResult(chatStartResultModel: ChatStartResultModel): Promise<any>{

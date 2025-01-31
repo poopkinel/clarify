@@ -23,7 +23,7 @@ export class ChatGatewayFirebaseImpl implements ChatGatewayToShareChat {
         //     createdAt: new Date(),
         //     updatedAt: new Date(),
         //     name: chatName,
-        //     responses: []
+        //     responses: ()
         // };
 
         // // const chatRef = await admin.firestore().collection("chats").add(chat);
@@ -46,7 +46,7 @@ export class ChatGatewayFirebaseImpl implements ChatGatewayToShareChat {
         throw new Error("Method not implemented.");
     }
 
-    async getAllChats(): Promise<ChatEntity[]> {
+    async getAllChats(): Promise<ChatEntity()> {
         throw new Error("Method not implemented.");
     }
 
@@ -57,7 +57,7 @@ export class ChatGatewayFirebaseImpl implements ChatGatewayToShareChat {
         //     throw new Error("Chat not found");
         // }
 
-        // const chatMessages: ChatMessageResponseModel[] = chatData.chatMessages.map((chatMessage: ResponseEntity) => {
+        // const chatMessages: ChatMessageResponseModel() = chatData.chatMessages.map((chatMessage: ResponseEntity) => {
         //     return {
         //         messageText: chatMessage.message,
         //         messageAuthor: chatMessage.userId
@@ -82,7 +82,7 @@ export class ChatGatewayFirebaseImpl implements ChatGatewayToShareChat {
         //     throw new Error("Chat not found");
         // }
 
-        // const chatMessages: ResponseEntity[] = chatData.chatMessages;
+        // const chatMessages: ResponseEntity() = chatData.chatMessages;
         // chatMessages.push({
         //     : messageText,
         //     messageAuthor: messageAuthor

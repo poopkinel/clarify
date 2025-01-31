@@ -35,7 +35,7 @@ class ProceedInChatUseCaseProcessInputTest extends ProceedInChatUseCaseBaseTest 
                     await usecase.executeProceedInChat(requestModel);
 
                     expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
-                        errors: expect.arrayContaining(['Content invalid for event']),
+                        errors: expect.arrayContaining(('Content invalid for event')),
                         chatNextStateId: ''
                     }));
                 })

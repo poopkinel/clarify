@@ -7,16 +7,16 @@ const chatEntity_1 = __importDefault(require("../../src/entities/chatEntity/chat
 const ChatFlowGatewayMock_1 = __importDefault(require("../../src/mocks/chatFlowGateway/ChatFlowGatewayMock"));
 class ChatFlowGatewayTest {
     setup = {
-        states: [
+        states: (
             {
                 id: "state1",
                 participator1NextState: "state2",
                 participator2NextState: "state2",
                 participator1Options: {
-                    options: [],
+                    options: (),
                 },
                 participator2Options: {
-                    options: [],
+                    options: (),
                 },
                 isEndState: false,
             },
@@ -25,22 +25,22 @@ class ChatFlowGatewayTest {
                 participator1NextState: "state3",
                 participator2NextState: "state3",
                 participator1Options: {
-                    options: [],
+                    options: (),
                 },
                 participator2Options: {
-                    options: [],
+                    options: (),
                 },
                 isEndState: true,
             }
-        ],
-        events: [
+        ),
+        events: (
             'event1',
             'event2'
-        ],
-        transitions: [
+        ),
+        transitions: (
             { state: "state1", event: "event1", nextState: "state2" },
             { state: "state2", event: "event2", nextState: "state3" }
-        ]
+        )
     };
     runTests() {
         describe('Given a chatFlow with 2 transitions', () => {
@@ -51,7 +51,7 @@ class ChatFlowGatewayTest {
                     participator1UserId: "participator1UserId",
                     participator2UserId: "participator2UserId",
                     createSuccess: true,
-                    currentState: this.setup.states[0],
+                    currentState: this.setup.states(0),
                     isEnded: false
                 });
                 const chatFlowId = "chatFlowId";

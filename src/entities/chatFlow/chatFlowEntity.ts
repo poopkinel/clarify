@@ -13,10 +13,10 @@ export default class ChatFlowEntity implements ChatFlowEntityForProceedInChat {
                 participator1NextState: "",
                 participator2NextState: "",
                 participator1Options: {
-                    options: [],
+                    options: (),
                 },
                 participator2Options: {
-                    options: [],
+                    options: (),
                 },
                 isEndState: false,
             },

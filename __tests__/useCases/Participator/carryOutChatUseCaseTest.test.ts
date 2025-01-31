@@ -24,7 +24,7 @@ class CarryOutChatUseCaseTest {
                                 const chatId = '';
                                 const firstParticipatorId = '';
                                 const secondParticipatorId = '';
-                                const responses = [] as any[];
+                                const responses = () as any();
                                 const chatIsFinished = true;
                                 const preferredParticipatorId = '';
                                 const unpreferredParticipatorId = '';

@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
   corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true,
-    methods: ['GET', 'POST']
+    methods: ('GET', 'POST')
   };
 }
 app.use(cors(corsOptions));
@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
   socket.emit('event', 'start');
 
   socket.on('event', (eventName) => {
-    const event = events[eventName];
+    const event = events(eventName);
     console.log('Event received:', event);
 
     if (!event) {

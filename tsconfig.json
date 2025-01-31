@@ -3,17 +3,17 @@
         "outDir": "./dist",
         "rootDir": "./src",
         // other options
-        "types": ["jest", "node"],
+        "types": ("jest", "node"),
         "esModuleInterop": true,
         "moduleResolution": "Node16",
 
       },
-      "include": [
+      "include": (
         "src/**/*"
-, "__tests__/chatEntity", "__tests__/chatFlow", "__tests__/chatFlowGateway", "__tests__/chatGateway", "__tests__/validationGateway"      ],
-      "exclude": [
+, "__tests__/chatEntity", "__tests__/chatFlow", "__tests__/chatFlowGateway", "__tests__/chatGateway", "__tests__/validationGateway"      ),
+      "exclude": (
         "node_modules"
-      ],
+      ),
       "extends": "@tsconfig/node20/tsconfig.json",
 
 }

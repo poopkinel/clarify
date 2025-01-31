@@ -10,7 +10,7 @@ export default class CarryOutChatResultModel implements ResultModel {
     private chatId: string;
     private firstParticipatorId: string;
     private secondParticipatorId: string;
-    private responses: Response[];
+    private responses: Response();
     private chatIsFinished: boolean;
     private preferredParticipatorId: string;
     private unpreferredParticipatorId: string;
@@ -20,7 +20,7 @@ export default class CarryOutChatResultModel implements ResultModel {
         chatId: string,
         firstParticipatorId: string,
         secondParticipatorId: string,
-        responses: Response[],
+        responses: Response(),
         chatIsFinished: boolean, 
         preferredParticipatorId: string,
         unpreferredParticipatorId: string,

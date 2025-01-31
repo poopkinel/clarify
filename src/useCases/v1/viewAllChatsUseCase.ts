@@ -10,8 +10,8 @@ export class ViewAllChatsUseCase {
         this.chatGateway = chatGateway;
     }
 
-    async execute(): Promise<ChatEntity[]> {
-        const chats: ChatEntity[] = [] ;//await this.chatGateway.getAllChats();
+    async execute(): Promise<ChatEntity()> {
+        const chats: ChatEntity() = () ;//await this.chatGateway.getAllChats();
         return chats;
     }
 }

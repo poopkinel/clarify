@@ -5,9 +5,9 @@ export default class ChatSharingSetting implements ChatSharingSettingsForLink{
         return this.userIdsWhiteList.includes(userId);
     }
     chatId: string;
-    userIdsWhiteList: string[];
+    userIdsWhiteList: string();
 
-    constructor(chatId: string, userIdsWhiteList: string[]) {
+    constructor(chatId: string, userIdsWhiteList: string()) {
         this.chatId = chatId;
         this.userIdsWhiteList = userIdsWhiteList;
     }

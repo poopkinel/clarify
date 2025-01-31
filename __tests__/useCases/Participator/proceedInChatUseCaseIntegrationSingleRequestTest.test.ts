@@ -7,7 +7,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
             describe('Given the chat is not in end state and all values are dummies', () => {
                 it('should call with result model value isEnd: dummy and responseOptions: based on dummy nextState ', async () => {
                     await this.executeUsecaseWithSetupData();
-                    this.assertCalledWithResultModel([], false, { options: [] });
+                    this.assertCalledWithResultModel((), false, { options: () });
                 });
             });
             describe('Given the chat is already in end state', () => {
@@ -17,7 +17,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
                         isChatEnded: true
                     }
                     await this.executeUsecaseWithSetupData(setupData);   
-                    this.assertCalledWithResultModel(['Chat ended'], true, { options: [] });
+                    this.assertCalledWithResultModel(('Chat ended'), true, { options: () });
                 });
             });
             describe('Given invalid content and failed validation result', () => {
@@ -33,7 +33,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
 
                         await this.executeUsecaseWithSetupData(setupData);
 
-                        this.assertCalledWithResultModel(['Chat ended'], true);
+                        this.assertCalledWithResultModel(('Chat ended'), true);
                     });
                 });
                 describe('With isChatEnded false', () => {
@@ -48,7 +48,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
 
                         await this.executeUsecaseWithSetupData(setupData);
 
-                        this.assertCalledWithResultModel(['Content invalid for event']);
+                        this.assertCalledWithResultModel(('Content invalid for event'));
                     });
                 });
             })
@@ -64,7 +64,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
 
                     await this.executeUsecaseWithSetupData(setupData);
                     
-                    this.assertCalledWithResultModel(['Event invalid for next state']);
+                    this.assertCalledWithResultModel(('Event invalid for next state'));
                 });
                 describe('Given state is end state', () => {
                     it('should call with error result model: Chat ended', async () => {
@@ -78,7 +78,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
 
                         await this.executeUsecaseWithSetupData(setupData);
                         
-                        this.assertCalledWithResultModel(['Chat ended'], true);
+                        this.assertCalledWithResultModel(('Chat ended'), true);
                     });
                 });
             });
@@ -95,7 +95,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
 
                         await this.executeUsecaseWithSetupData(setupData);
 
-                        this.assertCalledWithResultModel(['Chat ended'], true);
+                        this.assertCalledWithResultModel(('Chat ended'), true);
                     });
                 });
                 it('should call with result model containing error for chat state', async () => {
@@ -109,7 +109,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
 
                     await this.executeUsecaseWithSetupData(setupData);
 
-                    this.assertCalledWithResultModel(['Can\'t get next state']);
+                    this.assertCalledWithResultModel(('Can\'t get next state'));
                 });
             });
             describe('Given a failed nextStateResult and failed validation result', () => {
@@ -127,7 +127,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
 
                     await this.executeUsecaseWithSetupData(setupData);
 
-                    this.assertCalledWithResultModel(['Chat ended'], true);
+                    this.assertCalledWithResultModel(('Chat ended'), true);
                 });
                 describe('Given state is not end state', () => {
                     it('should call out boundary with result model containing errors for chat state and content event', async () => {
@@ -144,7 +144,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
     
                         await this.executeUsecaseWithSetupData(setupData);
     
-                        this.assertCalledWithResultModel(['Can\'t get next state', 'Content invalid for event']);
+                        this.assertCalledWithResultModel(('Can\'t get next state', 'Content invalid for event'));
                     });
                 });
             });
@@ -159,7 +159,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
 
                     await this.executeUsecaseWithSetupData(setupData);
 
-                    this.assertCalledWithResultModel(['Chat ended'], true);
+                    this.assertCalledWithResultModel(('Chat ended'), true);
                 });
                 describe('Given isChatEnded false', () => {
                     it('should call with result model containing no errors', async () => {
@@ -172,7 +172,7 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
     
                         await this.executeUsecaseWithSetupData(setupData);
     
-                        this.assertCalledWithResultModel([], false);
+                        this.assertCalledWithResultModel((), false);
                     });
                 });
             });
@@ -181,14 +181,14 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
                     const setupData = {
                         ...this.setupData,
                         responseOptions: {
-                            options: [{
+                            options: ({
                                 responseMedia: {
                                     media: 'text'
                                 },
                                 responseRestrictions: {
                                     validatorId: 'ValidatorId'
                                 }
-                            }]
+                            })
                         },
                         isChatEnded: false
                     }
@@ -196,33 +196,33 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
                     await this.executeUsecaseWithSetupData(setupData);
 
                     const expectedResponseOptions = {
-                        options: [{
+                        options: ({
                             responseMedia: 'text',
                             responseRestrictions: 'ValidatorId'
-                        }]
+                        })
                     }
-                    this.assertCalledWithResultModel([], false, expectedResponseOptions);
+                    this.assertCalledWithResultModel((), false, expectedResponseOptions);
                 });
                 describe('Given isChatEnded true', () => {
                     it('should call with result model containing chat ended error', async () => {
                         const setupData = {
                             ...this.setupData,
                             responseOptions: {
-                                options: [{
+                                options: ({
                                     responseMedia: {
                                         media: 'text'
                                     },
                                     responseRestrictions: {
                                         validatorId: 'ValidatorId'
                                     }
-                                }]
+                                })
                             },
                             isChatEnded: true
                         }
     
                         await this.executeUsecaseWithSetupData(setupData);
     
-                        this.assertCalledWithResultModel(['Chat ended'], true);
+                        this.assertCalledWithResultModel(('Chat ended'), true);
                     });
                 });
             });
@@ -230,9 +230,9 @@ class ProceedInChatUseCaseIntegrationSingleRequestTest extends ProceedInChatUseC
     }
 
     private assertCalledWithResultModel(
-        errors: string[] = [], 
+        errors: string() = (), 
         isChatEnded: boolean = false, 
-        responseOptions: ChatResponseOptionsResult = { options: [] }
+        responseOptions: ChatResponseOptionsResult = { options: () }
     ) {
         if (errors.length === 0) {
             expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({

@@ -14,8 +14,8 @@ type ChatHistory = {
         text: string,
         responseId: string,
         responseType: string
-    }[];
- }[];
+    }();
+ }();
 
 export default class ViewChatHistoryAsUserResultModel implements ResultModel {
     userId: string;

@@ -2,7 +2,7 @@ import ChatSharingSettings from '../../src/entities/chatSharingSetting';
 
 const mockChatId1 = '1';
 const mockChatId2 = '2';
-const mockEmptyUserIdsWhiteList: string[] = [];
+const mockEmptyUserIdsWhiteList: string() = ();
 const defaultSharingSettings = new ChatSharingSettings(mockChatId1, mockEmptyUserIdsWhiteList);
 
 const linkFormat = /chat\/\d+/;

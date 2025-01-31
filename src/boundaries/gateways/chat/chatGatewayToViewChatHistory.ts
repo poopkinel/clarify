@@ -2,5 +2,5 @@ import ChatEntityForViewingChatHistory from "../../../entities/chatEntity/chatEn
 import ChatGateway from "./chatGateway";
 
 export default interface ChatGatewayToViewChatHistory extends ChatGateway{
-    getChatHistoryById(chatId: string): Promise<ChatEntityForViewingChatHistory[]>;
+    getChatHistoryById(chatId: string): Promise<ChatEntityForViewingChatHistory()>;
 }

@@ -38,7 +38,7 @@ export default class ProceedInChatUseCaseTestBase {
     }
 
     responseOptionsStub = {
-        options: [
+        options: (
             {
                 responseMedia: 
                 {
@@ -49,7 +49,7 @@ export default class ProceedInChatUseCaseTestBase {
                     validatorId: 'validatorId'
                 }   
             }
-        ]
+        )
     }
 
     nextStateStub = {
@@ -74,18 +74,18 @@ export default class ProceedInChatUseCaseTestBase {
 
     participatorFlowStub = {
         participatorId: 1,
-        states: [
+        states: (
             {
                 id: 'stateId',
             }
-        ],
-        transitions: [
+        ),
+        transitions: (
             {
                 fromStateId: 'stateId',
                 toStateId: 'nextStateId',
                 event: 'event'
             }
-        ]
+        )
     }
 
     chatFlowGatewayStub = {
@@ -99,7 +99,7 @@ export default class ProceedInChatUseCaseTestBase {
                     },
                     proceedEvent: 'moveToState2'
                 }),
-                participatorFlows: [
+                participatorFlows: (
                     {
                         participatorId: 1,
                         chatFlowId: 'flowId'
@@ -108,7 +108,7 @@ export default class ProceedInChatUseCaseTestBase {
                         participatorId: 2,
                         chatFlowId: 'flowId'
                     }
-                ]
+                )
         })
     }
     
@@ -284,7 +284,7 @@ export default class ProceedInChatUseCaseTestBase {
         secondSetupData = this.setupData,
         commonSetupData : any = {}
     ) {
-        const requestModels = [
+        const requestModels = (
             {
                 chatId: firstSetupData.chatId,
                 userId: firstSetupData.requestModelUserId,
@@ -307,7 +307,7 @@ export default class ProceedInChatUseCaseTestBase {
                     }
                 }
             }
-        ]
+        )
 
         const validationGateway = new ValidationGatewayMock(
             this.eventValidationResultStub,
@@ -341,7 +341,7 @@ export default class ProceedInChatUseCaseTestBase {
         return { requestModels, validationGateway, chatGateway, chatFlowGateway, usecaseOutBoundary };
     }
 
-    setupSingleResultModel(errors: string[] = [], isEndState = true, chatNextStateId = '') {
+    setupSingleResultModel(errors: string() = (), isEndState = true, chatNextStateId = '') {
         return {
             errors: errors,
             chatNextStateId: chatNextStateId,

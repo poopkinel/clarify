@@ -18,7 +18,7 @@ class ViewChatAsUserUseCaseTest {
                     participator2UserId: '',
                     name: dummyChatId,
                     access: '',
-                    responses: [],
+                    responses: (),
                     sharingSettings: {
                         getLink: jest.fn().mockResolvedValue('')
                     },
@@ -44,7 +44,7 @@ class ViewChatAsUserUseCaseTest {
                             participator2UserId: dummyUserId,
                             chatName: '',
                             access: '',
-                            responses: []
+                            responses: ()
                         });
                     });
                 });
@@ -57,7 +57,7 @@ class ViewChatAsUserUseCaseTest {
                     userId: stubUserId,
                     chatId: stubChatId
                 }
-                const stubResponses = [
+                const stubResponses = (
                     {
                         text: 'response1',
                         id: 'responseId1',
@@ -68,7 +68,7 @@ class ViewChatAsUserUseCaseTest {
                         id: 'responseId2',
                         type: 'responseType2'
                     }
-                ]
+                )
                 const participator1UserId = 'stubUserId';
                 const participator2UserId = 'stubUserId';
                 const stubChatName = 'stubChatName';
@@ -98,17 +98,17 @@ class ViewChatAsUserUseCaseTest {
                         participator2UserId: participator2UserId,
                         chatName: stubChatName,
                         access: stubAccess,
-                        responses: [{
-                            text: stubResponses[0].text,
-                            responseId: stubResponses[0].id,
-                            responseType: stubResponses[0].type
+                        responses: ({
+                            text: stubResponses(0).text,
+                            responseId: stubResponses(0).id,
+                            responseType: stubResponses(0).type
                         
                         },
                         {
-                            text: stubResponses[1].text,
-                            responseId: stubResponses[1].id,
-                            responseType: stubResponses[1].type
-                        }]
+                            text: stubResponses(1).text,
+                            responseId: stubResponses(1).id,
+                            responseType: stubResponses(1).type
+                        })
                     });
                 });
             });

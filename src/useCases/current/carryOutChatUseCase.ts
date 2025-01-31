@@ -10,7 +10,7 @@ export default class CarryOutChatUseCase {
     }
 
     async executeCarryOutChat(requestModel: CarryOutChatRequestModel) {
-        const result = new CarryOutChatResultModel('', '', '', [], true, '', '', '');
+        const result = new CarryOutChatResultModel('', '', '', (), true, '', '', '');
         await this.usecaseOutBoundary.sendResultModel(result);
     }
 }

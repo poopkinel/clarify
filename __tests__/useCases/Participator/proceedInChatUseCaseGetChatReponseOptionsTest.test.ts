@@ -51,10 +51,10 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
                         await usecase.executeProceedInChat(requestModelStub);
                         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             responseOptionsForParticipant: {
-                                options: [] as {
+                                options: () as {
                                     responseMedia: string,
                                     responseRestrictions: string
-                                }[]
+                                }()
                             }
                         }));
                     })
@@ -80,14 +80,14 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
             }
 
             const responseOptionsP1Stub = {
-                options: [{
+                options: ({
                     responseMedia: {
                         media: 'text'
                     },
                     responseRestrictions: {
                         validatorId: 'CantBeQuestionValidatorId'
                     }
-                }]
+                })
             }
 
             const responseOptionsP2Stub = {
@@ -95,10 +95,10 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
             }
 
             const responseOptionsP1ResultStub = {
-                options: [{
+                options: ({
                     responseMedia: 'text',
                     responseRestrictions: 'CantBeQuestionValidatorId'
-                }]
+                })
             }
             
             describe('Given a chatFlowGateway returning a dummy chat state with 1 option per participant', () => {
@@ -129,7 +129,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
                         options: null
                     }
                     ,{
-                        options: [{
+                        options: ({
                             responseMedia: {
                                 media: 'text'
                             },
@@ -144,7 +144,7 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
                                 validatorId: 'CantBeQuestionValidatorId'
                             }
                         
-                        }]
+                        })
                     }
                 );
 
@@ -176,13 +176,13 @@ class ProceedInChatUseCaseGetChatReponseOptionsTest extends ProceedInChatUseCase
                         await usecase.executeProceedInChat(requestModel);
                         expect(this.usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({
                             responseOptionsForParticipant: {
-                                options: [{
+                                options: ({
                                     responseMedia: 'text',
                                     responseRestrictions: 'CantBeQuestionValidatorId'
                                 }, {
                                     responseMedia: 'image',
                                     responseRestrictions: 'CantBeQuestionValidatorId',                                
-                                }]
+                                })
                             }
                         }));
                     });

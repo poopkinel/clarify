@@ -10,14 +10,14 @@ type ParticipatorResponseOptions = {
         responseRestrictions: {
             validatorId: string;
         };
-    }[] | null;
+    }() | null;
 };
 
 type ParticipatorResponseOptionsResults = { 
     options: { 
         responseMedia: string; 
         responseRestrictions: string; 
-    }[]; 
+    }(); 
 }
 
 class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
@@ -41,33 +41,33 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
         const participatorOptionsFull = this.setupResponseOptions('text', 'ValidatorId'); 
 
 
-        const paricipator1OptionsForEachState = [
+        const paricipator1OptionsForEachState = (
             participatorOptionsFull,
             participatorOptionsEmpty,
             participatorOptionsEmpty
-        ];
+        );
 
-        const paricipator2OptionsForEachState = [
+        const paricipator2OptionsForEachState = (
             participatorOptionsEmpty,
             participatorOptionsFull,
             participatorOptionsFull
-        ];
+        );
 
         const responseOptionsFullInResultModel = this.setupResponseOptionsResults('text', 'ValidatorId'); 
 
-        const expectedP1ResponseOptionsForEachState = [
+        const expectedP1ResponseOptionsForEachState = (
             responseOptionsFullInResultModel,
             responseOptionEmptyInResultModel,
             responseOptionEmptyInResultModel
-        ]
+        )
 
-        const expectedP2ResponseOptionsForEachState = [
+        const expectedP2ResponseOptionsForEachState = (
             responseOptionEmptyInResultModel,
             responseOptionsFullInResultModel,
             responseOptionsFullInResultModel,
-        ]
+        )
 
-        const eventsToProceedInChatSameEvent = ["event", "event", "event"];
+        const eventsToProceedInChatSameEvent = ("event", "event", "event");
 
         describe.skip('Given a request model stub and empty response options stub', () => {
 
@@ -137,7 +137,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         for (let i = 0; i < expectedResponseOptionsForEachState.length; i++) {
                             await usecase.executeProceedInChat(requestModel);
                             chatCounter++;
-                            this.expectOptionsForState(`state${i}`, expectedResponseOptionsForEachState[i], this.usecaseOutBoundarySpy);
+                            this.expectOptionsForState(`state${i}`, expectedResponseOptionsForEachState(i), this.usecaseOutBoundarySpy);
                         }
                     });
                 });
@@ -179,10 +179,10 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
 
                         for (chatCounter = 0; chatCounter < expectedP1ResponseOptionsForEachState.length; chatCounter++) {
                             await usecase.executeProceedInChat(requestModelsP1WithContentStubs(chatCounter));
-                            this.expectOptionsForState(`state${chatCounter}`, expectedP1ResponseOptionsForEachState[chatCounter], this.usecaseOutBoundarySpy);
+                            this.expectOptionsForState(`state${chatCounter}`, expectedP1ResponseOptionsForEachState(chatCounter), this.usecaseOutBoundarySpy);
 
                             await usecase.executeProceedInChat(requestModelsP2WithContentStubs(chatCounter));
-                            this.expectOptionsForState(`state${chatCounter}`, expectedP2ResponseOptionsForEachState[chatCounter], this.usecaseOutBoundarySpy);
+                            this.expectOptionsForState(`state${chatCounter}`, expectedP2ResponseOptionsForEachState(chatCounter), this.usecaseOutBoundarySpy);
                         }
                     });
                 });
@@ -195,8 +195,8 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                             responseMedia: string;
                             responseContent: string;
                         }) => {
-                            const eventValidationResultIndex = response.responseContent[response.responseContent.length - 1]
-                            return eventValidationResultsForEachState[Number(eventValidationResultIndex)];
+                            const eventValidationResultIndex = response.responseContent(response.responseContent.length - 1)
+                            return eventValidationResultsForEachState(Number(eventValidationResultIndex));
                         })
                     }
 
@@ -223,8 +223,8 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                             const usecase = this.setupUsecase(chatFlowGatewayMock, validationGatewayEventsSequenceStub);
 
                             for (chatCounter = 0; chatCounter < eventValidationResultsForEachState.length; chatCounter++) {
-                                await usecase.executeProceedInChat(requestModelsP1WithContentStubs[chatCounter]);
-                                this.expectOptionsForState(`state${chatCounter}`, expectedP1ResponseOptionsForEachState[chatCounter], this.usecaseOutBoundarySpy);
+                                await usecase.executeProceedInChat(requestModelsP1WithContentStubs(chatCounter));
+                                this.expectOptionsForState(`state${chatCounter}`, expectedP1ResponseOptionsForEachState(chatCounter), this.usecaseOutBoundarySpy);
                             }
                         });
                     });
@@ -254,7 +254,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                 }
 
                 const expectedResultModelForEachState = (chatCounter: number) => {
-                    return this.setupResultModel(chatCounter, expectedP1ResponseOptionsForEachState[chatCounter])
+                    return this.setupResultModel(chatCounter, expectedP1ResponseOptionsForEachState(chatCounter))
                 }
 
                 it('should call according to sequence of validation results', async () => {
@@ -314,19 +314,19 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                 const nextStateId = 'state1'
                 const { usecase, usecaseOutBoundarySpy, requestModels } = 
                     this.arrangeChatFlowWithMultipleRequestsScenario(
-                        0, ["content0", "content1"], [nextStateId, "end"], ["event-to-state1", "end"]);
+                        0, ("content0", "content1"), (nextStateId, "end"), ("event-to-state1", "end"));
                 describe('Given 2 request models with chat responses (media and content)', () => {
-                    const requestModels = [
+                    const requestModels = (
                         this.setupRequestModel(0, 'userId1', 'content0'),
                         this.setupRequestModel(1, 'userId1', 'end')
-                    ]
+                    )
                     
                     describe('When responses are sent to the chatFlow', () => {
                         it('should call sendResult with next state and then with end state', async () => {
-                            await this.actChatFlowScenario(usecase, requestModels[0]);
+                            await this.actChatFlowScenario(usecase, requestModels(0));
                             this.assertChatFlowScenario(usecaseOutBoundarySpy, false);
 
-                            await this.actChatFlowScenario(usecase, requestModels[1]);
+                            await this.actChatFlowScenario(usecase, requestModels(1));
                             this.assertChatFlowScenario(usecaseOutBoundarySpy, true);
                         });
                     });
@@ -350,11 +350,11 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
     }
 
     private setupRequestModelsWithContent(chatCounter: number, participator1UserId: string) {
-        return [
+        return (
             this.setupRequestModel(chatCounter, participator1UserId, 'content0'),
             this.setupRequestModel(chatCounter, participator1UserId, 'content1'),
             this.setupRequestModel(chatCounter, participator1UserId, 'content2')
-        ];
+        );
     }
 
     private setupValidationResultsForEachState() {
@@ -370,10 +370,10 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
             event: 'event-to-state1'
         };
 
-        const eventValidationResultsForEachState = [
+        const eventValidationResultsForEachState = (
             eventValidationResultToState1Stub,
             eventValidationResultToState2Stub,
-        ];
+        );
         return eventValidationResultsForEachState;
     }
 
@@ -381,30 +381,30 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
         expectedResponseOptionsFull: ParticipatorResponseOptionsResults, 
         responseOptionEmptyInResultModel: ParticipatorResponseOptionsResults
     ) {
-        return [
+        return (
             expectedResponseOptionsFull,
             responseOptionEmptyInResultModel,
             responseOptionEmptyInResultModel
-        ];
-    }
-
-    private setupNextState(chatCounter: number, paricipator1OptionsForEachState: ({ options: null; } | { options: { responseMedia: { media: string; }; responseRestrictions: { validatorId: string; }; }[]; })[]) {
-        return this.setupNextStateByCounter(
-            chatCounter, paricipator1OptionsForEachState, paricipator1OptionsForEachState,
-            ["event", "event", "event"]
         );
     }
 
-    private setupParticipator1OptionsForEachState(participator1OptionsFull: { options: null; } | { options: { responseMedia: { media: string; }; responseRestrictions: { validatorId: string; }; }[]; }, participatorOptionsEmpty: { options: null; } | { options: { responseMedia: { media: string; }; responseRestrictions: { validatorId: string; }; }[]; }) {
-        return [
+    private setupNextState(chatCounter: number, paricipator1OptionsForEachState: ({ options: null; } | { options: { responseMedia: { media: string; }; responseRestrictions: { validatorId: string; }; }(); })()) {
+        return this.setupNextStateByCounter(
+            chatCounter, paricipator1OptionsForEachState, paricipator1OptionsForEachState,
+            ("event", "event", "event")
+        );
+    }
+
+    private setupParticipator1OptionsForEachState(participator1OptionsFull: { options: null; } | { options: { responseMedia: { media: string; }; responseRestrictions: { validatorId: string; }; }(); }, participatorOptionsEmpty: { options: null; } | { options: { responseMedia: { media: string; }; responseRestrictions: { validatorId: string; }; }(); }) {
+        return (
             participator1OptionsFull,
             participatorOptionsEmpty,
             participatorOptionsEmpty
-        ];
+        );
     }
 
     private setupExpectedResultModel(
-        responseOptions: { options: { responseMedia: string; responseRestrictions: string; }[]; } = { options: [] }
+        responseOptions: { options: { responseMedia: string; responseRestrictions: string; }(); } = { options: () }
     ) {
         return {
             chatNextStateId: 'nextState',
@@ -428,8 +428,8 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
     }
 
     private setupChatFlowGatewayWithOptions(
-        responseOptionsP1: { options: null; } | { options: { responseMedia: { media: string }; responseRestrictions: { validatorId: string }; }[] },
-        responseOptionsP2: { options: null; } | { options: { responseMedia: { media: string }; responseRestrictions: { validatorId: string }; }[] } = { options: null }
+        responseOptionsP1: { options: null; } | { options: { responseMedia: { media: string }; responseRestrictions: { validatorId: string }; }() },
+        responseOptionsP2: { options: null; } | { options: { responseMedia: { media: string }; responseRestrictions: { validatorId: string }; }() } = { options: null }
     ) {
         return {
             getChatFlowById: jest.fn().mockResolvedValue({
@@ -484,43 +484,43 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
             }
         }
         return {
-            options: [{
+            options: ({
                 responseMedia: {
                     media: media
                 },
                 responseRestrictions: {
                     validatorId: validatorId,
                 }
-            }]
+            })
         };
     }
 
     private setupNextStateByCounter(
         counter: number,
-        paricipator1OptionsForEachState: ParticipatorResponseOptions[],
-        paricipator2OptionsForEachState: ParticipatorResponseOptions[],
-        proceedEvents: string[] = ["event-to-state0", "event-to-state1", "event-to-state2"]
+        paricipator1OptionsForEachState: ParticipatorResponseOptions(),
+        paricipator2OptionsForEachState: ParticipatorResponseOptions(),
+        proceedEvents: string() = ("event-to-state0", "event-to-state1", "event-to-state2")
     ) {
         return {
             ...this.nextStateStub,
             id: `state${counter}`,
-            participator1Options: paricipator1OptionsForEachState[counter],
-            participator2Options: paricipator2OptionsForEachState[counter],
-            proceedEvent: proceedEvents[counter]
+            participator1Options: paricipator1OptionsForEachState(counter),
+            participator2Options: paricipator2OptionsForEachState(counter),
+            proceedEvent: proceedEvents(counter)
         }
     }
 
     private setupResponseOptionsResults(media: string = 'text', validatorId: string = 'ValidatorId', isEmpty: boolean = false) {
         if (isEmpty) {
             return {
-                options: []
+                options: ()
             }
         }
         return {
-            options: [{
+            options: ({
                 responseMedia: media,
                 responseRestrictions: validatorId
-            }]
+            })
         }
     }
 
@@ -541,7 +541,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
         await usecase.executeProceedInChat(requestModel);
     }
 
-    private arrangeChatFlowWithMultipleRequestsScenario(index: number, contents: string[], ids: string[], proceedEvents: string[]) {
+    private arrangeChatFlowWithMultipleRequestsScenario(index: number, contents: string(), ids: string(), proceedEvents: string()) {
         const chatGatewayMock = this.chatGatewayStub;
         const chatFlowGatewayMock = {
             ...this.chatFlowGatewayStub,
@@ -551,8 +551,8 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                         ...this.nextStateResultStub,
                         nextState: {
                             ...this.nextStateStub,
-                            id: ids[index],
-                            proceedEvent: proceedEvents[index]
+                            id: ids(index),
+                            proceedEvent: proceedEvents(index)
                         }
                     }
                 })
@@ -568,16 +568,16 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
             validationGateway: validationGatewayMock
         });
 
-        const nextStateId = ids[index];
+        const nextStateId = ids(index);
 
-        const requestModels = [{
+        const requestModels = ({
             chatId: 'chatId',
             userId: 'userId1',
             stateInput: {
                 stateId: nextStateId,
                 response: {
                     responseMedia: 'text',
-                    responseContent: contents[index]
+                    responseContent: contents(index)
                 }
             }
         },
@@ -588,10 +588,10 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
                 stateId: nextStateId,
                 response: {
                     responseMedia: 'text',
-                    responseContent: contents[index]
+                    responseContent: contents(index)
                 }
             }
-        }]
+        })
 
         return { usecase, usecaseOutBoundarySpy, requestModels };
     }
@@ -638,7 +638,7 @@ class ProceedInChatUseCaseIntegrationTest extends ProceedInChatUseCaseBaseTest{
 
     private expectOptionsForState(
         chatNextStateId: string, 
-        expectedResponseOptions1: { options: { responseMedia: string; responseRestrictions: string; }[]; },
+        expectedResponseOptions1: { options: { responseMedia: string; responseRestrictions: string; }(); },
         usecaseOutBoundary: any
     ) {
         expect(usecaseOutBoundary.sendResultModel).toHaveBeenCalledWith(expect.objectContaining({

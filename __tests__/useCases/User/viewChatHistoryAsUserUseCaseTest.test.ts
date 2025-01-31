@@ -15,7 +15,7 @@ class ViewChatHistoryAsUserTest {
                 sendResultModel: jest.fn()
             }
             
-            const dummyChatHistory: any = [];
+            const dummyChatHistory: any = ();
             
             const dummychatGateway: ChatGatewayToViewChatHistory = {
                 getChatHistoryById: jest.fn().mockResolvedValue(dummyChatHistory)
@@ -36,30 +36,30 @@ class ViewChatHistoryAsUserTest {
             });
 
             describe('Given an expected chat history of single chat, ', () => {
-                const stubChatHistorySingleChatResult = [{
+                const stubChatHistorySingleChatResult = ({
                     chatId: "chatId",
                     participator1UserId: "user1",
                     participator2UserId: "user2",
-                    responses: [{
+                    responses: ({
                         text: "text",
                         responseId: "responseId",
                         responseType: "text"
-                    }]
-                }];
+                    })
+                });
 
                 describe('Given a chatHistory stub chatGateway and a stub usecase', () => {
-                    const stubChatHistory: any = [
+                    const stubChatHistory: any = (
                         {
                             id: "chatId",
                             participator1UserId: "user1",
                             participator2UserId: "user2",
-                            responses: [{
+                            responses: ({
                                 text: "text",
                                 id: "responseId",
                                 type: ResponseType.TEXT
-                            }]
+                            })
                         }
-                    ];
+                    );
                     const chatGatewayStubHistory: ChatGatewayToViewChatHistory = {
                         getChatHistoryById: jest.fn().mockResolvedValue(stubChatHistory)
                     };
@@ -91,7 +91,7 @@ class ViewChatHistoryAsUserTest {
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(
                             new ViewChatHistoryAsUserResultModel(
                                 "differentUserId",
-                                []
+                                ()
                             )
                         );
                     });
@@ -101,14 +101,14 @@ class ViewChatHistoryAsUserTest {
                     it('When new chat is added to history, then chat history should include that chat in result model', async () => {
                         var counter = 0;
                         const mockChatGatewayChatHistory: ChatGatewayToViewChatHistory = {
-                            getChatHistoryById: jest.fn().mockResolvedValue(counter == 0 ? [] : this.setupStubChatHistory())
+                            getChatHistoryById: jest.fn().mockResolvedValue(counter == 0 ? () : this.setupStubChatHistory())
                         };
                         const useCase = new ViewChatHistoryAsUserUseCase(usecaseOutBoundarySpy, mockChatGatewayChatHistory);
                         await useCase.executeViewChatHistory(dummyRequestModel);
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(
                             new ViewChatHistoryAsUserResultModel(
                                 dummyUserId,
-                                []
+                                ()
                             )
                         );
 
@@ -138,28 +138,28 @@ class ViewChatHistoryAsUserTest {
                     const subReponseTypeFirstChat = ResponseType.TEXT;
                     const subReponseTypeSecondChat = ResponseType.MULTI_CHOICE;
 
-                    const stubChatHistoryMultipleChats = [
+                    const stubChatHistoryMultipleChats = (
                         {
                             id: stubFirstChatId,
                             participator1UserId: stubFirstUserIdFirstChat,
                             participator2UserId: stubSecondUserIdFirstChat,
-                            responses: [{
+                            responses: ({
                                 text: stubTextFirstChat,
                                 id: stubResponseIdFirstChat,
                                 type: subReponseTypeFirstChat
-                            }]
+                            })
                         },
                         {
                             id: stubSecondChatId,
                             participator1UserId: stubFirstUserIdSecondChat,
                             participator2UserId: stubSecondUserIdSecondChat,
-                            responses: [{
+                            responses: ({
                                 text: stubTextSecondChat,
                                 id: stubResponseIdSecondChat,
                                 type: subReponseTypeSecondChat
-                            }]
+                            })
                         }
-                    ];
+                    );
                     it('should call usecaseOutBoundary.sendResultModel with a response model'
                     + 'containing multiple chats with right data in each chat', async () => {
                         const chatGatewayStubHistoryMultipleChats: ChatGatewayToViewChatHistory = {
@@ -171,32 +171,32 @@ class ViewChatHistoryAsUserTest {
                         expect(usecaseOutBoundarySpy.sendResultModel).toHaveBeenCalledWith(
                             new ViewChatHistoryAsUserResultModel(
                                 dummyUserId,
-                                [
+                                (
                                     {
                                         chatId: stubFirstChatId,
                                         participator1UserId: stubFirstUserIdFirstChat,
                                         participator2UserId: stubSecondUserIdFirstChat,
-                                        responses: [
+                                        responses: (
                                             {
                                                 text: stubTextFirstChat,
                                                 responseId: stubResponseIdFirstChat,
                                                 responseType: subReponseTypeFirstChat
                                             }
-                                        ]
+                                        )
                                     },
                                     {
                                         chatId: stubSecondChatId,
                                         participator1UserId: stubFirstUserIdSecondChat,
                                         participator2UserId: stubSecondUserIdSecondChat,
-                                        responses: [
+                                        responses: (
                                             {
                                                 text: stubTextSecondChat,
                                                 responseId: stubResponseIdSecondChat,
                                                 responseType: subReponseTypeSecondChat
                                             }
-                                        ]
+                                        )
                                     }
-                                ]
+                                )
                             )
                         );
                     });
@@ -212,7 +212,7 @@ class ViewChatHistoryAsUserTest {
     setupAllDummies() {
         const dummyUserId: any = "userId";
         const dummyChatId: any = "chatId";
-        const dummyChatHistory: any = [];
+        const dummyChatHistory: any = ();
         const dummychatGateway: ChatGatewayToViewChatHistory = {
             getChatHistoryById: jest.fn().mockResolvedValue(dummyChatHistory)
         };
@@ -229,18 +229,18 @@ class ViewChatHistoryAsUserTest {
     }
     
     setupStubChatHistory() {
-        return [
+        return (
             {
                 id: "chatId",
                 participator1UserId: "user1",
                 participator2UserId: "user2",
-                responses: [{
+                responses: ({
                     text: "text",
                     id: "responseId",
                     type: ResponseType.TEXT
-                }]
+                })
             }
-        ];
+        );
     }
 
     setupUsecaseWithNonEmptyStubChatHistory() {

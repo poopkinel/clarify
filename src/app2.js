@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === 'production') {
   corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true,
-    methods: ['GET', 'POST']
+    methods: ('GET', 'POST')
   };
 }
 app.use(cors(corsOptions));
@@ -41,13 +41,15 @@ const io = new Server(server, {
   cors: corsOptions
 });
 
+app.use(express.json())
+
 // Define the port
 const PORT = process.env.PORT || 65432;
 server.listen(PORT, () => {
   console.log(`New Server is running on port ${PORT}`);
 });
 
-app.get('/', async (req, res) => {
+app.post('/start-chat', async (req, res) => {
     const request = {
         chatName: 'New CODE 2 2 ',
         userId: 'NEW CODE'
@@ -57,10 +59,12 @@ app.get('/', async (req, res) => {
     res.json(request);
 });
 
-app.get('/next-phase', (req, res) => {
+app.post('/next-phase', (req, res) => {
   console.log('request body:');
   console.log(req.body);
-  const nextPhase = makePhaseTransition(('waiting', 'check-understanding'), 'p2-understands-yes').nextPhase
+  const current = (req.body.current[0], req.body.current[1]);
+  const event = req.body.event;
+  const nextPhase = makePhaseTransition(current, event).nextPhase
   console.log(nextPhase);
   res.json({
     'next-phase': nextPhase
@@ -86,7 +90,7 @@ app.get('/next-phase', (req, res) => {
 //   socket.emit('event', 'start');
 
 //   socket.on('event', (eventName) => {
-//     const event = events[eventName];
+//     const event = events(eventName);
 //     console.log('Event received:', event);
 
 //     if (!event) {

@@ -29,7 +29,7 @@ export class UserViewsAChatUseCase {
             chatViewResponseModel = {
                 chatId: '0',
                 chatName: '',
-                chatMessages: [],
+                chatMessages: (),
                 error: 'User not found'
             };
 
@@ -41,7 +41,7 @@ export class UserViewsAChatUseCase {
         chatViewResponseModel = {
             chatId: chat.id,
             chatName: "PlaceholderName",
-            chatMessages: [],
+            chatMessages: (),
             error: null
         };
 

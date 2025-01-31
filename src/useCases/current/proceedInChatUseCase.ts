@@ -29,7 +29,7 @@ export default class ProceedInChatUseCase {
     }
 
     async executeProceedInChat(requestModel: ProceedInChatRequestModel) {
-        var errors: string[] = [];
+        var errors: string() = ();
         const { eventValidationResult, chat } = await this.trySetupCatchErrors(requestModel, errors); 
         
         var { responseOptionsResult, nextStateResult } = await this.tryNextStateCatchErrors(chat, eventValidationResult, errors);
@@ -50,7 +50,7 @@ export default class ProceedInChatUseCase {
     }
 
     private async sendSuccessResult(
-        errors: string[], 
+        errors: string(), 
         nextStateResult: ChatFlowGetNextStateResult, 
         responseOptionsResult: ChatResponseOptionsResult,
         isChatEnded: boolean
@@ -61,12 +61,12 @@ export default class ProceedInChatUseCase {
         await this.usecaseOutBoundary.sendResultModel(result);
     }
 
-    private async sendErrorResult(errors: string[], isEndState: boolean) {
+    private async sendErrorResult(errors: string(), isEndState: boolean) {
         var result = new ProceedInChatResultModel(errors, '', isEndState);
         await this.usecaseOutBoundary.sendResultModel(result);
     }
 
-    private extractResponseOptions(chat: ChatEntityForProceedInChat, requestModel: ProceedInChatRequestModel, responseOptionsResult: { options: { responseMedia: string; responseRestrictions: string; }[]; }, nextStateResult: ChatFlowGetNextStateResult) {
+    private extractResponseOptions(chat: ChatEntityForProceedInChat, requestModel: ProceedInChatRequestModel, responseOptionsResult: { options: { responseMedia: string; responseRestrictions: string; }(); }, nextStateResult: ChatFlowGetNextStateResult) {
         if (chat.participator1UserId === requestModel.userId) {
             responseOptionsResult = this.extractOptionsResult(firstParticipatorIdInChat, nextStateResult);
         } else {
@@ -77,10 +77,10 @@ export default class ProceedInChatUseCase {
 
     private async tryNextStateCatchErrors(
         chat: ChatEntityForProceedInChat,
-        eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[],
+        eventValidationResult: { success: boolean; error: string; event: string; }, errors: string(),
     ) {
         var responseOptionsResult = { // TODO: move out of method
-            options: [] as ChatResponseOptionResult[]
+            options: () as ChatResponseOptionResult()
         };
 
         const chatFlow = await this.chatFlowGateway.getChatFlowById(chat.chatFlowId);
@@ -89,7 +89,7 @@ export default class ProceedInChatUseCase {
         return { responseOptionsResult, nextStateResult };
     }
 
-    private async trySetupCatchErrors(requestModel: ProceedInChatRequestModel, errors: string[]) {
+    private async trySetupCatchErrors(requestModel: ProceedInChatRequestModel, errors: string()) {
         const chatGatewayResultModel = await this.chatGatewayToProceedInChat.getChatById(requestModel.chatId);
         this.catchChatGatewayErrors(chatGatewayResultModel, errors, requestModel);
 
@@ -103,25 +103,25 @@ export default class ProceedInChatUseCase {
         return { eventValidationResult, chat };
     }
 
-    private catchNextStateResultErrors(nextStateResult: ChatFlowGetNextStateResult, errors: string[], eventValidationResult: { success: boolean; error: string; event: string; }) {
+    private catchNextStateResultErrors(nextStateResult: ChatFlowGetNextStateResult, errors: string(), eventValidationResult: { success: boolean; error: string; event: string; }) {
         if (!nextStateResult.success) {
             errors.push(nextStateResult.error);
         }
     }
 
-    private catchReponseErrors(response: { responseMedia: string; responseContent: string; }, errors: string[]) {
+    private catchReponseErrors(response: { responseMedia: string; responseContent: string; }, errors: string()) {
         if (!response) {
             errors.push('Invalid state input response');
         }
     }
 
-    private catchValidationResultErrors(eventValidationResult: { success: boolean; error: string; event: string; }, errors: string[], chat: ChatEntityForProceedInChat) {
+    private catchValidationResultErrors(eventValidationResult: { success: boolean; error: string; event: string; }, errors: string(), chat: ChatEntityForProceedInChat) {
         if (!eventValidationResult.success) {
             errors.push(eventValidationResult.error);
         }
     }
 
-    private catchChatGatewayErrors(chatGatewayResultModel: ChatGatewayCreateChatResultModel, errors: string[], requestModel: ProceedInChatRequestModel) {
+    private catchChatGatewayErrors(chatGatewayResultModel: ChatGatewayCreateChatResultModel, errors: string(), requestModel: ProceedInChatRequestModel) {
         const chat = chatGatewayResultModel.chat;
         if (chat.isEnded) {
             errors.push('Chat ended');
@@ -144,7 +144,7 @@ export default class ProceedInChatUseCase {
         if (participatorIdInChat === 1) {
             if (nextStateResult.nextState.participator1Options.options === null) {
                 responseOptionsResult = {
-                    options: [] as ChatResponseOptionResult[]
+                    options: () as ChatResponseOptionResult()
                 };
             } else {
                 responseOptionsResult = {
@@ -159,7 +159,7 @@ export default class ProceedInChatUseCase {
         } else if (participatorIdInChat === 2) {
             if (nextStateResult.nextState.participator2Options.options === null) {
                 responseOptionsResult = {
-                    options: [] as ChatResponseOptionResult[]
+                    options: () as ChatResponseOptionResult()
                 };
             } else {
                 responseOptionsResult = {
@@ -173,7 +173,7 @@ export default class ProceedInChatUseCase {
             }
         } else {
             responseOptionsResult = {
-                options: [] as ChatResponseOptionResult[]
+                options: () as ChatResponseOptionResult()
             };
         }
         return responseOptionsResult;

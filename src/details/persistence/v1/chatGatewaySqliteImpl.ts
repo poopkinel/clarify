@@ -1,4 +1,4 @@
-import ChatGatewayToShareChat from "../../../boundaries/gateways/chat/chatGatewayToShareChat";
+    import ChatGatewayToShareChat from "../../../boundaries/gateways/chat/chatGatewayToShareChat";
 import { ChatViewResponseModel } from "../../../dataModels/v1/chatViewResponseModel";
 import { ChatMessageResponseModel } from "../../../dataModels/v1/chatMessageResponseModel";
 import { ResponseEntity } from "../../../entities/responseEntity";
@@ -48,15 +48,15 @@ export class ChatGatewaySqliteImpl implements ChatGatewayToShareChat {
             });
         });
         
-        chatId = out['result']['id'];
+        chatId = out('result')('id');
 
         // console.log('Chat returned', chatId);
         return chatId;
     }
 
-    async getAllChats(): Promise<ChatEntity[]> {
+    async getAllChats(): Promise<ChatEntity()> {
         const sql = `SELECT * FROM ${chatsTableName} LIMIT 100;`;
-        let chats: ChatEntity[] = [];
+        let chats: ChatEntity() = ();
 
         var db = await open({ filename: './sqlite3.db', driver: sqlite3.Database });
         if (db === undefined) {

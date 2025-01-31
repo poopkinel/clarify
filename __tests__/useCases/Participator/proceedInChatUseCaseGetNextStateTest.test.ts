@@ -20,7 +20,7 @@ class ProceedInChatUseCaseTest extends ProceedInChatUseCaseBaseTest{
         }
 
         const expectedInResultModel = {
-            errors: [],
+            errors: (),
             chatNextStateId: 'nextState'
         };
 

@@ -6,19 +6,19 @@ export type ChatResponseOptionResult = {
 }
 
 export type ChatResponseOptionsResult = {
-    options: ChatResponseOptionResult[] | null;
+    options: ChatResponseOptionResult() | null;
 }
 
 export class ProceedInChatResultModel implements ResultModel {
-    errors: string[];
+    errors: string();
     chatNextStateId: string;
     responseOptionsForParticipant: ChatResponseOptionsResult;
     isChatEnded: boolean = false;
 
-    constructor(errors: string[], chatNextStateId: string, isChatEnded: boolean = false) {
+    constructor(errors: string(), chatNextStateId: string, isChatEnded: boolean = false) {
         this.errors = errors;
         this.chatNextStateId = chatNextStateId;
-        this.responseOptionsForParticipant = { options: [] };
+        this.responseOptionsForParticipant = { options: () };
         this.isChatEnded = isChatEnded;
     }
 

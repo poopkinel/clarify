@@ -1,3 +1,3 @@
 export default interface ChatStateForSendChatResponse {
-    getChatReponseOptions(): Promise<string[]>;
+    getChatReponseOptions(): Promise<string()>;
 }

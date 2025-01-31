@@ -5,11 +5,11 @@ import { ChatMessageResponseModel } from "./chatMessageResponseModel";
 export class ChatViewResponseModel {
     chatId: string;
     chatName: string;
-    chatMessages: ChatMessageResponseModel[];
+    chatMessages: ChatMessageResponseModel();
 
     error: string | null;
 
-    constructor(chatId: string, chatName: string, chatMessages: ChatMessageResponseModel[], error: string | null) {
+    constructor(chatId: string, chatName: string, chatMessages: ChatMessageResponseModel(), error: string | null) {
         this.chatId = chatId;
         this.chatName = chatName;
         this.chatMessages = chatMessages;

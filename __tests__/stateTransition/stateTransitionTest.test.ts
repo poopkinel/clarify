@@ -8,10 +8,10 @@ class StateTransitionTest {
         participator1NextState: "state1",
         participator2NextState: "state1",
         participator1Options: {
-            options: [],
+            options: (),
         },
         participator2Options: {
-            options: [],
+            options: (),
         },
         isEndState: false,
     };

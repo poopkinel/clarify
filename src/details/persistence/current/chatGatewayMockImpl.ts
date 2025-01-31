@@ -5,7 +5,7 @@ export default class ChatGatewayMockImpl implements ChatGatewayToShareChat {
     createChat(chatName: string, user1: string, user2: string): Promise<string> {
         throw new Error("Method not implemented.");
     }
-    getAllChats(): Promise<ChatEntity[]> {
+    getAllChats(): Promise<ChatEntity()> {
         throw new Error("Method not implemented.");
     }
     getChatById(chatId: string): Promise<ChatEntity> {
