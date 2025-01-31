@@ -3,7 +3,7 @@ import ProceedInChatUseCase from "../../../src/useCases/current/proceedInChatUse
 
 import ChatGatewayMock from "../../../src/mocks/chatGateway/ChatGatewayMock";
 import ValidationGatewayMock from "../../../src/mocks/validationGateway/ValidationGatewayMock";
-import ChatFlowGatewayMock from "../../../src/mocks/chatFlowGateway/ChatFlowGatewayMock";
+import ChatFlowGateway from "../../../src/mocks/chatFlowGateway/ChatFlowGatewayMock";
 
 export default class ProceedInChatUseCaseTestBase {
     usecaseOutBoundarySpy = {
@@ -323,7 +323,7 @@ export default class ProceedInChatUseCaseTestBase {
             secondSetupData
         );
 
-        var chatFlowGateway = new ChatFlowGatewayMock(
+        var chatFlowGateway = new ChatFlowGateway(
             this.nextStateResultStub,
             this.nextStateStub,
             firstSetupData,

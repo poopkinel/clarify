@@ -16,7 +16,8 @@ const { StartANewChatUseCase } = require(path.join(distPath, './useCases/v1/star
 const { ChatGatewaySqliteImpl } = require(path.join(distPath, './details/persistence/v1/chatGatewaySqliteImpl'));
 const { WebInPortImpl } = require(path.join(distPath, './details/web/webInPortImpl'));
 
-const { chatPhaseManager } = require('./chatPhaseManager');
+const { makePhaseTransition } = require('./chatPhaseManager');
+
 
 // CORS settings
 var corsOptions;
@@ -43,11 +44,24 @@ const io = new Server(server, {
 // Define the port
 const PORT = process.env.PORT || 65432;
 server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`New Server is running on port ${PORT}`);
+});
+
+app.get('/', async (req, res) => {
+    const request = {
+        chatName: 'New CODE 2 2 ',
+        userId: 'NEW CODE'
+    };
+    // const resultModel = await this.webInPort.startNewChat(request);
+    // const response = await this.sendStartNewChatResult(resultModel);
+    res.json(request);
 });
 
 app.get('/next-phase', (req, res) => {
-  const nextPhase = chatPhaseManager.makePhaseTransition().nextPhase
+  console.log('request body:');
+  console.log(req.body);
+  const nextPhase = makePhaseTransition(('waiting', 'check-understanding'), 'p2-understands-yes').nextPhase
+  console.log(nextPhase);
   res.json({
     'next-phase': nextPhase
   });
@@ -60,33 +74,33 @@ app.get('/next-phase', (req, res) => {
 
 // Socket 
 
-app.get('/socket.io/socket.io.js', cors(corsOptions), (req, res) => {
-  console.log('socket.io.js requested');
-});
+// app.get('/socket.io/socket.io.js', cors(corsOptions), (req, res) => {
+//   console.log('socket.io.js requested');
+// });
 
-// Socket.io
-io.on('connection', (socket) => {
-  console.log('A user connected');
+// // Socket.io
+// io.on('connection', (socket) => {
+//   console.log('A user connected');
 
-  // Emit starting event
-  socket.emit('event', 'start');
+//   // Emit starting event
+//   socket.emit('event', 'start');
 
-  socket.on('event', (eventName) => {
-    const event = events[eventName];
-    console.log('Event received:', event);
+//   socket.on('event', (eventName) => {
+//     const event = events[eventName];
+//     console.log('Event received:', event);
 
-    if (!event) {
-      console.log('Invalid event');
-      return socket.emit('error', 'Invalid event');
-    }
+//     if (!event) {
+//       console.log('Invalid event');
+//       return socket.emit('error', 'Invalid event');
+//     }
 
-    ChatFlow_OLD.Proceed(event);
-    socket.emit('eventProcessed', 'Event processed');
-  });
+//     ChatFlow_OLD.Proceed(event);
+//     socket.emit('eventProcessed', 'Event processed');
+//   });
 
-  // Handle disconnection
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
-});
+//   // Handle disconnection
+//   socket.on('disconnect', () => {
+//     console.log('User disconnected');
+//   });
+// });
 

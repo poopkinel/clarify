@@ -84,7 +84,7 @@ export default class ProceedInChatUseCase {
         };
 
         const chatFlow = await this.chatFlowGateway.getChatFlowById(chat.chatFlowId);
-        const nextStateResult = await chatFlow.tryGetNextState(chat.currentState, eventValidationResult.event);
+        const nextStateResult = await chatFlow.tryGetNextState(chat.currentStateId, eventValidationResult.event);
         this.catchNextStateResultErrors(nextStateResult, errors, eventValidationResult);
         return { responseOptionsResult, nextStateResult };
     }
@@ -129,7 +129,7 @@ export default class ProceedInChatUseCase {
         if (!chatGatewayResultModel.success || chat === null) {
             errors.push(chatGatewayResultModel.error);
         }
-        if (!chat.currentState) {
+        if (!chat.currentStateId) {
             errors.push('Invalid chat current state object');
         }
         if (chat.participator1UserId !== requestModel.userId &&

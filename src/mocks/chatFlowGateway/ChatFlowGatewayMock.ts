@@ -1,9 +1,8 @@
 import ChatFlowGatewayToProceedInChat from "../../boundaries/gateways/chatFlow/chatFlowGatewayToProceedInChat";
-import ChatEntityForProceedInChat from "../../entities/chatEntity/chatEntityForProceedInChat";
 import ChatFlowEntityForProceedInChat from "../../entities/chatFlow/chatFlowEntityForProceedInChat";
 import ChatFlowTwoRequestsMock from "../chatFlow/ChatFlowTwoRequestsMock";
 
-export default class ChatFlowGatewayMock implements ChatFlowGatewayToProceedInChat {
+export default class ChatFlowGateway implements ChatFlowGatewayToProceedInChat {
     constructor(
         private chatFlowGatewayResultModelStub: any,
         private chatFlowStub: any,
@@ -18,7 +17,6 @@ export default class ChatFlowGatewayMock implements ChatFlowGatewayToProceedInCh
             this.requestIndex++;
 
             return new ChatFlowTwoRequestsMock(
-                this.chatFlowGatewayResultModelStub,
                 this.chatFlowStub,
                 this.firstSetupData,
                 this.secondSetupData,
@@ -27,7 +25,6 @@ export default class ChatFlowGatewayMock implements ChatFlowGatewayToProceedInCh
 
         } else {
             return new ChatFlowTwoRequestsMock(
-                this.chatFlowGatewayResultModelStub,
                 this.chatFlowStub,
                 this.firstSetupData,
                 this.secondSetupData,

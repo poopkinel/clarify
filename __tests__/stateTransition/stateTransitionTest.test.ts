@@ -31,10 +31,10 @@ class StateTransitionTest {
             it('should change the current state id in chat to the transitioned state id', async () => {
                 const { chatFlow, chat, event } = this.arrange();
 
-                const nextStateInFlow = await chatFlow.tryGetNextState(chat.currentState, event);
+                const nextStateInFlow = await chatFlow.tryGetNextState(chat.currentStateId, event);
                 chat.setCurrentState(nextStateInFlow.nextState);
                 
-                expect(chat.currentState.id).toEqual(nextStateInFlow.nextState.id);
+                expect(chat.currentStateId.id).toEqual(nextStateInFlow.nextState.id);
             });
         });
     }

@@ -28,7 +28,7 @@ export default class ChatEntity implements ChatEntityForShare,
     sharingSettings: ChatSharingSettings;
 
     chatFlowId: string;
-    currentState: ChatStateForProceedInChat;
+    currentStateId: string;
 
     isEnded: boolean;
 
@@ -45,7 +45,7 @@ export default class ChatEntity implements ChatEntityForShare,
         sharingSettings: ChatSharingSettings = new ChatSharingSettings(id, []),
 
         chatFlowId: string = '',
-        currentState: ChatStateForProceedInChat,
+        currentStateId: string = '',
 
         isEnded: boolean = false
     ) {
@@ -65,7 +65,7 @@ export default class ChatEntity implements ChatEntityForShare,
         this.sharingSettings = sharingSettings;
 
         this.chatFlowId = chatFlowId;
-        this.currentState = currentState;
+        this.currentStateId = currentStateId;
 
         this.isEnded = isEnded;
     }
@@ -86,8 +86,8 @@ export default class ChatEntity implements ChatEntityForShare,
         );
     }
 
-    setCurrentState(newCurrentState: ChatStateForProceedInChat): void {
-        this.currentState = newCurrentState ;
+    setCurrentState(newCurrentStateId: string): void {
+        this.currentStateId = newCurrentStateId ;
     }
 
 

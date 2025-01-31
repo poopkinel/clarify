@@ -5,14 +5,13 @@ import { response } from "express";
 
 export default class ChatFlowTwoRequestsMock implements ChatFlowEntityForProceedInChat{
     constructor(
-        private chatFlowGatewayResultModelStub: any,
         private chatFlowStub: any,
         private firstSetupData: any,
         private secondSetupData: any,
         private requestIndex: number,
     ) { }
 
-    async tryGetNextState(currentState: ChatStateForProceedInChat, proceedEvent: string): Promise<ChatFlowGetNextStateResult> {
+    async tryGetNextState(currentStateId: string, proceedEvent: string): Promise<ChatFlowGetNextStateResult> {
         if (this.requestIndex === 0) {
             return {
                 ...this.firstSetupData.nextStateResultStub,
