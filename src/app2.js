@@ -20,25 +20,48 @@ const { makePhaseTransition } = require('./chatPhaseManager');
 
 
 // CORS settings
-var corsOptions;
-if (process.env.NODE_ENV === 'production') {
-  console.log('using cors production settings');
-  corsOptions = {
-    origin: 'https://silver-dragon-272374.netlify.app'
-  };
-} else {
-  console.log('using cors development settings');
-  corsOptions = {
-    origin: 'http://localhost:3000',
-    credentials: true,
-    methods: ('GET', 'POST')
-  };
-}
-app.use(cors(corsOptions));
+// var corsOptions;
+// if (process.env.NODE_ENV === 'production') {
+//   console.log('using cors production settings');
+//   corsOptions = {
+//     origin: 'https://silver-dragon-272374.netlify.app'
+//   };
+// } else {
+//   console.log('using cors development settings');
+//   corsOptions = {
+//     origin: 'http://localhost:3000',
+//     credentials: true,
+//     methods: ('GET', 'POST')
+//   };
+//   corsOptions2 = {
+//     origin: 'http://127.2.2.2:3000',
+//     credentials: true,
+//     methods: ('GET', 'POST')
+//   };
+// }
+
+const corsOrigins = {
+    origins: ["http://localhost:3000","http://127.2.2.2:3000"],
+    default: "http://localhost:3000"
+  } 
+  
+app.all('*', function(req, res, next) {
+    const origin = req.header('origin').toLowerCase();
+    if (corsOrigins.origins.includes(origin)) {
+        console.log({'origin': origin})
+        res.header("Access-Control-Allow-Origin", origin);
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+    }
+});
+
+// app.use(cors(corsOptions2));
+// app.use(cors(corsOptions2));
 
 // Create Socket.io server
 const io = new Server(server, {
-  cors: corsOptions
+//   cors: corsOptions
+    cors: corsOrigins.origins
 });
 
 app.use(express.json())
@@ -70,6 +93,16 @@ app.post('/next-phase', (req, res) => {
     'next-phase': nextPhase
   });
 })
+
+
+io.on('connection', (socket) => {
+    io.emit('hello');
+
+    socket.on('chat message', (msg) => {
+        console.log({'received msg': msg});
+        io.emit('chat message', msg)
+    });
+});
 
 // const apiService = new ApiService();
 // const startNewChatUseCase = new StartANewChatUseCase(new ChatGatewaySqliteImpl(), apiService);
