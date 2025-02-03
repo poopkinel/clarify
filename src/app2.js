@@ -82,6 +82,35 @@ app.post('/start-chat', async (req, res) => {
     res.json(request);
 });
 
+var p1;
+var p2;
+
+var currentPhase;
+
+app.post('/start-chat-phases', async (req, res) => {
+    console.log('in start-chat-phases');
+    if (p1 == null) {
+        p1 = req.ip;
+    } else if (p2 == null) {
+        p2 = req.ip;
+    }
+    var phaseThis;
+    var phaseOther;
+    console.log({'req.ip': req.ip})
+    
+    // if (req.ip == "127.2.2.2") {
+    if (req.header('origin') == "http://localhost:3000") { // TODO: change on production
+        phaseThis = 'openSay';
+        phaseOther = 'waiting';
+    } else if (req.ip == p2) {
+        phaseThis = 'waiting';
+        phaseOther = 'openSay';
+    }
+    currentPhase = [phaseThis, phaseOther];
+    console.log({'phaseThis': phaseThis, 'phaseOther': phaseOther})
+    res.json([phaseThis, phaseOther]);
+});
+
 app.post('/next-phase', (req, res) => {
   console.log('request body:');
   console.log(req.body);
@@ -98,9 +127,15 @@ app.post('/next-phase', (req, res) => {
 io.on('connection', (socket) => {
     io.emit('hello');
 
-    socket.on('chat message', (msg) => {
-        console.log({'received msg': msg});
-        io.emit('chat message', msg)
+    socket.on('chat message to server', (msgJson) => {
+        const msg = JSON.parse(msgJson);
+        const event = msg.chatEvent;
+        console.log({'currentPhase': currentPhase, 'chatEvent': event});
+        const nextPhase = makePhaseTransition(currentPhase, event).nextPhase
+        console.log({'on server received msg': msg});
+        const msgNextPhase = {'id': msg.id, 'text': msg.text, 'sender': msg.sender, 'nextPhase': nextPhase}
+        console.log({'msgNextPhase from server': msgNextPhase});
+        io.emit('chat message from server', JSON.stringify(msgNextPhase))
     });
 });
 
