@@ -21,11 +21,14 @@ const makePhaseTransition = (currentPhase, fromChatEvent) => {
     for (var i = 0; i < transitions.length; i++) {
         const from = transitions[i].from;
         const modelEvent = transitions[i].event;
-        console.log({'from': from, 'currentPhase': currentPhase, 'modelEvent': modelEvent, 'fromChatEvent': fromChatEvent})
+        // console.log({'from': from, 'currentPhase': currentPhase, 'modelEvent': modelEvent, 'fromChatEvent': fromChatEvent})
         if (from[0] == currentPhase[0] && from[1] == currentPhase[1] && modelEvent == fromChatEvent) {
-            console.log('found match');
+            // console.log('found match');
             return ({
-                'nextPhase' : transitions[i].to
+                'nextPhases' : {
+                    'p1' : transitions[i].to[0],
+                    'p2' : transitions[i].to[1],
+                }
             });
         }
     }

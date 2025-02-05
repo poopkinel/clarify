@@ -55,8 +55,6 @@ app.all('*', function(req, res, next) {
     }
 });
 
-// app.use(cors(corsOptions2));
-// app.use(cors(corsOptions2));
 
 // Create Socket.io server
 const io = new Server(server, {
@@ -69,59 +67,42 @@ app.use(express.json())
 // Define the port
 const PORT = process.env.PORT || 65432;
 server.listen(PORT, () => {
-  console.log(`New Server is running on port ${PORT}`);
+    console.log(`New Server is running on port ${PORT}`);
 });
+
+var currentPhase;
 
 app.post('/start-chat', async (req, res) => {
     const request = {
         chatName: 'New CODE 2 2 ',
         userId: 'NEW CODE'
     };
-    // const resultModel = await this.webInPort.startNewChat(request);
-    // const response = await this.sendStartNewChatResult(resultModel);
+    currentPhase = ['openSay', 'waiting']
     res.json(request);
 });
 
 var p1;
 var p2;
 
-var currentPhase;
 
-app.post('/start-chat-phases', async (req, res) => {
-    console.log('in start-chat-phases');
-    if (p1 == null) {
-        p1 = req.ip;
-    } else if (p2 == null) {
-        p2 = req.ip;
-    }
-    var phaseThis;
-    var phaseOther;
+app.post('/start-chat-phase', async (req, res) => {
+    console.log('in start-chat-phase');
+    var phase;
+    var role;
     console.log({'req.ip': req.ip})
     
-    // if (req.ip == "127.2.2.2") {
     if (req.header('origin') == "http://localhost:3000") { // TODO: change on production
-        phaseThis = 'openSay';
-        phaseOther = 'waiting';
-    } else if (req.ip == p2) {
-        phaseThis = 'waiting';
-        phaseOther = 'openSay';
+        phase = 'openSay';
+        p1 = phase;
+        role = 'p1';
+    } else {
+        phase = 'waiting';
+        p2 = phase;
+        role = 'p2';
     }
-    currentPhase = [phaseThis, phaseOther];
-    console.log({'phaseThis': phaseThis, 'phaseOther': phaseOther})
-    res.json([phaseThis, phaseOther]);
+    console.log({'phase': phase, 'role': role})
+    res.json({'phase': phase, 'role': role});
 });
-
-app.post('/next-phase', (req, res) => {
-  console.log('request body:');
-  console.log(req.body);
-  const current = (req.body.current[0], req.body.current[1]);
-  const event = req.body.event;
-  const nextPhase = makePhaseTransition(current, event).nextPhase
-  console.log(nextPhase);
-  res.json({
-    'next-phase': nextPhase
-  });
-})
 
 
 io.on('connection', (socket) => {
@@ -130,10 +111,11 @@ io.on('connection', (socket) => {
     socket.on('chat message to server', (msgJson) => {
         const msg = JSON.parse(msgJson);
         const event = msg.chatEvent;
-        console.log({'currentPhase': currentPhase, 'chatEvent': event});
-        const nextPhase = makePhaseTransition(currentPhase, event).nextPhase
+        console.log({'currentPhase': [p1, p2], 'chatEvent': event});
+        const nextPhases = makePhaseTransition([p1, p2], event).nextPhases
         console.log({'on server received msg': msg});
-        const msgNextPhase = {'id': msg.id, 'text': msg.text, 'sender': msg.sender, 'nextPhase': nextPhase}
+        
+        const msgNextPhase = {'id': msg.id, 'text': msg.text, 'sender': msg.sender, 'nextPhases': nextPhases}
         console.log({'msgNextPhase from server': msgNextPhase});
         io.emit('chat message from server', JSON.stringify(msgNextPhase))
     });
