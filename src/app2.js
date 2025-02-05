@@ -106,13 +106,16 @@ app.post('/start-chat-phase', async (req, res) => {
 
 
 io.on('connection', (socket) => {
-    io.emit('hello');
+    io.emit('ping');
 
     socket.on('chat message to server', (msgJson) => {
         const msg = JSON.parse(msgJson);
         const event = msg.chatEvent;
+        
         console.log({'currentPhase': [p1, p2], 'chatEvent': event});
         const nextPhases = makePhaseTransition([p1, p2], event).nextPhases
+        p1 = nextPhases['p1'];
+        p2 = nextPhases['p2'];
         console.log({'on server received msg': msg});
         
         const msgNextPhase = {'id': msg.id, 'text': msg.text, 'sender': msg.sender, 'nextPhases': nextPhases}
