@@ -17,6 +17,9 @@ const { ChatGatewaySqliteImpl } = require(path.join(distPath, './details/persist
 const { WebInPortImpl } = require(path.join(distPath, './details/web/webInPortImpl'));
 
 const { makePhaseTransition } = require('./chatPhaseManager');
+const { phases } = require('./Phase');
+
+const { waiting, openSay } = phases;
 
 
 // CORS settings
@@ -92,11 +95,11 @@ app.post('/start-chat-phase', async (req, res) => {
     console.log({'req.ip': req.ip})
     
     if (req.header('origin') == "http://localhost:3000") { // TODO: change on production
-        phase = 'openSay';
+        phase = openSay;
         p1 = phase;
         role = 'p1';
     } else {
-        phase = 'waiting';
+        phase = waiting;
         p2 = phase;
         role = 'p2';
     }
@@ -121,6 +124,14 @@ io.on('connection', (socket) => {
         const msgNextPhase = {'id': msg.id, 'text': msg.text, 'sender': msg.sender, 'nextPhases': nextPhases, 'username': msg.username}
         console.log({'msgNextPhase from server': msgNextPhase});
         io.emit('chat message from server', JSON.stringify(msgNextPhase))
+        
+        console.log({'p2': p2});
+        // if (p2 == 'closedUnderstand') {
+        //     const newSystemResponse = {'id': msg.id, 'text': `Do you understand what ${msg.username} means?`, 
+        //       'sender': 'system', 'username': msg.username};
+        //     console.log({'newSystemResponse': newSystemResponse});
+        //     io.emit('chat message from server', JSON.stringify(newSystemResponse))
+        // }
     });
 });
 
