@@ -118,7 +118,7 @@ io.on('connection', (socket) => {
         p2 = nextPhases['p2'];
         console.log({'on server received msg': msg});
         
-        const msgNextPhase = {'id': msg.id, 'text': msg.text, 'sender': msg.sender, 'nextPhases': nextPhases}
+        const msgNextPhase = {'id': msg.id, 'text': msg.text, 'sender': msg.sender, 'nextPhases': nextPhases, 'username': msg.username}
         console.log({'msgNextPhase from server': msgNextPhase});
         io.emit('chat message from server', JSON.stringify(msgNextPhase))
     });
