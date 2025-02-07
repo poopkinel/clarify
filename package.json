@@ -6,10 +6,8 @@
   "scripts": {
     "test": "jest",
     "test:unit": "jest --testPathPattern=__tests__/",
-    "build": "tsc",
     "clean": "rimraf dist",
     "start": "nodemon",
-    "watch:build": "tsc --watch",
     "watch:server": "nodemon './dist/index.js' --watch './dist'"
   },
   "author": "Ophek Ozelle",
