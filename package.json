@@ -2,7 +2,7 @@
   "name": "clarify",
   "version": "1.0.0",
   "description": "Chat app",
-  "main": "src/app.js",
+  "main": "src/app2.js",
   "scripts": {
     "test": "jest",
     "test:unit": "jest --testPathPattern=__tests__/",
