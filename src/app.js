@@ -93,6 +93,7 @@ app.post('/start-chat', async (req, res) => {
 var p1;
 var p2;
 
+var pCounter = 0;
 
 app.post('/start-chat-phase', async (req, res) => {
     console.log('in start-chat-phase');
@@ -100,7 +101,15 @@ app.post('/start-chat-phase', async (req, res) => {
     var role;
     console.log({'req.ip': req.ip})
     
-    if (req.header('origin') == "http://localhost:3000") { // TODO: change on production
+    pCounter++;
+    if (pCounter > 2) {
+        p1 = null;
+        p2 = null;
+        pCounter = 1;
+    }
+
+    // if (req.header('origin') == "http://localhost:3000") { // TODO: change on production
+    if (pCounter == 1) {
         phase = openSay;
         p1 = phase;
         role = 'p1';
