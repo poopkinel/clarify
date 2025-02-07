@@ -48,15 +48,21 @@ const corsOrigins = {
     default: "http://localhost:3000"
   } 
   
-app.all('*', function(req, res, next) {
-    const origin = req.header('origin').toLowerCase();
-    if (corsOrigins.origins.includes(origin)) {
-        console.log({'origin': origin})
-        res.header("Access-Control-Allow-Origin", origin);
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        next();
-    }
-});
+// app.all('*', function(req, res, next) {
+//     const origin = req.header('origin').toLowerCase();
+//     if (corsOrigins.origins.includes(origin)) {
+//         console.log({'origin': origin})
+//         res.header("Access-Control-Allow-Origin", origin);
+//         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//         next();
+//     }
+// });
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 
 
 // Create Socket.io server
