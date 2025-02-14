@@ -54,43 +54,43 @@ export class ChatGatewaySqliteImpl implements ChatGatewayToShareChat {
         return chatId;
     }
 
-    async getAllChats(): Promise<ChatEntity()> {
-        const sql = `SELECT * FROM ${chatsTableName} LIMIT 100;`;
-        let chats: ChatEntity() = ();
+    // async getAllChats(): Promise<ChatEntity()> {
+    //     const sql = `SELECT * FROM ${chatsTableName} LIMIT 100;`;
+    //     let chats: ChatEntity() = ();
 
-        var db = await open({ filename: './sqlite3.db', driver: sqlite3.Database });
-        if (db === undefined) {
-            console.log('Error opening database');
-            return chats;
-        }
+    //     var db = await open({ filename: './sqlite3.db', driver: sqlite3.Database });
+    //     if (db === undefined) {
+    //         console.log('Error opening database');
+    //         return chats;
+    //     }
 
-        try {
-            const rows = await db.all(sql);  // using all() with async/await
+    //     try {
+    //         const rows = await db.all(sql);  // using all() with async/await
             
-            rows.forEach((row: any) => {
-                chats.push({} as ChatEntity
-                    // new ChatEntity(
-                    // row.id,
-                    // row.name,
-                    // row.user1,
-                    // row.user2,
-                    // true
-                // )
-            );
-            });
+    //         rows.forEach((row: any) => {
+    //             chats.push({} as ChatEntity
+    //                 // new ChatEntity(
+    //                 // row.id,
+    //                 // row.name,
+    //                 // row.user1,
+    //                 // row.user2,
+    //                 // true
+    //             // )
+    //         );
+    //         });
 
-            return chats;
+    //         return chats;
 
-        } catch (err: any) {
-            console.error('Error when fetching chats:', err);
-            throw err;  // rethrow the error if you want to handle it further up the chain
-        } finally {
-            if (db) {
-                db.close(); // Make sure to close the database connection
-            }
-        }
+    //     } catch (err: any) {
+    //         console.error('Error when fetching chats:', err);
+    //         throw err;  // rethrow the error if you want to handle it further up the chain
+    //     } finally {
+    //         if (db) {
+    //             db.close(); // Make sure to close the database connection
+    //         }
+    //     }
             
-    }
+    // }
 
     async getChatById(chatId: string): Promise<ChatEntity> {
         if (chatId === '0') {
@@ -114,15 +114,15 @@ export class ChatGatewaySqliteImpl implements ChatGatewayToShareChat {
         }
     }
 
-    async addMessageToChat(chatId: string, messageText: string, messageAuthor: string): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
+    // async addMessageToChat(chatId: string, messageText: string, messageAuthor: string): Promise<void> {
+    //     throw new Error("Method not implemented.");
+    // }
 
-    async deleteChat(chatId: string): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
+    // async deleteChat(chatId: string): Promise<void> {
+    //     throw new Error("Method not implemented.");
+    // }
 
-    async isChatNameUnique(chatName: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
-    }
+    // async isChatNameUnique(chatName: string): Promise<boolean> {
+    //     throw new Error("Method not implemented.");
+    // }
 }

@@ -11,6 +11,10 @@ const { Server } = require('socket.io');
 const path = require('path');
 var distPath = path.join(process.cwd(), './dist/');
 
+const sqlite3 = require('sqlite3');
+const db = new sqlite3.Database('./sqlite3.db', (err) => {});
+
+
 // const { ApiService } = require(path.join(distPath, './details/web/apiService.js'));
 // const { StartANewChatUseCase } = require(path.join(distPath, './useCases/v1/startANewChatUseCase'));
 // const { ChatGatewaySqliteImpl } = require(path.join(distPath, './details/persistence/v1/chatGatewaySqliteImpl'));
@@ -18,6 +22,7 @@ var distPath = path.join(process.cwd(), './dist/');
 
 const { makePhaseTransition } = require('./chatPhaseManager');
 const { phases } = require('./Phase');
+const { unwatchFile } = require('fs');
 
 const { waiting, openSay } = phases;
 
@@ -90,6 +95,8 @@ app.post('/start-chat', async (req, res) => {
     res.json(request);
 });
 
+var user1;
+var user2;
 var p1;
 var p2;
 
@@ -99,24 +106,34 @@ app.post('/start-chat-phase', async (req, res) => {
     console.log('in start-chat-phase');
     var phase;
     var role;
-    console.log({'req.ip': req.ip})
+    console.log({'req.body': req.body})
     
-    pCounter++;
-    if (pCounter > 2) {
-        p1 = null;
-        p2 = null;
-        pCounter = 1;
+    const incomingUser = req.body.userId;
+    if (user1 === undefined) {
+        user1 = incomingUser;
+    } else if (user2 === undefined && incomingUser !== user1) {
+        user2 = incomingUser;
     }
 
+    // pCounter++;
+    // if (pCounter > 2) {
+    //     p1 = null;
+    //     p2 = null;
+    //     pCounter = 1;
+    // }
+
     // if (req.header('origin') == "http://localhost:3000") { // TODO: change on production
-    if (pCounter == 1) {
+    if (user1 === incomingUser) {
         phase = openSay;
         p1 = phase;
         role = 'p1';
-    } else {
+    } else if (user2 === incomingUser) {
         phase = waiting;
         p2 = phase;
         role = 'p2';
+    } else {
+        console.log({'user1': user1 === undefined, 'user2': user2 === undefined});
+        return;
     }
     console.log({'phase': phase, 'role': role})
     res.json({'phase': phase, 'role': role});
@@ -126,7 +143,9 @@ app.post('/start-chat-phase', async (req, res) => {
 io.on('connection', (socket) => {
     io.emit('ping');
 
-    socket.on('chat message to server', (msgJson) => {
+    socket.on('chat message to server', async (msgJson) => {
+        const id = await createChat('TestName', 'TestUser1', 'TestUser2');
+
         const msg = JSON.parse(msgJson);
         const event = msg.chatEvent;
         
@@ -149,6 +168,95 @@ io.on('connection', (socket) => {
         // }
     });
 });
+
+function insert(sql, params) {
+    return new Promise((resolve, reject) => {          // return new Promise here <---
+      return db.run(sql, params, function (err, res) { // .run <----
+        if (err) {
+          console.error("DB Error: Insert failed: ", err.message);
+          return reject(err.message);
+        }
+        return resolve(this.lastID);
+      });
+    });
+}
+
+app.get('/test-db-create-chat', async (req, res) => {
+    const row = await createChat('TestName', 'TestUser1', 'TestUser2');
+    console.log({'row': row});
+    res.json({'row': row});
+});
+
+app.get('/test-db-get-all-chats', async (req, res) => {
+    const rows = await getAllChats();
+    console.log({'rows': rows });
+    res.json({'rows': rows });
+});
+
+const createChat = async (chatName, user1, user2) => {
+    const chatsTableName = 'chats'
+    const sql = `INSERT INTO ${chatsTableName} (name, user1, user2) VALUES ('${chatName}', '${user1}', '${user2}') RETURNING *;`;
+    // console.log(sql);
+
+    var chatId = "";
+
+    // var result;
+
+    const result = await insert(sql, []);
+    return result; 
+
+    // const { err, result } = await db.get(sql);
+    
+    // db.get(sql, (err, row) => {
+    //     if (err) {
+    //         console.log(err);
+    //     } else {
+    //         console.log({ 'result': row });
+    //         return row;
+    //     }
+    // });
+
+    // db.run(sql, function(err) {
+    //     if (err) {
+    //         console.log(err.message);
+    //     }
+    //     // get the last insert id
+    //     console.log(`A row has been inserted with rowid ${this.lastID}`);
+    //     return this.lastID;
+    // });
+
+    // const row = await db.get(sql);
+    // const result = typeof row !== 'undefined' && row.recsCount > 0;
+
+    // return row;
+    
+    // return new Promise((resolve, reject) => {
+    //     db.run(sql, (err, row) => {
+    //      if (err) reject(err);
+    //      resolve(row);
+    //     });
+    //    });
+
+    // // chatId = out('result')('id');
+
+    // // console.log('Chat returned', chatId);
+    // return chatId;    
+}
+
+const getAllChats = async () => {
+    const sql = 'SELECT * FROM chats';
+    
+    return new Promise((resolve, reject) => {
+        db.all(sql, [], (error, rows) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+};
+
 
 // const apiService = new ApiService();
 // const startNewChatUseCase = new StartANewChatUseCase(new ChatGatewaySqliteImpl(), apiService);
