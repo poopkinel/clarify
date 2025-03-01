@@ -22,7 +22,7 @@ const { waiting, openSay, didUnderstand, openParaphrase, closedConfirmParaphrase
 //     { from: [waiting, openQuestion], to: [openSay, waiting], event: 'Participator2Questions' }
 // ];
 
-const transitions = [
+const transitions = [ // clarity 1.1
     { from: [openSay, waiting], to: [didISayOne, waiting], event: chatEvents.InputTextParticipant1 },
     { from: [didISayOne, waiting], to: [waiting, didUnderstand], event: chatEvents.InputOption1Participant1 },
     { from: [didISayOne, waiting], to: [focusOneThing, waiting], event: chatEvents.InputOption2Participant1 },
@@ -60,11 +60,13 @@ const makePhaseTransition = (currentPhase, fromChatEvent) => {
                 'nextPhases' : {
                     'p1' : {
                         'key': transitions[i].to[0].key,
-                        'prompt': transitions[i].to[0].prompt
+                        'prompt': transitions[i].to[0].prompt,
+                        'responseOptions': transitions[i].to[0].responseOptions
                     },
                     'p2': {
                         'key': transitions[i].to[1].key,
-                        'prompt': transitions[i].to[1].prompt
+                        'prompt': transitions[i].to[1].prompt,
+                        'responseOptions': transitions[i].to[1].responseOptions
                     }
                 }
             });

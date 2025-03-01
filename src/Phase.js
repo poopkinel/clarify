@@ -2,7 +2,7 @@ class Phase {
     constructor(k, p, opts = []) {
         this.key = k;
         this.prompt = p;
-        this.options = opts
+        this.responseOptions = opts
     }
 }
 
@@ -29,49 +29,22 @@ const chatEvents = {
     InputOption1Participant2: InputOption1Participant2,
     InputOption2Participant1: InputOption2Participant1,
     InputOption2Participant2: InputOption2Participant2,
-    // Participator1FocusOneThing: 'Participator1FocusOneThing',
-    // Participator2FocusOneThing: 'Participator2FocusOneThing',
-    
-    // Participator1UnderstandsYes: 'Participator1UnderstandsYes',
-    // Participator1UnderstandsNo: 'Participator1UnderstandsNo',
-
-    // Participator1Paraphrases: 'Participator1Paraphrases',
-    // Participator2Paraphrases: 'Participator2Paraphrases',
-    // Participator1ConfirmParaphraseYes: 'Participator1ConfirmParaphraseYes',
-    // Participator1ConfirmParaphraseNo: 'Participator1ConfirmParaphraseNo',
-    // Participator2ConfirmParaphraseYes: 'Participator2ConfirmParaphraseYes',
-    // Participator2ConfirmParaphraseNo: 'Participator2ConfirmParaphraseNo',
-
     InputTextQuestionParticipant1: InputTextQuestionParticipant1,
     InputTextQuestionParticipant2: InputTextQuestionParticipant2
 }
 
-class ChatOption {
-    constructor(opts) {
-        this.options = opts
-    }
-}
 
-const didISayOptions = new ChatOption([
-    {
-        option: 'Yes',
-        event: {
-            eventKey: chatEvents.Participator1SaysOneThing,
-        }
-    },
-    {
-        option: 'No', 
-        event: chatEvents.Participator1SaysManyThings
-    }
-])
+const yesNoOptions = [
+    'Yes', 'No'
+]
 
-const waiting = new Phase('waiting', 'Waiting for response');
-const openSay = new Phase('openSay', 'I can write what I want to say');
-const didISayOne = new Phase('didISayOne', 'Did I just focus on one thing to talk about?', didISayOptions);
+const waiting = new Phase('waiting', 'Waiting for response', []);
+const openSay = new Phase('openSay', 'I can write what I want to say', []);
+const didISayOne = new Phase('didISayOne', 'Did I just focus on one thing to talk about?', yesNoOptions);
 const focusOneThing = new Phase('focusOneThing', 'Please choose one thing to focus on first');
-const didUnderstand = new Phase('didUnderstand', 'I answer "Yes" if I understand the other side, or "No" otherwise');
+const didUnderstand = new Phase('didUnderstand', 'I answer "Yes" if I understand the other side, or "No" otherwise', yesNoOptions);
 const openParaphrase = new Phase('openParaphrase', 'I write what the other side said in my own words');
-const closedConfirmParaphrase = new Phase('closedConfirmParaphrase', 'I confirm with "Yes" or reject with "No"');
+const closedConfirmParaphrase = new Phase('closedConfirmParaphrase', 'I confirm with "Yes" or reject with "No"', yesNoOptions);
 const openQuestion = new Phase('openQuestion', 'I ask a question to better understand the other side');
 
 const phases = {

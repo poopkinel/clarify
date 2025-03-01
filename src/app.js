@@ -95,7 +95,7 @@ io.on('connection', (socket) => {
             return;
         } 
 
-        const nextPhases = tryMakePhaseTransition.nextPhases
+        const nextPhases = tryMakePhaseTransition.nextPhases;
 
         console.log({'next phases': [nextPhases['p1'].key, nextPhases['p2'].key]});
         p1 = nextPhases['p1'];
